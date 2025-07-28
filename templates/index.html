@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Plataforma Preuniversitaria{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card ejercicio-card">
+                <div class="card-body text-center">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-graduation-cap"></i> Plataforma Preuniversitaria
+                    </h1>
+                    <p class="lead mb-0">
+                        Ejercicios y recursos para estudiantes preuniversitarios
+                    </p>
+                    <div class="mt-3">
+                        <a href="/simulacro" class="btn btn-danger btn-lg me-2">
+                            <i class="fas fa-clipboard-check"></i> Simulacro de Examen
+                        </a>
+                        <button class="btn btn-light btn-sm" onclick="testMathJax()">
+                            <i class="fas fa-calculator"></i> Probar MathJax
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Estadísticas rápidas -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ metadatos.total_ejercicios }}</div>
+            <div class="stats-label">Total Ejercicios</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ metadatos.materias|length }}</div>
+            <div class="stats-label">Materias</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ metadatos.capitulos|length }}</div>
+            <div class="stats-label">Capítulos</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ metadatos.niveles|length }}</div>
+            <div class="stats-label">Niveles</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="filtros-section">
+    <h3><i class="fas fa-filter"></i> Filtros Paso a Paso</h3>
+    <form method="GET" action="{{ url_for('index') }}" id="filtrosForm">
+        <!-- Paso 1: Seleccionar Materia -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="materia" class="form-label">
+                    <i class="fas fa-book"></i> Paso 1: Selecciona la Materia
+                </label>
+                <select class="form-select" id="materia" name="codigo_materia" required>
+                    <option value="">-- Selecciona una materia --</option>
+                    {% for materia, count in metadatos.materias.items() %}
+                    <option value="{{ materia }}" {% if filtros.materia == materia %}selected{% endif %}>
+                        {{ materia|title }} ({{ count }} ejercicios)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Paso 2: Seleccionar Capítulo (se habilita después de elegir materia) -->
+        <div class="row mb-3" id="paso2" style="display: none;">
+            <div class="col-md-6">
+                <label for="capitulo" class="form-label">
+                    <i class="fas fa-chapter"></i> Paso 2: Selecciona el Capítulo
+                </label>
+                <select class="form-select" id="capitulo" name="capitulo">
+                    <option value="">-- Selecciona un capítulo --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Paso 3: Seleccionar Nivel de Dificultad -->
+        <div class="row mb-3" id="paso3">
+            <div class="col-12">
+                <label class="form-label">
+                    <i class="fas fa-star"></i> Paso 3: Selecciona el Nivel de Dificultad
+                </label>
+                <div class="d-flex flex-wrap gap-2" id="dificultad-buttons">
+                    <!-- Los botones se generarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary me-2" id="btnFiltrar" disabled>
+                    <i class="fas fa-search"></i> Filtrar Ejercicios
+                </button>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Limpiar Filtros
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Resultados -->
+<div class="row mb-3">
+    <div class="col-12">
+        <h3>
+            <i class="fas fa-list"></i> Ejercicios 
+            {% if filtros.materia or filtros.nivel or filtros.capitulo %}
+            <small class="text-muted">(Filtrados)</small>
+            {% endif %}
+        </h3>
+        <p class="text-muted">
+            Mostrando {{ ejercicios_filtrados|length }} de {{ metadatos.total_ejercicios }} ejercicios
+        </p>
+    </div>
+</div>
+
+<!-- Lista de ejercicios -->
+{% if ejercicios_filtrados %}
+<div class="row">
+    {% for ejercicio in ejercicios_filtrados %}
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calculator"></i> {{ ejercicio.id }}
+                        {% if not ejercicio.mostrar_solucion %}
+                        <i class="fas fa-lock text-warning ms-2" title="Solución exclusiva en libro"></i>
+                        {% endif %}
+                    </h5>
+                    <div>
+                        <span class="badge badge-nivel badge-{{ ejercicio.nivel }}">
+                            {{ ejercicio.nivel|title }}
+                        </span>
+                        {% if not ejercicio.mostrar_solucion %}
+                        <span class="badge bg-warning ms-1">
+                            <i class="fas fa-crown"></i> Premium
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <i class="fas fa-book"></i> {{ ejercicio.codigo_materia|title }} | 
+                        <i class="fas fa-chapter"></i> {{ ejercicio.capitulo|title }} |
+                        <i class="fas fa-tag"></i> {{ ejercicio.procedencia }}
+                    </small>
+                </div>
+                
+                <div class="enunciado">
+                    <strong>Enunciado:</strong><br>
+                    <div class="enunciado-content">
+                        {{ ejercicio.enunciado|safe }}
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <a href="{{ url_for('ejercicio_detalle', ejercicio_id=ejercicio.id) }}" 
+                           class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye"></i> Ver Detalle
+                        </a>
+                        {% if ejercicio.youtube_url %}
+                        <a href="{{ ejercicio.youtube_url }}" target="_blank" class="btn btn-danger btn-sm ms-1">
+                            <i class="fab fa-youtube"></i> Video
+                        </a>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-file-alt"></i> {{ ejercicio.archivo_origen.split('/')[-1] if ejercicio.archivo_origen else 'N/A' }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>No se encontraron ejercicios</h4>
+                <p class="text-muted">
+                    No hay ejercicios que coincidan con los filtros seleccionados.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Paginación (si es necesaria en el futuro) -->
+{% if ejercicios|length > 10 %}
+<nav aria-label="Navegación de ejercicios">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+        </li>
+        <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">2</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">3</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">Siguiente</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Datos de ejercicios para filtrado dinámico
+const ejerciciosData = {{ ejercicios|tojson }};
+const metadatosData = {{ metadatos|tojson }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando filtros...');
+    console.log('Ejercicios disponibles:', ejerciciosData.length);
+    
+    const materiaSelect = document.getElementById('materia');
+    const capituloSelect = document.getElementById('capitulo');
+    const paso2 = document.getElementById('paso2');
+    const paso3 = document.getElementById('paso3');
+    const dificultadButtons = document.getElementById('dificultad-buttons');
+    const btnFiltrar = document.getElementById('btnFiltrar');
+    
+    console.log('Elementos encontrados:', {
+        materiaSelect: !!materiaSelect,
+        capituloSelect: !!capituloSelect,
+        paso2: !!paso2,
+        paso3: !!paso3,
+        dificultadButtons: !!dificultadButtons,
+        btnFiltrar: !!btnFiltrar
+    });
+    
+    // Mapeo de materias a capítulos
+    const materiaCapitulos = {};
+    ejerciciosData.forEach(ejercicio => {
+        if (!materiaCapitulos[ejercicio.codigo_materia]) {
+            materiaCapitulos[ejercicio.codigo_materia] = new Set();
+        }
+        materiaCapitulos[ejercicio.codigo_materia].add(ejercicio.capitulo);
+    });
+    
+    console.log('Mapeo de materias a capítulos:', materiaCapitulos);
+    
+    // Niveles de dificultad disponibles
+    const nivelesDificultad = ['basico', 'intermedio', 'avanzado', 'premium'];
+    
+    console.log('Niveles de dificultad disponibles:', nivelesDificultad);
+    
+    // Función para actualizar capítulos
+    function actualizarCapitulos() {
+        const materiaSeleccionada = materiaSelect.value;
+        capituloSelect.innerHTML = '<option value="">-- Selecciona un capítulo --</option>';
+        
+        if (materiaSeleccionada && materiaCapitulos[materiaSeleccionada]) {
+            const capitulos = Array.from(materiaCapitulos[materiaSeleccionada]).sort();
+            capitulos.forEach(capitulo => {
+                const option = document.createElement('option');
+                option.value = capitulo;
+                option.textContent = capitulo.charAt(0).toUpperCase() + capitulo.slice(1);
+                capituloSelect.appendChild(option);
+            });
+            paso2.style.display = 'block';
+            paso2.classList.add('paso-activo');
+        } else {
+            paso2.style.display = 'none';
+            paso2.classList.remove('paso-activo');
+        }
+        
+        verificarFiltros();
+    }
+    
+    // Función para actualizar dificultades
+    function actualizarDificultades() {
+        dificultadButtons.innerHTML = '';
+        
+        // Siempre mostrar todos los niveles de dificultad
+        nivelesDificultad.forEach(nivel => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `btn btn-dificultad btn-dificultad-${nivel}`;
+            button.textContent = nivel.charAt(0).toUpperCase() + nivel.slice(1);
+            button.dataset.nivel = nivel;
+            
+            button.addEventListener('click', function() {
+                // Remover selección previa
+                document.querySelectorAll('.btn-dificultad').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Seleccionar este botón
+                this.classList.add('active');
+                
+                // Agregar input hidden para el nivel
+                let inputHidden = document.querySelector('input[name="nivel"]');
+                if (!inputHidden) {
+                    inputHidden = document.createElement('input');
+                    inputHidden.type = 'hidden';
+                    inputHidden.name = 'nivel';
+                    document.getElementById('filtrosForm').appendChild(inputHidden);
+                }
+                inputHidden.value = nivel;
+                
+                verificarFiltros();
+            });
+            
+            dificultadButtons.appendChild(button);
+        });
+        
+        paso3.classList.add('paso-activo');
+    }
+    
+    // Función para verificar si se pueden aplicar filtros
+    function verificarFiltros() {
+        const materiaSeleccionada = materiaSelect.value;
+        const capituloSeleccionado = capituloSelect.value;
+        const inputNivel = document.querySelector('input[name="nivel"]');
+        const nivelSeleccionado = inputNivel ? inputNivel.value : '';
+        
+        // Habilitar botón si hay al menos una materia seleccionada
+        btnFiltrar.disabled = !materiaSeleccionada;
+        
+        // Actualizar texto del botón
+        if (materiaSeleccionada) {
+            let texto = `Filtrar ${materiaSeleccionada}`;
+            if (capituloSeleccionado) {
+                texto += ` - ${capituloSeleccionado}`;
+            }
+            if (nivelSeleccionado) {
+                texto += ` (${nivelSeleccionado.charAt(0).toUpperCase() + nivelSeleccionado.slice(1)})`;
+            }
+            btnFiltrar.innerHTML = `<i class="fas fa-search"></i> ${texto}`;
+        } else {
+            btnFiltrar.innerHTML = '<i class="fas fa-search"></i> Filtrar Ejercicios';
+        }
+    }
+    
+    // Event listeners
+    materiaSelect.addEventListener('change', actualizarCapitulos);
+    capituloSelect.addEventListener('change', verificarFiltros);
+    
+    // Inicializar dificultades siempre
+    actualizarDificultades();
+    
+    // Inicializar si hay valores preseleccionados
+    if (materiaSelect.value) {
+        actualizarCapitulos();
+    }
+    
+    // Animación de carga para las tarjetas
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Reprocesar MathJax después de que se carguen las tarjetas
+    setTimeout(() => {
+        if (typeof reprocessMathJax === 'function') {
+            reprocessMathJax();
+        }
+    }, 1500);
+});
+</script>
+{% endblock %} 

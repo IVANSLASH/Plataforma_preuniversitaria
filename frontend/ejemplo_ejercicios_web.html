@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de Exponentes - Nivel Medio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .ejercicio {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .ejercicio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .ejercicio-id {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .ejercicio-nivel {
+            background: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .ejercicio-procedencia {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        .enunciado {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        .solucion {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .solucion h4 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        .respuesta {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .nota {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .filtros {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .filtros select, .filtros button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .filtros button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .filtros button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Ejercicios de Exponentes - Nivel Medio</h1>
+        <p>Ejemplo de cómo se verían los nuevos ejercicios en la página web</p>
+
+        <div class="filtros">
+            <h3>🔍 Filtros</h3>
+            <select id="materia">
+                <option value="">Todas las materias</option>
+                <option value="algebra" selected>Álgebra</option>
+                <option value="calculo">Cálculo</option>
+            </select>
+            <select id="nivel">
+                <option value="">Todos los niveles</option>
+                <option value="basico">Básico</option>
+                <option value="intermedio" selected>Intermedio</option>
+                <option value="avanzado">Avanzado</option>
+            </select>
+            <select id="capitulo">
+                <option value="">Todos los capítulos</option>
+                <option value="exponentes" selected>Exponentes</option>
+                <option value="limites">Límites</option>
+            </select>
+            <button onclick="filtrarEjercicios()">Filtrar</button>
+        </div>
+
+        <!-- Ejercicio ALG_EXP_003 -->
+        <div class="ejercicio" data-materia="algebra" data-nivel="intermedio" data-capitulo="exponentes">
+            <div class="ejercicio-header">
+                <span class="ejercicio-id">ALG_EXP_003</span>
+                <span class="ejercicio-nivel">Intermedio</span>
+                <span class="ejercicio-procedencia">Examen UNI 2024</span>
+            </div>
+            
+            <div class="enunciado">
+                <strong>Enunciado:</strong><br>
+                Si x = 2 e y = 3, calcula el valor de la siguiente expresión:
+                <br><br>
+                $$\left(\frac{x^4 \cdot y^{-2}}{x^{-1} \cdot y^3}\right)^2 \cdot \frac{x^6}{y^4}$$
+            </div>
+
+            <div class="solucion">
+                <h4>📝 Solución paso a paso:</h4>
+                <p><strong>1)</strong> Primero simplificamos la fracción dentro del paréntesis:</p>
+                $$\frac{x^4 \cdot y^{-2}}{x^{-1} \cdot y^3} = x^{4-(-1)} \cdot y^{-2-3} = x^5 \cdot y^{-5}$$
+
+                <p><strong>2)</strong> Aplicamos el exponente 2:</p>
+                $$\left(x^5 \cdot y^{-5}\right)^2 = x^{5 \cdot 2} \cdot y^{-5 \cdot 2} = x^{10} \cdot y^{-10}$$
+
+                <p><strong>3)</strong> Multiplicamos por la segunda fracción:</p>
+                $$x^{10} \cdot y^{-10} \cdot \frac{x^6}{y^4} = x^{10+6} \cdot y^{-10-4} = x^{16} \cdot y^{-14}$$
+
+                <p><strong>4)</strong> Expresamos con exponentes positivos:</p>
+                $$x^{16} \cdot y^{-14} = \frac{x^{16}}{y^{14}}$$
+
+                <p><strong>5)</strong> Sustituimos los valores x = 2 e y = 3:</p>
+                $$\frac{2^{16}}{3^{14}} = \frac{65536}{4782969} = \frac{65536}{4782969}$$
+
+                <div class="respuesta">
+                    <strong>✅ Respuesta:</strong> $$\frac{65536}{4782969}$$
+                </div>
+
+                <div class="nota">
+                    <strong>💡 Nota:</strong> Este resultado se puede simplificar, pero se deja en forma de fracción para mayor precisión.
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejercicio ALG_EXP_004 -->
+        <div class="ejercicio" data-materia="algebra" data-nivel="intermedio" data-capitulo="exponentes">
+            <div class="ejercicio-header">
+                <span class="ejercicio-id">ALG_EXP_004</span>
+                <span class="ejercicio-nivel">Intermedio</span>
+                <span class="ejercicio-procedencia">Examen UNMSM 2024</span>
+            </div>
+            
+            <div class="enunciado">
+                <strong>Enunciado:</strong><br>
+                Simplifica la siguiente expresión y encuentra el valor cuando a = 4 y b = 2:
+                <br><br>
+                $$\frac{(a^3 b^{-2})^4 \cdot (a^{-1} b^3)^2}{(a^2 b^{-1})^3 \cdot (a^{-2} b^2)^2}$$
+            </div>
+
+            <div class="solucion">
+                <h4>📝 Solución paso a paso:</h4>
+                <p><strong>1)</strong> Desarrollamos las potencias en el numerador:</p>
+                $$(a^3 b^{-2})^4 = a^{3 \cdot 4} \cdot b^{-2 \cdot 4} = a^{12} \cdot b^{-8}$$
+                $$(a^{-1} b^3)^2 = a^{-1 \cdot 2} \cdot b^{3 \cdot 2} = a^{-2} \cdot b^6$$
+
+                <p><strong>2)</strong> Desarrollamos las potencias en el denominador:</p>
+                $$(a^2 b^{-1})^3 = a^{2 \cdot 3} \cdot b^{-1 \cdot 3} = a^6 \cdot b^{-3}$$
+                $$(a^{-2} b^2)^2 = a^{-2 \cdot 2} \cdot b^{2 \cdot 2} = a^{-4} \cdot b^4$$
+
+                <p><strong>3)</strong> Reescribimos la expresión original:</p>
+                $$\frac{a^{12} \cdot b^{-8} \cdot a^{-2} \cdot b^6}{a^6 \cdot b^{-3} \cdot a^{-4} \cdot b^4}$$
+
+                <p><strong>4)</strong> Agrupamos términos semejantes:</p>
+                $$\frac{a^{12-2} \cdot b^{-8+6}}{a^{6-4} \cdot b^{-3+4}} = \frac{a^{10} \cdot b^{-2}}{a^2 \cdot b^1}$$
+
+                <p><strong>5)</strong> Simplificamos aplicando propiedades de división:</p>
+                $$\frac{a^{10}}{a^2} \cdot \frac{b^{-2}}{b^1} = a^{10-2} \cdot b^{-2-1} = a^8 \cdot b^{-3}$$
+
+                <p><strong>6)</strong> Expresamos con exponentes positivos:</p>
+                $$a^8 \cdot b^{-3} = \frac{a^8}{b^3}$$
+
+                <p><strong>7)</strong> Sustituimos los valores a = 4 y b = 2:</p>
+                $$\frac{4^8}{2^3} = \frac{65536}{8} = 8192$$
+
+                <div class="respuesta">
+                    <strong>✅ Respuesta:</strong> 8192
+                </div>
+
+                <div class="nota">
+                    <strong>💡 Nota:</strong> La expresión simplificada es $$\frac{a^8}{b^3}$$, que es mucho más manejable que la expresión original.
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h3>🎯 Resumen de la Incorporación</h3>
+            <p><strong>✅ Archivos creados:</strong></p>
+            <ul>
+                <li><code>ejercicios/algebra/exponentes_exp_003.tex</code> - Ejercicio ALG_EXP_003</li>
+                <li><code>ejercicios/algebra/exponentes_exp_004.tex</code> - Ejercicio ALG_EXP_004</li>
+            </ul>
+            
+            <p><strong>✅ Archivos actualizados:</strong></p>
+            <ul>
+                <li><code>etiquetas/algebra.json</code> - Metadatos de álgebra</li>
+                <li><code>etiquetas/metadata_ejercicios.json</code> - Metadatos generales</li>
+                <li><code>etiquetas/todos_ejercicios.json</code> - Catálogo completo</li>
+                <li><code>libros/algebra_pre.tex</code> - Libro principal</li>
+            </ul>
+
+            <p><strong>✅ Funcionalidades:</strong></p>
+            <ul>
+                <li>Ejercicios disponibles en la página web</li>
+                <li>Ejercicios incluidos en el libro PDF</li>
+                <li>Filtros por materia, nivel y capítulo</li>
+                <li>Metadatos completos para búsqueda</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function filtrarEjercicios() {
+            const materia = document.getElementById('materia').value;
+            const nivel = document.getElementById('nivel').value;
+            const capitulo = document.getElementById('capitulo').value;
+            
+            const ejercicios = document.querySelectorAll('.ejercicio');
+            
+            ejercicios.forEach(ejercicio => {
+                const ejercicioMateria = ejercicio.dataset.materia;
+                const ejercicioNivel = ejercicio.dataset.nivel;
+                const ejercicioCapitulo = ejercicio.dataset.capitulo;
+                
+                const mostrarMateria = !materia || ejercicioMateria === materia;
+                const mostrarNivel = !nivel || ejercicioNivel === nivel;
+                const mostrarCapitulo = !capitulo || ejercicioCapitulo === capitulo;
+                
+                if (mostrarMateria && mostrarNivel && mostrarCapitulo) {
+                    ejercicio.style.display = 'block';
+                } else {
+                    ejercicio.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

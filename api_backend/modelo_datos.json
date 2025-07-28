@@ -1,0 +1,298 @@
+{
+  "api_version": "1.0.0",
+  "endpoints": {
+    "ejercicios": {
+      "base_url": "/api/ejercicios",
+      "methods": {
+        "GET": {
+          "description": "Obtener lista de ejercicios con filtros opcionales",
+          "parameters": {
+            "materia": {
+              "type": "string",
+              "description": "Filtrar por materia (algebra, calculo, fisica, etc.)",
+              "required": false
+            },
+            "nivel": {
+              "type": "string",
+              "description": "Filtrar por nivel (basico, intermedio, avanzado)",
+              "required": false
+            },
+            "capitulo": {
+              "type": "string",
+              "description": "Filtrar por capítulo específico",
+              "required": false
+            },
+            "libro": {
+              "type": "string",
+              "description": "Filtrar por libro",
+              "required": false
+            },
+            "visibilidad": {
+              "type": "boolean",
+              "description": "Filtrar por visibilidad en web",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Número máximo de ejercicios a retornar",
+              "required": false,
+              "default": 50
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Número de ejercicios a saltar (para paginación)",
+              "required": false,
+              "default": 0
+            }
+          },
+          "response": {
+            "success": true,
+            "data": {
+              "ejercicios": [],
+              "total": 0,
+              "limit": 50,
+              "offset": 0
+            }
+          }
+        },
+        "POST": {
+          "description": "Crear nuevo ejercicio",
+          "body": {
+            "id": "string (required)",
+            "materia": "string (required)",
+            "capitulo": "string (required)",
+            "nivel": "string (required)",
+            "procedencia": "string (required)",
+            "visibilidad": "boolean (required)",
+            "libros": "array (optional)",
+            "enunciado": "string (required)",
+            "solucion": "string (required)"
+          }
+        }
+      },
+      "individual": {
+        "GET": {
+          "description": "Obtener ejercicio específico por ID",
+          "parameters": {
+            "id": {
+              "type": "string",
+              "description": "ID único del ejercicio",
+              "required": true
+            }
+          }
+        },
+        "PUT": {
+          "description": "Actualizar ejercicio existente",
+          "body": "Mismo formato que POST"
+        },
+        "DELETE": {
+          "description": "Eliminar ejercicio",
+          "parameters": {
+            "id": {
+              "type": "string",
+              "description": "ID único del ejercicio",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "base_url": "/api/metadata",
+      "methods": {
+        "GET": {
+          "description": "Obtener estadísticas y metadatos de ejercicios",
+          "response": {
+            "success": true,
+            "data": {
+              "total_ejercicios": 0,
+              "materias": {},
+              "capitulos": {},
+              "niveles": {},
+              "libros": {},
+              "visibles_web": 0,
+              "no_visibles_web": 0,
+              "ultima_actualizacion": "ISO 8601 timestamp"
+            }
+          }
+        }
+      }
+    },
+    "simulacros": {
+      "base_url": "/api/simulacros",
+      "methods": {
+        "POST": {
+          "description": "Generar simulacro personalizado",
+          "body": {
+            "titulo": "string (required)",
+            "cantidad": "integer (required)",
+            "materia": "string (optional)",
+            "nivel": "string (optional)",
+            "capitulo": "string (optional)",
+            "visibilidad": "boolean (optional)",
+            "libros": "array (optional)",
+            "formato": "string (optional, latex|json)"
+          }
+        }
+      }
+    },
+    "libros": {
+      "base_url": "/api/libros",
+      "methods": {
+        "GET": {
+          "description": "Obtener lista de libros disponibles",
+          "response": {
+            "success": true,
+            "data": {
+              "libros": [
+                {
+                  "id": "string",
+                  "titulo": "string",
+                  "materia": "string",
+                  "total_ejercicios": 0,
+                  "ejercicios_visibles": 0
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "data_models": {
+    "ejercicio": {
+      "id": {
+        "type": "string",
+        "description": "Identificador único del ejercicio",
+        "pattern": "^[A-Z]{3}_[A-Z]{3}_[0-9]{3}$",
+        "example": "ALG_EXP_001"
+      },
+      "materia": {
+        "type": "string",
+        "description": "Materia del ejercicio",
+        "enum": ["algebra", "calculo", "fisica", "quimica", "biologia", "lenguaje"],
+        "required": true
+      },
+      "capitulo": {
+        "type": "string",
+        "description": "Capítulo o tema específico",
+        "required": true
+      },
+      "nivel": {
+        "type": "string",
+        "description": "Nivel de dificultad",
+        "enum": ["basico", "intermedio", "avanzado"],
+        "required": true
+      },
+      "procedencia": {
+        "type": "string",
+        "description": "Origen del ejercicio",
+        "required": true
+      },
+      "visibilidad": {
+        "type": "boolean",
+        "description": "Si el ejercicio es visible en la web",
+        "required": true
+      },
+      "libros": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Lista de libros donde aparece el ejercicio",
+        "required": false
+      },
+      "enunciado": {
+        "type": "string",
+        "description": "Enunciado del ejercicio en LaTeX",
+        "required": true
+      },
+      "solucion": {
+        "type": "string",
+        "description": "Solución detallada en LaTeX",
+        "required": true
+      },
+      "archivo_origen": {
+        "type": "string",
+        "description": "Archivo .tex de origen",
+        "required": false
+      },
+      "linea_inicio": {
+        "type": "integer",
+        "description": "Línea donde inicia el ejercicio en el archivo",
+        "required": false
+      },
+      "fecha_creacion": {
+        "type": "string",
+        "format": "ISO 8601",
+        "description": "Fecha de creación del ejercicio",
+        "required": false
+      },
+      "fecha_modificacion": {
+        "type": "string",
+        "format": "ISO 8601",
+        "description": "Fecha de última modificación",
+        "required": false
+      }
+    },
+    "simulacro": {
+      "id": {
+        "type": "string",
+        "description": "Identificador único del simulacro"
+      },
+      "titulo": {
+        "type": "string",
+        "description": "Título del simulacro",
+        "required": true
+      },
+      "fecha_generacion": {
+        "type": "string",
+        "format": "ISO 8601",
+        "description": "Fecha de generación"
+      },
+      "total_ejercicios": {
+        "type": "integer",
+        "description": "Número total de ejercicios"
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Metadatos del simulacro"
+      },
+      "ejercicios": {
+        "type": "array",
+        "items": {
+          "$ref": "#/data_models/ejercicio"
+        },
+        "description": "Lista de ejercicios del simulacro"
+      }
+    }
+  },
+  "error_codes": {
+    "400": "Bad Request - Parámetros inválidos",
+    "401": "Unauthorized - Autenticación requerida",
+    "403": "Forbidden - Sin permisos",
+    "404": "Not Found - Recurso no encontrado",
+    "409": "Conflict - ID duplicado",
+    "422": "Unprocessable Entity - Datos inválidos",
+    "500": "Internal Server Error - Error del servidor"
+  },
+  "rate_limits": {
+    "default": {
+      "requests_per_minute": 100,
+      "requests_per_hour": 1000
+    },
+    "simulacros": {
+      "requests_per_minute": 10,
+      "requests_per_hour": 100
+    }
+  },
+  "authentication": {
+    "required": false,
+    "methods": ["JWT", "API Key"],
+    "public_endpoints": [
+      "/api/ejercicios",
+      "/api/metadata",
+      "/api/libros"
+    ]
+  }
+} 

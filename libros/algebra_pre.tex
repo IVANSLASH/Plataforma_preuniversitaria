@@ -1,0 +1,256 @@
+\documentclass[12pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+% Configuración de página
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Configuración de títulos
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+% Definición del entorno ejercicio
+\newenvironment{ejercicio}[1][]{%
+    \begin{trivlist}\item[\hskip \labelsep {\bfseries Ejercicio.}]
+    \if\relax\detokenize{#1}\relax
+    \else
+        \textbf{[#1]}
+    \fi
+}{%
+    \end{trivlist}
+}
+
+% Definición del entorno solución
+\newenvironment{solucion}{%
+    \begin{trivlist}\item[\hskip \labelsep {\bfseries Solución.}]
+    \color{blue}
+}{%
+    \color{black}
+    \end{trivlist}
+}
+
+% Información del documento
+\title{\Huge \textbf{Álgebra Preuniversitaria}\\[0.5cm]
+       \Large Teoría y Ejercicios Resueltos}
+\author{Plataforma Preuniversitaria}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\chapter{Exponentes y Radicales}
+
+\section{Propiedades de los Exponentes}
+
+Los exponentes son una herramienta fundamental en álgebra. A continuación presentamos las propiedades más importantes:
+
+\begin{enumerate}
+    \item $a^m \cdot a^n = a^{m+n}$ (Producto de potencias de igual base)
+    \item $\frac{a^m}{a^n} = a^{m-n}$ (Cociente de potencias de igual base)
+    \item $(a^m)^n = a^{m \cdot n}$ (Potencia de una potencia)
+    \item $(a \cdot b)^n = a^n \cdot b^n$ (Potencia de un producto)
+    \item $\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$ (Potencia de un cociente)
+    \item $a^0 = 1$ (Exponente cero)
+    \item $a^{-n} = \frac{1}{a^n}$ (Exponente negativo)
+\end{enumerate}
+
+\section{Ejercicios Resueltos}
+
+% Incluir ejercicios desde el repositorio central
+% Estos ejercicios se pueden incluir manualmente o mediante scripts
+
+% Ejercicio básico de exponentes
+\begin{ejercicio}[ALG\_EXP\_001]
+Calcula el valor de la siguiente expresión:
+
+$$2^3 \cdot 2^4 \div 2^2$$
+
+\begin{solucion}
+Para resolver esta expresión, aplicamos las propiedades de los exponentes:
+
+1) \textbf{Producto de potencias de igual base}: $a^m \cdot a^n = a^{m+n}$
+2) \textbf{Cociente de potencias de igual base}: $a^m \div a^n = a^{m-n}$
+
+Aplicando estas propiedades:
+
+$$2^3 \cdot 2^4 \div 2^2 = 2^{3+4} \div 2^2 = 2^7 \div 2^2 = 2^{7-2} = 2^5 = 32$$
+
+\textbf{Respuesta:} 32
+\end{solucion}
+\end{ejercicio}
+
+% Ejercicio intermedio de exponentes
+\begin{ejercicio}[ALG\_EXP\_002]
+Simplifica la siguiente expresión:
+
+$$\left(\frac{x^2 y^{-3}}{x^{-1} y^2}\right)^{-2} \cdot \frac{x^4}{y^6}$$
+
+\begin{solucion}
+Vamos a simplificar paso a paso:
+
+1) \textbf{Primero simplificamos la fracción dentro del paréntesis}:
+   $$\frac{x^2 y^{-3}}{x^{-1} y^2} = x^{2-(-1)} \cdot y^{-3-2} = x^3 \cdot y^{-5}$$
+
+2) \textbf{Aplicamos el exponente -2}:
+   $$\left(x^3 \cdot y^{-5}\right)^{-2} = x^{3 \cdot (-2)} \cdot y^{-5 \cdot (-2)} = x^{-6} \cdot y^{10}$$
+
+3) \textbf{Multiplicamos por la segunda fracción}:
+   $$x^{-6} \cdot y^{10} \cdot \frac{x^4}{y^6} = x^{-6+4} \cdot y^{10-6} = x^{-2} \cdot y^4$$
+
+4) \textbf{Expresamos con exponentes positivos}:
+   $$x^{-2} \cdot y^4 = \frac{y^4}{x^2}$$
+
+\textbf{Respuesta:} $\frac{y^4}{x^2}$
+\end{solucion}
+\end{ejercicio}
+
+% Ejercicio intermedio de exponentes con valores numéricos
+\begin{ejercicio}[ALG\_EXP\_003]
+Si $x = 2$ e $y = 3$, calcula el valor de la siguiente expresión:
+
+$$\left(\frac{x^4 \cdot y^{-2}}{x^{-1} \cdot y^3}\right)^2 \cdot \frac{x^6}{y^4}$$
+
+\begin{solucion}
+Vamos a resolver este problema paso a paso:
+
+1) \textbf{Primero simplificamos la fracción dentro del paréntesis}:
+   $$\frac{x^4 \cdot y^{-2}}{x^{-1} \cdot y^3} = x^{4-(-1)} \cdot y^{-2-3} = x^5 \cdot y^{-5}$$
+
+2) \textbf{Aplicamos el exponente 2}:
+   $$\left(x^5 \cdot y^{-5}\right)^2 = x^{5 \cdot 2} \cdot y^{-5 \cdot 2} = x^{10} \cdot y^{-10}$$
+
+3) \textbf{Multiplicamos por la segunda fracción}:
+   $$x^{10} \cdot y^{-10} \cdot \frac{x^6}{y^4} = x^{10+6} \cdot y^{-10-4} = x^{16} \cdot y^{-14}$$
+
+4) \textbf{Expresamos con exponentes positivos}:
+   $$x^{16} \cdot y^{-14} = \frac{x^{16}}{y^{14}}$$
+
+5) \textbf{Sustituimos los valores} $x = 2$ e $y = 3$:
+   $$\frac{2^{16}}{3^{14}} = \frac{65536}{4782969} = \frac{65536}{4782969}$$
+
+\textbf{Respuesta:} $\frac{65536}{4782969}$
+
+\textbf{Nota:} Este resultado se puede simplificar, pero se deja en forma de fracción para mayor precisión.
+\end{solucion}
+\end{ejercicio}
+
+% Ejercicio intermedio de exponentes con simplificación compleja
+\begin{ejercicio}[ALG\_EXP\_004]
+Simplifica la siguiente expresión y encuentra el valor cuando $a = 4$ y $b = 2$:
+
+$$\frac{(a^3 b^{-2})^4 \cdot (a^{-1} b^3)^2}{(a^2 b^{-1})^3 \cdot (a^{-2} b^2)^2}$$
+
+\begin{solucion}
+Vamos a simplificar esta expresión compleja paso a paso:
+
+1) \textbf{Desarrollamos las potencias en el numerador}:
+   $$(a^3 b^{-2})^4 = a^{3 \cdot 4} \cdot b^{-2 \cdot 4} = a^{12} \cdot b^{-8}$$
+   $$(a^{-1} b^3)^2 = a^{-1 \cdot 2} \cdot b^{3 \cdot 2} = a^{-2} \cdot b^6$$
+
+2) \textbf{Desarrollamos las potencias en el denominador}:
+   $$(a^2 b^{-1})^3 = a^{2 \cdot 3} \cdot b^{-1 \cdot 3} = a^6 \cdot b^{-3}$$
+   $$(a^{-2} b^2)^2 = a^{-2 \cdot 2} \cdot b^{2 \cdot 2} = a^{-4} \cdot b^4$$
+
+3) \textbf{Reescribimos la expresión original}:
+   $$\frac{a^{12} \cdot b^{-8} \cdot a^{-2} \cdot b^6}{a^6 \cdot b^{-3} \cdot a^{-4} \cdot b^4}$$
+
+4) \textbf{Agrupamos términos semejantes}:
+   $$\frac{a^{12-2} \cdot b^{-8+6}}{a^{6-4} \cdot b^{-3+4}} = \frac{a^{10} \cdot b^{-2}}{a^2 \cdot b^1}$$
+
+5) \textbf{Simplificamos aplicando propiedades de división}:
+   $$\frac{a^{10}}{a^2} \cdot \frac{b^{-2}}{b^1} = a^{10-2} \cdot b^{-2-1} = a^8 \cdot b^{-3}$$
+
+6) \textbf{Expresamos con exponentes positivos}:
+   $$a^8 \cdot b^{-3} = \frac{a^8}{b^3}$$
+
+7) \textbf{Sustituimos los valores} $a = 4$ y $b = 2$:
+   $$\frac{4^8}{2^3} = \frac{65536}{8} = 8192$$
+
+\textbf{Respuesta:} 8192
+
+\textbf{Nota:} La expresión simplificada es $\frac{a^8}{b^3}$, que es mucho más manejable que la expresión original.
+\end{solucion}
+\end{ejercicio}
+
+\section{Ejercicios Propuestos}
+
+% Aquí se pueden incluir ejercicios adicionales
+% que no necesariamente están en el repositorio central
+
+\begin{ejercicio}
+Calcula: $3^2 \cdot 3^5 \cdot 3^{-3}$
+\end{ejercicio}
+
+\begin{ejercicio}
+Simplifica: $\frac{(x^3)^2 \cdot x^4}{x^8}$
+\end{ejercicio}
+
+\chapter{Límites y Continuidad}
+
+\section{Concepto de Límite}
+
+El límite de una función $f(x)$ cuando $x$ tiende a $a$ es el valor al que se aproxima $f(x)$ cuando $x$ se acerca arbitrariamente a $a$.
+
+$$\lim_{x \to a} f(x) = L$$
+
+\section{Ejercicios Resueltos}
+
+% Ejercicio de límites
+\begin{ejercicio}[CAL\_LIM\_001]
+Calcula el siguiente límite:
+
+$$\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$$
+
+\begin{solucion}
+Este es un límite de la forma $\frac{0}{0}$ (indeterminación). Vamos a resolverlo:
+
+1) \textbf{Factorizamos el numerador}:
+   $$x^2 - 4 = (x + 2)(x - 2)$$
+
+2) \textbf{Simplificamos la fracción}:
+   $$\frac{x^2 - 4}{x - 2} = \frac{(x + 2)(x - 2)}{x - 2} = x + 2$$
+
+3) \textbf{Calculamos el límite}:
+   $$\lim_{x \to 2} (x + 2) = 2 + 2 = 4$$
+
+\textbf{Respuesta:} 4
+
+\textbf{Nota:} Este límite se puede resolver también aplicando la regla de L'Hôpital, pero la factorización es más directa.
+\end{solucion}
+\end{ejercicio}
+
+\appendix
+
+\chapter{Soluciones de Ejercicios Propuestos}
+
+\section{Soluciones del Capítulo 1}
+
+\begin{solucion}
+Para $3^2 \cdot 3^5 \cdot 3^{-3}$:
+
+$$3^2 \cdot 3^5 \cdot 3^{-3} = 3^{2+5-3} = 3^4 = 81$$
+\end{solucion}
+
+\begin{solucion}
+Para $\frac{(x^3)^2 \cdot x^4}{x^8}$:
+
+$$\frac{(x^3)^2 \cdot x^4}{x^8} = \frac{x^6 \cdot x^4}{x^8} = \frac{x^{10}}{x^8} = x^2$$
+\end{solucion}
+
+\end{document} 

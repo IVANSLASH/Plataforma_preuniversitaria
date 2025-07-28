@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}{{ data.titulo }} - Teoría{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="/teoria">Teoría</a></li>
+            <li class="breadcrumb-item"><a href="/teoria">{{ materia|title }}</a></li>
+            <li class="breadcrumb-item active">{{ data.titulo }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header del capítulo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card ejercicio-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-5 mb-3">
+                                <i class="fas fa-book-open"></i> {{ data.titulo }}
+                            </h1>
+                            <p class="lead mb-0">{{ data.introduccion }}</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <a href="/descargar/{{ materia }}/{{ capitulo }}" class="btn btn-success btn-lg">
+                                <i class="fas fa-download"></i> Descargar Formulario
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contenido principal -->
+        <div class="col-lg-8">
+            <!-- Conceptos clave -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-lightbulb"></i> Conceptos Clave</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for concepto in data.conceptos_clave %}
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success mt-1 me-3"></i>
+                                <div>
+                                    <h6 class="mb-1">{{ concepto }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Propiedades -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-calculator"></i> Propiedades y Fórmulas</h3>
+                </div>
+                <div class="card-body">
+                    {% for propiedad in data.propiedades %}
+                    <div class="propiedad-item mb-4 p-3 border rounded">
+                        <h5 class="text-primary">{{ propiedad.nombre }}</h5>
+                        <div class="formula-container mb-2">
+                            <strong>Fórmula:</strong>
+                            <div class="formula">{{ propiedad.formula|safe }}</div>
+                        </div>
+                        <div class="ejemplo-container">
+                            <strong>Ejemplo:</strong>
+                            <div class="ejemplo">{{ propiedad.ejemplo|safe }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Ejemplos prácticos -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-tools"></i> Ejemplos Prácticos</h3>
+                </div>
+                <div class="card-body">
+                    {% for ejemplo in data.ejemplos_practicos %}
+                    <div class="ejemplo-item mb-4 p-3 bg-light rounded">
+                        <h5 class="text-success">{{ ejemplo.titulo }}</h5>
+                        <p class="mb-2"><strong>Problema:</strong> {{ ejemplo.descripcion|safe }}</p>
+                        <div class="solucion-container">
+                            <strong>Solución:</strong>
+                            <div class="solucion">{{ ejemplo.solucion|safe }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Navegación rápida -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-compass"></i> Navegación</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/" class="btn btn-outline-primary">
+                            <i class="fas fa-list"></i> Ver Ejercicios
+                        </a>
+                        <a href="/teoria" class="btn btn-outline-secondary">
+                            <i class="fas fa-book"></i> Más Teoría
+                        </a>
+                        <a href="/formularios" class="btn btn-outline-success">
+                            <i class="fas fa-download"></i> Formularios
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consejos de estudio -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-graduation-cap"></i> Consejos de Estudio</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% for consejo in data.consejos_estudio %}
+                        <li class="mb-2">
+                            <i class="fas fa-star text-warning"></i> {{ consejo }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Estadísticas del capítulo -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-primary">{{ data.propiedades|length }}</h4>
+                                <small class="text-muted">Propiedades</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-success">{{ data.ejemplos_practicos|length }}</h4>
+                                <small class="text-muted">Ejemplos</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlaces relacionados -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-link"></i> Enlaces Relacionados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="/?materia={{ materia }}&capitulo={{ capitulo }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-list"></i> Ejercicios de {{ data.titulo }}
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/descargar/{{ materia }}/{{ capitulo }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-download"></i> Formulario PDF
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/estadisticas" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-pie"></i> Ver Estadísticas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Animación de entrada
+document.addEventListener('DOMContentLoaded', function() {
+    const items = document.querySelectorAll('.propiedad-item, .ejemplo-item');
+    items.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+    
+    // Reprocesar MathJax después de las animaciones
+    setTimeout(() => {
+        reprocessMathJax();
+    }, 2000);
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,38 @@
+{
+  "materia": "geometria",
+  "total_ejercicios": 2,
+  "ejercicios": [
+    {
+      "id": "GEO_CIRC_001",
+      "materia": "geometria",
+      "capitulo": "circunferencia",
+      "nivel": "intermedio",
+      "procedencia": "Examen UNI 2024",
+      "visibilidad": true,
+      "libros": "{geometria_pre",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_geometria",
+      "mostrar_solucion": true,
+      "libro_promocion": "",
+      "enunciado": "En la figura adjunta, se muestra una circunferencia con centro en el punto $C(2,3)$ y radio $r = 5$ unidades. Si la recta $L$ es tangente a la circunferencia en el punto $P$, y la ecuación de $L$ es $3x + 4y = 25$, determina las coordenadas del punto $P$.\n\n\\textbf{Nota:} Utiliza la figura para visualizar el problema.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/circulo_001.png}\n\\caption{Circunferencia con centro en (2,3) y radio 5}\n\\label{fig:circulo}\n\\end{figure}",
+      "solucion": "Para resolver este problema, seguiremos estos pasos:\n\n1) \\textbf{Identificamos los datos:}\n   \\begin{itemize}\n   \\item Centro: $C(2,3)$\n   \\item Radio: $r = 5$\n   \\item Recta tangente: $3x + 4y = 25$\n   \\end{itemize}\n\n2) \\textbf{Aplicamos la propiedad de la tangente:}\n   La distancia del centro a la recta tangente es igual al radio.\n\n3) \\textbf{Calculamos la distancia:}\n   $$d = \\frac{|3(2) + 4(3) - 25|}{\\sqrt{3^2 + 4^2}} = \\frac{|6 + 12 - 25|}{5} = \\frac{7}{5}$$\n\n4) \\textbf{Verificamos:}\n   Como $d = \\frac{7}{5} \\neq 5$, hay un error en el enunciado.\n\n\\textbf{Respuesta:} El problema tiene un error en los datos proporcionados.\n\n\\textbf{Nota:} En la figura se puede observar la relación geométrica entre el centro, el radio y la recta tangente.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/solucion_circulo_001.png}\n\\caption{Solución gráfica del problema}\n\\label{fig:solucion_circulo}\n\\end{figure}",
+      "archivo_origen": "ejercicios\\geometria\\geometria_circ_001.tex",
+      "linea_inicio": 1
+    },
+    {
+      "id": "GEO_TRI_001",
+      "materia": "geometria",
+      "capitulo": "triangulos",
+      "nivel": "intermedio",
+      "procedencia": "Examen UNI 2024",
+      "visibilidad": true,
+      "libros": "{geometria_pre",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_geometria_tri",
+      "mostrar_solucion": true,
+      "libro_promocion": "",
+      "enunciado": "En el triángulo $ABC$ mostrado en la figura, se tiene que $AB = 6$ cm, $BC = 8$ cm y $AC = 10$ cm. Si $D$ es el punto medio de $BC$ y $E$ es el punto medio de $AC$, determina la longitud del segmento $DE$.\n\n\\begin{center}\n\\begin{tikzpicture}[scale=0.6]\n\\coordinate (A) at (0,0);\n\\coordinate (B) at (6,0);\n\\coordinate (C) at (3,4);\n\\coordinate (D) at (4.5,2);\n\\coordinate (E) at (1.5,2);\n\n\\draw[thick] (A) -- (B) -- (C) -- cycle;\n\\draw[red, thick] (D) -- (E);\n\\draw[dashed, blue] (A) -- (D);\n\\draw[dashed, blue] (B) -- (E);\n\n\\node[below] at (A) {$A$};\n\\node[below] at (B) {$B$};\n\\node[above] at (C) {$C$};\n\\node[right] at (D) {$D$};\n\\node[left] at (E) {$E$};\n\n\\node[below] at (3,0) {$6$};\n\\node[right] at (4.5,2) {$8$};\n\\node[left] at (1.5,2) {$10$};\n\\end{tikzpicture}\n\\end{center}",
+      "solucion": "Para resolver este problema, utilizamos el teorema de la línea media:\n\n1) \\textbf{Identificamos los datos:}\n   \\begin{itemize}\n   \\item $AB = 6$ cm\n   \\item $BC = 8$ cm\n   \\item $AC = 10$ cm\n   \\item $D$ es punto medio de $BC$\n   \\item $E$ es punto medio de $AC$\n   \\end{itemize}\n\n2) \\textbf{Aplicamos el teorema de la línea media:}\n   La línea que une los puntos medios de dos lados de un triángulo es paralela al tercer lado y mide la mitad de su longitud.\n\n3) \\textbf{Calculamos:}\n   Como $DE$ es la línea media que une los puntos medios de $BC$ y $AC$, entonces:\n   $$DE \\parallel AB \\text{ y } DE = \\frac{AB}{2} = \\frac{6}{2} = 3 \\text{ cm}$$\n\n4) \\textbf{Verificamos con el teorema de Pitágoras:}\n   \\begin{itemize}\n   \\item $AB^2 + BC^2 = 6^2 + 8^2 = 36 + 64 = 100 = 10^2 = AC^2$\n   \\item El triángulo es rectángulo en $B$\n   \\end{itemize}\n\n\\textbf{Respuesta:} La longitud del segmento $DE$ es $3$ cm.\n\n\\textbf{Nota:} La figura muestra claramente la relación entre los puntos medios y confirma que $DE$ es paralela a $AB$.",
+      "archivo_origen": "ejercicios\\geometria\\geometria_tri_001.tex",
+      "linea_inicio": 1
+    }
+  ]
+}

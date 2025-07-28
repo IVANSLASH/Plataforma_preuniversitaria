@@ -1,0 +1,440 @@
+% Estilos para ejercicios de la Plataforma Preuniversitaria
+% ========================================================
+% Este archivo define los entornos y estilos para ejercicios
+% Autor: Plataforma Preuniversitaria
+% Fecha: 2024
+
+% Paquetes necesarios
+\RequirePackage{amsmath,amssymb,amsfonts}
+\RequirePackage{xcolor}
+\RequirePackage{framed}
+\RequirePackage{tcolorbox}
+\RequirePackage{enumitem}
+\RequirePackage{geometry}
+
+% Configuración de colores
+\definecolor{ejercicioColor}{RGB}{41, 128, 185}    % Azul
+\definecolor{solucionColor}{RGB}{39, 174, 96}      % Verde
+\definecolor{advertenciaColor}{RGB}{230, 126, 34}  % Naranja
+\definecolor{errorColor}{RGB}{231, 76, 60}         % Rojo
+
+% Configuración de márgenes para ejercicios
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% Entorno para ejercicios
+\newtcolorbox{ejercicio}[1][]{
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=ejercicioColor,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=Ejercicio,
+    boxrule=2pt,
+    arc=8pt,
+    left=15pt,
+    right=15pt,
+    top=10pt,
+    bottom=10pt,
+    before skip=15pt,
+    after skip=15pt,
+    #1
+}
+
+% Entorno para soluciones
+\newtcolorbox{solucion}{
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=solucionColor,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=Solución,
+    boxrule=2pt,
+    arc=8pt,
+    left=15pt,
+    right=15pt,
+    top=10pt,
+    bottom=10pt,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Entorno para ejercicios numerados
+\newcounter{ejercicioCounter}
+\newtcolorbox{ejercicioNumerado}[1][]{
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=ejercicioColor,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=Ejercicio~\theejercicioCounter,
+    boxrule=2pt,
+    arc=8pt,
+    left=15pt,
+    right=15pt,
+    top=10pt,
+    bottom=10pt,
+    before skip=15pt,
+    after skip=15pt,
+    #1
+}
+
+% Comando para incrementar contador de ejercicios
+\newcommand{\nuevoejercicio}{
+    \stepcounter{ejercicioCounter}
+}
+
+% Entorno para ejercicios con metadatos
+\newenvironment{ejercicioConMetadatos}[1][]{
+    \begin{ejercicio}[title=Ejercicio~#1]
+}{
+    \end{ejercicio}
+}
+
+% Entorno para soluciones detalladas
+\newenvironment{solucionDetallada}{
+    \begin{solucion}
+    \textbf{Solución detallada:}
+    \vspace{5pt}
+}{
+    \end{solucion}
+}
+
+% Entorno para pasos de solución
+\newenvironment{pasosSolucion}{
+    \begin{enumerate}[label=\textbf{Paso \arabic*:}, leftmargin=*]
+}{
+    \end{enumerate}
+}
+
+% Entorno para respuestas
+\newtcolorbox{respuesta}{
+    enhanced,
+    colback=yellow!10,
+    colframe=yellow!50,
+    coltitle=black,
+    fonttitle=\bfseries,
+    title=Respuesta,
+    boxrule=1pt,
+    arc=5pt,
+    left=10pt,
+    right=10pt,
+    top=8pt,
+    bottom=8pt
+}
+
+% Entorno para notas importantes
+\newtcolorbox{notaImportante}{
+    enhanced,
+    colback=orange!10,
+    colframe=advertenciaColor,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=Nota Importante,
+    boxrule=1pt,
+    arc=5pt,
+    left=10pt,
+    right=10pt,
+    top=8pt,
+    bottom=8pt
+}
+
+% Entorno para definiciones
+\newtcolorbox{definicion}{
+    enhanced,
+    colback=blue!10,
+    colframe=blue!50,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=Definición,
+    boxrule=1pt,
+    arc=5pt,
+    left=10pt,
+    right=10pt,
+    top=8pt,
+    bottom=8pt
+}
+
+% Entorno para teoremas
+\newtcolorbox{teorema}{
+    enhanced,
+    colback=green!10,
+    colframe=green!50,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=Teorema,
+    boxrule=1pt,
+    arc=5pt,
+    left=10pt,
+    right=10pt,
+    top=8pt,
+    bottom=8pt
+}
+
+% Comandos útiles para ejercicios
+\newcommand{\ejercicioId}[1]{\textbf{ID:} #1}
+\newcommand{\ejercicioMateria}[1]{\textbf{Materia:} #1}
+\newcommand{\ejercicioNivel}[1]{\textbf{Nivel:} #1}
+\newcommand{\ejercicioCapitulo}[1]{\textbf{Capítulo:} #1}
+\newcommand{\ejercicioProcedencia}[1]{\textbf{Procedencia:} #1}
+
+% Comando para mostrar metadatos del ejercicio
+\newcommand{\mostrarMetadatos}[5]{
+    \begin{center}
+    \small
+    \begin{tabular}{ll}
+        \ejercicioId{#1} & \ejercicioMateria{#2} \\
+        \ejercicioNivel{#3} & \ejercicioCapitulo{#4} \\
+        \multicolumn{2}{l}{\ejercicioProcedencia{#5}}
+    \end{tabular}
+    \end{center}
+}
+
+% Configuración para listas de ejercicios
+\setlist[enumerate,1]{label=\textbf{\arabic*.}, leftmargin=*}
+\setlist[enumerate,2]{label=\textbf{(\alph*)}, leftmargin=*}
+
+% Configuración para fórmulas matemáticas
+\everymath{\displaystyle}
+
+% Comandos para espacios en ejercicios
+\newcommand{\espacioEjercicio}{\vspace{1cm}}
+\newcommand{\espacioSolucion}{\vspace{0.5cm}}
+
+% Comando para separador de ejercicios
+\newcommand{\separadorEjercicios}{
+    \vspace{1cm}
+    \hrule
+    \vspace{1cm}
+}
+
+% Configuración para encabezados de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Configuración para pies de página
+\fancyfoot[C]{
+    \small
+    Plataforma Preuniversitaria - Ejercicios
+}
+
+% Comando para título de sección de ejercicios
+\newcommand{\tituloSeccionEjercicios}[1]{
+    \section*{#1}
+    \vspace{0.5cm}
+}
+
+% Comando para título de capítulo de ejercicios
+\newcommand{\tituloCapituloEjercicios}[1]{
+    \chapter*{#1}
+    \vspace{1cm}
+}
+
+% Configuración para referencias cruzadas
+\newcommand{\refEjercicio}[1]{\textbf{Ejercicio~\ref{#1}}}
+\newcommand{\refSolucion}[1]{\textbf{Solución~\ref{#1}}}
+
+% Comando para índice de ejercicios
+\newcommand{\indiceEjercicios}{
+    \tableofcontents
+    \newpage
+}
+
+% Configuración para ejercicios con imágenes
+\newcommand{\ejercicioConImagen}[2]{
+    \begin{ejercicio}
+    #1
+    \begin{center}
+    \includegraphics[width=0.8\textwidth]{#2}
+    \end{center}
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de opción múltiple
+\newenvironment{ejercicioOpcionMultiple}{
+    \begin{ejercicio}
+    \begin{enumerate}[label=\textbf{\Alph*.}, leftmargin=*]
+}{
+    \end{enumerate}
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de verdadero/falso
+\newenvironment{ejercicioVerdaderoFalso}{
+    \begin{ejercicio}
+    \textbf{Indica si cada afirmación es verdadera (V) o falsa (F):}
+    \begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+}{
+    \end{enumerate}
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de desarrollo
+\newenvironment{ejercicioDesarrollo}{
+    \begin{ejercicio}
+    \textbf{Desarrolla paso a paso:}
+}{
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de completar
+\newcommand{\ejercicioCompletar}[1]{
+    \begin{ejercicio}
+    \textbf{Completa los espacios en blanco:}
+    #1
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de demostración
+\newenvironment{ejercicioDemostracion}{
+    \begin{ejercicio}
+    \textbf{Demuestra:}
+}{
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de cálculo
+\newcommand{\ejercicioCalculo}[1]{
+    \begin{ejercicio}
+    \textbf{Calcula:}
+    \[#1\]
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de simplificación
+\newcommand{\ejercicioSimplificar}[1]{
+    \begin{ejercicio}
+    \textbf{Simplifica:}
+    \[#1\]
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de factorización
+\newcommand{\ejercicioFactorizar}[1]{
+    \begin{ejercicio}
+    \textbf{Factoriza:}
+    \[#1\]
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de resolución de ecuaciones
+\newenvironment{ejercicioEcuacion}{
+    \begin{ejercicio}
+    \textbf{Resuelve la ecuación:}
+}{
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de sistemas de ecuaciones
+\newcommand{\ejercicioSistemaEcuaciones}[1]{
+    \begin{ejercicio}
+    \textbf{Resuelve el sistema de ecuaciones:}
+    \[#1\]
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de geometría
+\newenvironment{ejercicioGeometria}{
+    \begin{ejercicio}
+    \textbf{Problema de geometría:}
+}{
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de trigonometría
+\newcommand{\ejercicioTrigonometria}[1]{
+    \begin{ejercicio}
+    \textbf{Problema de trigonometría:}
+    \[#1\]
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de cálculo diferencial
+\newenvironment{ejercicioCalculoDiferencial}{
+    \begin{ejercicio}
+    \textbf{Problema de cálculo diferencial:}
+}{
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de cálculo integral
+\newenvironment{ejercicioCalculoIntegral}{
+    \begin{ejercicio}
+    \textbf{Problema de cálculo integral:}
+}{
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de límites
+\newcommand{\ejercicioLimite}[1]{
+    \begin{ejercicio}
+    \textbf{Calcula el límite:}
+    \[\lim_{#1}\]
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de derivadas
+\newcommand{\ejercicioDerivada}[1]{
+    \begin{ejercicio}
+    \textbf{Calcula la derivada:}
+    \[\frac{d}{dx}\left(#1\right)\]
+    \end{ejercicio}
+}
+
+% Comando para ejercicios de integrales
+\newcommand{\ejercicioIntegral}[1]{
+    \begin{ejercicio}
+    \textbf{Calcula la integral:}
+    \[\int #1 \, dx\]
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de física
+\newenvironment{ejercicioFisica}{
+    \begin{ejercicio}
+    \textbf{Problema de física:}
+}{
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de química
+\newenvironment{ejercicioQuimica}{
+    \begin{ejercicio}
+    \textbf{Problema de química:}
+}{
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de biología
+\newenvironment{ejercicioBiologia}{
+    \begin{ejercicio}
+    \textbf{Problema de biología:}
+}{
+    \end{ejercicio}
+}
+
+% Configuración para ejercicios de lenguaje
+\newenvironment{ejercicioLenguaje}{
+    \begin{ejercicio}
+    \textbf{Problema de lenguaje:}
+}{
+    \end{ejercicio}
+}
+
+% Comando para finalizar el documento
+\newcommand{\finDocumento}{
+    \vspace{2cm}
+    \begin{center}
+    \textbf{--- Fin de los ejercicios ---}
+    \end{center}
+} 

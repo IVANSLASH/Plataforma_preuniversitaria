@@ -1,0 +1,43 @@
+{
+  "total_ejercicios": 10,
+  "materias": {
+    "algebra": 5,
+    "calculo": 2,
+    "fisica": 1,
+    "geometria": 2
+  },
+  "capitulos": {
+    "exponentes": 5,
+    "funciones": 1,
+    "limites": 1,
+    "movimiento": 1,
+    "circunferencia": 1,
+    "triangulos": 1
+  },
+  "niveles": {
+    "basico": 3,
+    "intermedio": 7
+  },
+  "libros": {
+    "{": 10,
+    "a": 17,
+    "l": 9,
+    "g": 7,
+    "e": 16,
+    "b": 6,
+    "r": 14,
+    "_": 8,
+    "p": 7,
+    "c": 6,
+    "u": 2,
+    "o": 4,
+    "1": 2,
+    "f": 1,
+    "i": 5,
+    "s": 2,
+    "m": 2,
+    "t": 2
+  },
+  "visibles_web": 10,
+  "no_visibles_web": 0
+}

@@ -1,0 +1,111 @@
+% PLANTILLA PARA CREAR EJERCICIOS - VERSIÓN NUEVA ESTRUCTURA
+% ==========================================================
+% 
+% INSTRUCCIONES DE USO:
+% 1. Copia esta plantilla para crear nuevos ejercicios
+% 2. Guárdala en: ejercicios_nuevo/[MATERIA_PRINCIPAL]/[CAPITULO]/[ID].tex
+% 3. Las imágenes van en: ejercicios_nuevo/[MATERIA_PRINCIPAL]/[CAPITULO]/imagenes/
+%
+% EJEMPLO DE UBICACIÓN:
+% ejercicios_nuevo/matematicas_preuniversitaria/algebra/MATU_ALG_001.tex
+% ejercicios_nuevo/fisica_preuniversitaria/cinematica/FISU_CIN_001.tex
+%
+% CÓDIGOS DE MATERIAS (4 caracteres):
+% MATU = Matemáticas Preuniversitaria
+% FISU = Física Preuniversitaria  
+% QUIM = Química Preuniversitaria
+% LENG = Lenguaje y Literatura
+% CAL2 = Cálculo 2
+% FIS1 = Física 1, etc.
+%
+% FORMATO ID: [MATERIA]_[CAPITULO]_[NÚMERO]
+% Ejemplo: MATU_ALG_001, FISU_CIN_042
+
+\begin{ejercicio}[
+  id=MATU_ALG_001,                    % ID único del ejercicio
+  materia_principal=matematicas_preuniversitaria,  % Materia principal
+  codigo_materia=MATU,                % Código de 4 caracteres
+  capitulo=algebra,                   % Capítulo específico
+  subtema=exponentes,                 % Subtema dentro del capítulo
+  nivel=basico,                       % basico, intermedio, avanzado
+  procedencia="Examen UNI 2023",      % Origen del problema
+  visibilidad=web_impreso,            % web_impreso, solo_impreso, solo_web
+  tiempo_estimado=5,                  % Tiempo en minutos
+  libros={matematicas_pre, algebra_completa},  % Libros donde aparece
+  dificultad=2,                       % Escala 1-5
+  tags={exponentes, propiedades}      % Etiquetas para búsqueda
+]
+
+% ==========================================
+% ENUNCIADO DEL PROBLEMA
+% ==========================================
+% Escribe aquí el enunciado de tu problema.
+% Usa LaTeX para matemáticas: $x^2$, $\frac{a}{b}$, $\sqrt{x}$
+% 
+% Para incluir imágenes:
+% \begin{figure}[h]
+%   \includegraphics[width=0.6\textwidth]{imagenes/nombre_imagen.png}
+%   \caption{Descripción de la imagen}
+% \end{figure}
+
+Simplifica la siguiente expresión aplicando las propiedades de los exponentes:
+
+$$\frac{2^5 \cdot 2^3}{2^4} \cdot 2^{-1}$$
+
+a) $2^3$  \quad b) $2^4$  \quad c) $2^2$  \quad d) $2^5$  \quad e) $2^1$
+
+\begin{solucion}
+% ==========================================
+% SOLUCIÓN DETALLADA
+% ==========================================
+% Escribe aquí la solución paso a paso.
+% Usa LaTeX para matemáticas y fórmulas.
+% 
+% Formato recomendado:
+% 1. Identificar propiedades a usar
+% 2. Aplicar paso a paso
+% 3. Resultado final
+
+\textbf{Propiedades a usar:}
+\begin{itemize}
+    \item Producto de potencias: $a^m \cdot a^n = a^{m+n}$
+    \item Cociente de potencias: $\frac{a^m}{a^n} = a^{m-n}$
+\end{itemize}
+
+\textbf{Desarrollo:}
+
+Paso 1: Simplificar el numerador
+$$2^5 \cdot 2^3 = 2^{5+3} = 2^8$$
+
+Paso 2: Simplificar la fracción
+$$\frac{2^8}{2^4} = 2^{8-4} = 2^4$$
+
+Paso 3: Multiplicar por el factor restante
+$$2^4 \cdot 2^{-1} = 2^{4+(-1)} = 2^{4-1} = 2^3$$
+
+\textbf{Respuesta:} a) $2^3$
+
+\textbf{Nota:} También se puede resolver directamente:
+$$\frac{2^5 \cdot 2^3}{2^4} \cdot 2^{-1} = 2^{5+3-4-1} = 2^{8-5} = 2^3$$
+\end{solucion}
+\end{ejercicio}
+
+% ==========================================
+% NOTAS ADICIONALES PARA EL AUTOR
+% ==========================================
+%
+% NIVELES DE DIFICULTAD:
+% - basico: Conceptos fundamentales, aplicación directa
+% - intermedio: Requiere varios pasos, conexión de conceptos  
+% - avanzado: Problemas complejos, pensamiento crítico
+%
+% VISIBILIDAD:
+% - web_impreso: Aparece en ambos formatos
+% - solo_impreso: Solo en libros físicos (soluciones exclusivas)
+% - solo_web: Solo en plataforma digital
+%
+% TIEMPO ESTIMADO:
+% Tiempo promedio que toma un estudiante resolver el problema
+%
+% TAGS:
+% Palabras clave para filtros y búsquedas avanzadas

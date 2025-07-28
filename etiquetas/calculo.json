@@ -1,0 +1,38 @@
+{
+  "materia": "calculo",
+  "total_ejercicios": 2,
+  "ejercicios": [
+    {
+      "id": "CAL_FUN_001",
+      "materia": "calculo",
+      "capitulo": "funciones",
+      "nivel": "intermedio",
+      "procedencia": "Libro Cálculo Avanzado",
+      "visibilidad": true,
+      "libros": "{calculo1",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_calculo",
+      "mostrar_solucion": true,
+      "libro_promocion": "",
+      "enunciado": "Considera la función $f(x) = x^3 - 3x + 1$. Determina los puntos críticos y clasifícalos como máximos, mínimos o puntos de inflexión.\n\n\\textbf{Nota:} Utiliza la gráfica de la función para visualizar los puntos críticos.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/funcion_cubica_001.png}\n\\caption{Gráfica de la función f(x) = x³ - 3x + 1 con puntos críticos marcados}\n\\label{fig:funcion_cubica}\n\\end{figure}",
+      "solucion": "Para encontrar los puntos críticos, seguimos estos pasos:\n\n1) \\textbf{Calculamos la primera derivada:}\n   $$f'(x) = 3x^2 - 3 = 3(x^2 - 1) = 3(x+1)(x-1)$$\n\n2) \\textbf{Encontramos los puntos críticos:}\n   $$f'(x) = 0 \\Rightarrow x = -1 \\text{ o } x = 1$$\n\n3) \\textbf{Calculamos la segunda derivada:}\n   $$f''(x) = 6x$$\n\n4) \\textbf{Clasificamos los puntos críticos:}\n   \\begin{itemize}\n   \\item Para $x = -1$: $f''(-1) = -6 < 0$ → \\textbf{Máximo local}\n   \\item Para $x = 1$: $f''(1) = 6 > 0$ → \\textbf{Mínimo local}\n   \\end{itemize}\n\n5) \\textbf{Calculamos los valores de la función:}\n   \\begin{itemize}\n   \\item $f(-1) = (-1)^3 - 3(-1) + 1 = -1 + 3 + 1 = 3$\n   \\item $f(1) = (1)^3 - 3(1) + 1 = 1 - 3 + 1 = -1$\n   \\end{itemize}\n\n\\textbf{Respuesta:}\n\\begin{itemize}\n\\item Punto máximo local: $(-1, 3)$\n\\item Punto mínimo local: $(1, -1)$\n\\end{itemize}\n\n\\textbf{Nota:} La gráfica muestra claramente el comportamiento de la función y confirma nuestros cálculos.",
+      "archivo_origen": "ejercicios\\calculo\\calculo_fun_001.tex",
+      "linea_inicio": 1
+    },
+    {
+      "id": "CAL_LIM_001",
+      "materia": "calculo",
+      "capitulo": "limites",
+      "nivel": "basico",
+      "procedencia": "Examen CEPRE 2023",
+      "visibilidad": true,
+      "libros": "{calculo1",
+      "youtube_url": "",
+      "mostrar_solucion": true,
+      "libro_promocion": "",
+      "enunciado": "Calcula el siguiente límite:\n\n$$\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$$",
+      "solucion": "Este es un límite de la forma $\\frac{0}{0}$ (indeterminación). Vamos a resolverlo:\n\n1) **Factorizamos el numerador**:\n   $$x^2 - 4 = (x + 2)(x - 2)$$\n\n2) **Simplificamos la fracción**:\n   $$\\frac{x^2 - 4}{x - 2} = \\frac{(x + 2)(x - 2)}{x - 2} = x + 2$$\n\n3) **Calculamos el límite**:\n   $$\\lim_{x \\to 2} (x + 2) = 2 + 2 = 4$$\n\n\\textbf{Respuesta:} 4\n\n\\textbf{Nota:} Este límite se puede resolver también aplicando la regla de L'Hôpital, pero la factorización es más directa.",
+      "archivo_origen": "ejercicios\\calculo\\limites_lim_001.tex",
+      "linea_inicio": 1
+    }
+  ]
+}

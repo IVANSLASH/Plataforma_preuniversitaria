@@ -1,0 +1,52 @@
+\begin{ejercicio}[
+  id=MATU_ALG_004,
+  materia_principal=matematicas_preuniversitaria,
+  codigo_materia=MATU,
+  capitulo=algebra,
+  subtema=exponentes,
+  nivel=intermedio,
+  procedencia="Examen UNI 2024",
+  visibilidad=web_impreso,
+  tiempo_estimado=5,
+  libros={algebra_pre, algebra_intermedio},
+  dificultad=2,
+  tags={exponentes},
+  youtube_url="",
+  mostrar_solucion=true,
+  libro_promocion=""
+]
+% ENUNCIADO DEL PROBLEMA
+% Escribe aquí el enunciado de tu problema.
+% Usa LaTeX para matemáticas: $x^2$, $\frac{a}{b}$, $\sqrt{x}$
+
+Si $x = 2$ e $y = 3$, calcula el valor de la siguiente expresión:
+
+$$\left(\frac{x^4 \cdot y^{-2}}{x^{-1} \cdot y^3}\right)^2 \cdot \frac{x^6}{y^4}$$
+
+\begin{solucion}
+% SOLUCIÓN DETALLADA
+% Escribe aquí la solución paso a paso.
+% Usa LaTeX para matemáticas y fórmulas.
+
+Vamos a resolver este problema paso a paso:
+
+1) \textbf{Primero simplificamos la fracción dentro del paréntesis}:
+   $$\frac{x^4 \cdot y^{-2}}{x^{-1} \cdot y^3} = x^{4-(-1)} \cdot y^{-2-3} = x^5 \cdot y^{-5}$$
+
+2) \textbf{Aplicamos el exponente 2}:
+   $$\left(x^5 \cdot y^{-5}\right)^2 = x^{5 \cdot 2} \cdot y^{-5 \cdot 2} = x^{10} \cdot y^{-10}$$
+
+3) \textbf{Multiplicamos por la segunda fracción}:
+   $$x^{10} \cdot y^{-10} \cdot \frac{x^6}{y^4} = x^{10+6} \cdot y^{-10-4} = x^{16} \cdot y^{-14}$$
+
+4) \textbf{Expresamos con exponentes positivos}:
+   $$x^{16} \cdot y^{-14} = \frac{x^{16}}{y^{14}}$$
+
+5) \textbf{Sustituimos los valores} $x = 2$ e $y = 3$:
+   $$\frac{2^{16}}{3^{14}} = \frac{65536}{4782969} = \frac{65536}{4782969}$$
+
+\textbf{Respuesta:} $\frac{65536}{4782969}$
+
+\textbf{Nota:} Este resultado se puede simplificar, pero se deja en forma de fracción para mayor precisión.
+\end{solucion}
+\end{ejercicio}

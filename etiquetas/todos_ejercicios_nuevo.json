@@ -1,0 +1,307 @@
+{
+  "metadatos": {
+    "total_ejercicios": 12,
+    "fecha_generacion": "2025-07-28T00:41:39.773448",
+    "version_estructura": "2.0_jerarquica",
+    "materias_principales": {
+      "fisica_preuniversitaria": 2,
+      "matematicas_preuniversitaria": 10
+    },
+    "capitulos": {
+      "cinematica": 1,
+      "dinamica": 1,
+      "algebra": 6,
+      "funciones": 2,
+      "geometria": 2
+    },
+    "niveles": {
+      "intermedio": 8,
+      "basico": 4
+    },
+    "dificultades": {
+      "2": 11,
+      "3": 1
+    },
+    "visibilidades": {
+      "web_impreso": 12
+    },
+    "codigos_materia": {
+      "FISU": 2,
+      "MATU": 10
+    }
+  },
+  "ejercicios": [
+    {
+      "id": "FISU_CIN_009",
+      "materia_principal": "fisica_preuniversitaria",
+      "codigo_materia": "FISU",
+      "capitulo": "cinematica",
+      "subtema": "movimiento",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen CEPRE 2023",
+      "visibilidad": "web_impreso",
+      "libros": "{fisica_basica",
+      "tags": [
+        "movimiento"
+      ],
+      "enunciado": "Un bloque de masa $m = 2$ kg se encuentra sobre una superficie horizontal rugosa. Se aplica una fuerza horizontal $F = 10$ N al bloque. Si el coeficiente de fricción cinética es $\\mu_k = 0.3$, determina la aceleración del bloque.\n\n\\textbf{Nota:} Observa el diagrama de fuerzas para entender mejor el problema.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/diagrama_fuerzas_001.png}\n\\caption{Diagrama de fuerzas actuando sobre el bloque}\n\\label{fig:diagrama_fuerzas}\n\\end{figure}",
+      "solucion": "Para resolver este problema, analizamos las fuerzas que actúan sobre el bloque:\n\n1) \\textbf{Fuerzas verticales:}\n   \\begin{itemize}\n   \\item Peso: $W = mg = 2 \\cdot 9.8 = 19.6$ N (hacia abajo)\n   \\item Normal: $N = W = 19.6$ N (hacia arriba)\n   \\end{itemize}\n\n2) \\textbf{Fuerzas horizontales:}\n   \\begin{itemize}\n   \\item Fuerza aplicada: $F = 10$ N (hacia la derecha)\n   \\item Fricción cinética: $f_k = \\mu_k N = 0.3 \\cdot 19.6 = 5.88$ N (hacia la izquierda)\n   \\end{itemize}\n\n3) \\textbf{Fuerza neta horizontal:}\n   $$F_{net} = F - f_k = 10 - 5.88 = 4.12 \\text{ N}$$\n\n4) \\textbf{Aceleración:}\n   $$a = \\frac{F_{net}}{m} = \\frac{4.12}{2} = 2.06 \\text{ m/s}^2$$\n\n\\textbf{Respuesta:} La aceleración del bloque es $2.06$ m/s².\n\n\\textbf{Nota:} El diagrama muestra claramente cómo las fuerzas se equilibran verticalmente y la fuerza neta horizontal produce la aceleración.",
+      "archivo_origen": "fisica_preuniversitaria/dinamica/FISU_CIN_009.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.571808",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_fisica",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "FISU_DIN_001",
+      "materia_principal": "fisica_preuniversitaria",
+      "codigo_materia": "FISU",
+      "capitulo": "dinamica",
+      "subtema": "segunda_ley_newton",
+      "nivel": "intermedio",
+      "dificultad": 3,
+      "tiempo_estimado": 8,
+      "procedencia": "Examen CEPRE 2023",
+      "visibilidad": "web_impreso",
+      "libros": "{fisica_basica",
+      "tags": "{friccion",
+      "enunciado": "Un bloque de masa $m = 2$ kg se encuentra sobre una superficie horizontal rugosa. Se aplica una fuerza horizontal $F = 10$ N al bloque. Si el coeficiente de fricción cinética es $\\mu_k = 0.3$, determina la aceleración del bloque.\n\n\\textbf{Dato:} $g = 9.8$ m/s²\n\n\\textbf{Nota:} Observa el diagrama de fuerzas para entender mejor el problema.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/diagrama_fuerzas_001.png}\n\\caption{Diagrama de fuerzas actuando sobre el bloque}\n\\label{fig:diagrama_fuerzas}\n\\end{figure}",
+      "solucion": "Para resolver este problema de dinámica, aplicamos la Segunda Ley de Newton analizando todas las fuerzas:\n\n\\textbf{Paso 1: Análisis de fuerzas verticales}\n\nEn el eje vertical, el bloque está en equilibrio:\n\\begin{itemize}\n\\item Peso: $W = mg = 2 \\times 9.8 = 19.6$ N (hacia abajo)\n\\item Fuerza normal: $N = W = 19.6$ N (hacia arriba)\n\\end{itemize}\n\n$$\\sum F_y = 0 \\Rightarrow N - W = 0 \\Rightarrow N = 19.6 \\text{ N}$$\n\n\\textbf{Paso 2: Análisis de fuerzas horizontales}\n\nEn el eje horizontal actúan:\n\\begin{itemize}\n\\item Fuerza aplicada: $F = 10$ N (hacia la derecha)\n\\item Fuerza de fricción cinética: $f_k = \\mu_k N = 0.3 \\times 19.6 = 5.88$ N (hacia la izquierda)\n\\end{itemize}\n\n\\textbf{Paso 3: Fuerza neta horizontal}\n$$F_{neta} = F - f_k = 10 - 5.88 = 4.12 \\text{ N}$$\n\n\\textbf{Paso 4: Aplicar Segunda Ley de Newton}\n$$F_{neta} = ma$$\n$$a = \\frac{F_{neta}}{m} = \\frac{4.12}{2} = 2.06 \\text{ m/s}^2$$\n\n\\textbf{Respuesta:} La aceleración del bloque es $a = 2.06$ m/s².\n\n\\textbf{Verificación:} La aceleración es positiva, lo que confirma que el bloque se mueve en la dirección de la fuerza aplicada, como era de esperarse dado que $F > f_k$.",
+      "archivo_origen": "fisica_preuniversitaria/dinamica/FISU_DIN_001.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.574743",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_fisica",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_ALG_001",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "algebra",
+      "subtema": "exponentes",
+      "nivel": "basico",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen UNI 2022",
+      "visibilidad": "web_impreso",
+      "libros": "{algebra_pre",
+      "tags": "{exponentes",
+      "enunciado": "Calcula el valor de la siguiente expresión:\n\n$$2^3 \\cdot 2^4 \\div 2^2$$",
+      "solucion": "Para resolver esta expresión, aplicamos las propiedades de los exponentes:\n\n1) **Producto de potencias de igual base**: $a^m \\cdot a^n = a^{m+n}$\n2) **Cociente de potencias de igual base**: $a^m \\div a^n = a^{m-n}$\n\nAplicando estas propiedades:\n\n$$2^3 \\cdot 2^4 \\div 2^2 = 2^{3+4} \\div 2^2 = 2^7 \\div 2^2 = 2^{7-2} = 2^5 = 32$$\n\n\\textbf{Respuesta:} 32",
+      "archivo_origen": "matematicas_preuniversitaria/algebra/MATU_ALG_001.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.656661",
+      "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_ALG_002",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "algebra",
+      "subtema": "exponentes",
+      "nivel": "basico",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen UNI 2022",
+      "visibilidad": "web_impreso",
+      "libros": "{algebra_pre",
+      "tags": [
+        "exponentes"
+      ],
+      "enunciado": "Calcula el valor de la siguiente expresión:\n\n$$2^3 \\cdot 2^4 \\div 2^2$$",
+      "solucion": "Para resolver esta expresión, aplicamos las propiedades de los exponentes:\n\n1) **Producto de potencias de igual base**: $a^m \\cdot a^n = a^{m+n}$\n2) **Cociente de potencias de igual base**: $a^m \\div a^n = a^{m-n}$\n\nAplicando estas propiedades:\n\n$$2^3 \\cdot 2^4 \\div 2^2 = 2^{3+4} \\div 2^2 = 2^7 \\div 2^2 = 2^{7-2} = 2^5 = 32$$\n\n\\textbf{Respuesta:} 32",
+      "archivo_origen": "matematicas_preuniversitaria/algebra/MATU_ALG_002.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.659619",
+      "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_ALG_003",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "algebra",
+      "subtema": "exponentes",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Libro Álgebra Avanzada",
+      "visibilidad": "web_impreso",
+      "libros": "{algebra_pre",
+      "tags": [
+        "exponentes"
+      ],
+      "enunciado": "Simplifica la siguiente expresión:\n\n$$\\left(\\frac{x^2 y^{-3}}{x^{-1} y^2}\\right)^{-2} \\cdot \\frac{x^4}{y^6}$$",
+      "solucion": "Vamos a simplificar paso a paso:\n\n1) **Primero simplificamos la fracción dentro del paréntesis**:\n   $$\\frac{x^2 y^{-3}}{x^{-1} y^2} = x^{2-(-1)} \\cdot y^{-3-2} = x^3 \\cdot y^{-5}$$\n\n2) **Aplicamos el exponente -2**:\n   $$\\left(x^3 \\cdot y^{-5}\\right)^{-2} = x^{3 \\cdot (-2)} \\cdot y^{-5 \\cdot (-2)} = x^{-6} \\cdot y^{10}$$\n\n3) **Multiplicamos por la segunda fracción**:\n   $$x^{-6} \\cdot y^{10} \\cdot \\frac{x^4}{y^6} = x^{-6+4} \\cdot y^{10-6} = x^{-2} \\cdot y^4$$\n\n4) **Expresamos con exponentes positivos**:\n   $$x^{-2} \\cdot y^4 = \\frac{y^4}{x^2}$$\n\n\\textbf{Respuesta:} $\\frac{y^4}{x^2}$",
+      "archivo_origen": "matematicas_preuniversitaria/algebra/MATU_ALG_003.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.663365",
+      "youtube_url": "",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_ALG_004",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "algebra",
+      "subtema": "exponentes",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen UNI 2024",
+      "visibilidad": "web_impreso",
+      "libros": "{algebra_pre",
+      "tags": [
+        "exponentes"
+      ],
+      "enunciado": "% Usa LaTeX para matemáticas: $x^2$, $\\frac{a}{b}$, $\\sqrt{x}$\n\nSi $x = 2$ e $y = 3$, calcula el valor de la siguiente expresión:\n\n$$\\left(\\frac{x^4 \\cdot y^{-2}}{x^{-1} \\cdot y^3}\\right)^2 \\cdot \\frac{x^6}{y^4}$$",
+      "solucion": "Vamos a resolver este problema paso a paso:\n\n1) \\textbf{Primero simplificamos la fracción dentro del paréntesis}:\n   $$\\frac{x^4 \\cdot y^{-2}}{x^{-1} \\cdot y^3} = x^{4-(-1)} \\cdot y^{-2-3} = x^5 \\cdot y^{-5}$$\n\n2) \\textbf{Aplicamos el exponente 2}:\n   $$\\left(x^5 \\cdot y^{-5}\\right)^2 = x^{5 \\cdot 2} \\cdot y^{-5 \\cdot 2} = x^{10} \\cdot y^{-10}$$\n\n3) \\textbf{Multiplicamos por la segunda fracción}:\n   $$x^{10} \\cdot y^{-10} \\cdot \\frac{x^6}{y^4} = x^{10+6} \\cdot y^{-10-4} = x^{16} \\cdot y^{-14}$$\n\n4) \\textbf{Expresamos con exponentes positivos}:\n   $$x^{16} \\cdot y^{-14} = \\frac{x^{16}}{y^{14}}$$\n\n5) \\textbf{Sustituimos los valores} $x = 2$ e $y = 3$:\n   $$\\frac{2^{16}}{3^{14}} = \\frac{65536}{4782969} = \\frac{65536}{4782969}$$\n\n\\textbf{Respuesta:} $\\frac{65536}{4782969}$\n\n\\textbf{Nota:} Este resultado se puede simplificar, pero se deja en forma de fracción para mayor precisión.",
+      "archivo_origen": "matematicas_preuniversitaria/algebra/MATU_ALG_004.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.666509",
+      "youtube_url": "",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_ALG_005",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "algebra",
+      "subtema": "exponentes",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen UNMSM 2024",
+      "visibilidad": "web_impreso",
+      "libros": "{algebra_pre",
+      "tags": [
+        "exponentes"
+      ],
+      "enunciado": "% Usa LaTeX para matemáticas: $x^2$, $\\frac{a}{b}$, $\\sqrt{x}$\n\nSimplifica la siguiente expresión y encuentra el valor cuando $a = 4$ y $b = 2$:\n\n$$\\frac{(a^3 b^{-2})^4 \\cdot (a^{-1} b^3)^2}{(a^2 b^{-1})^3 \\cdot (a^{-2} b^2)^2}$$",
+      "solucion": "Vamos a simplificar esta expresión compleja paso a paso:\n\n1) \\textbf{Desarrollamos las potencias en el numerador}:\n   $$(a^3 b^{-2})^4 = a^{3 \\cdot 4} \\cdot b^{-2 \\cdot 4} = a^{12} \\cdot b^{-8}$$\n   $$(a^{-1} b^3)^2 = a^{-1 \\cdot 2} \\cdot b^{3 \\cdot 2} = a^{-2} \\cdot b^6$$\n\n2) \\textbf{Desarrollamos las potencias en el denominador}:\n   $$(a^2 b^{-1})^3 = a^{2 \\cdot 3} \\cdot b^{-1 \\cdot 3} = a^6 \\cdot b^{-3}$$\n   $$(a^{-2} b^2)^2 = a^{-2 \\cdot 2} \\cdot b^{2 \\cdot 2} = a^{-4} \\cdot b^4$$\n\n3) \\textbf{Reescribimos la expresión original}:\n   $$\\frac{a^{12} \\cdot b^{-8} \\cdot a^{-2} \\cdot b^6}{a^6 \\cdot b^{-3} \\cdot a^{-4} \\cdot b^4}$$\n\n4) \\textbf{Agrupamos términos semejantes}:\n   $$\\frac{a^{12-2} \\cdot b^{-8+6}}{a^{6-4} \\cdot b^{-3+4}} = \\frac{a^{10} \\cdot b^{-2}}{a^2 \\cdot b^1}$$\n\n5) \\textbf{Simplificamos aplicando propiedades de división}:\n   $$\\frac{a^{10}}{a^2} \\cdot \\frac{b^{-2}}{b^1} = a^{10-2} \\cdot b^{-2-1} = a^8 \\cdot b^{-3}$$\n\n6) \\textbf{Expresamos con exponentes positivos}:\n   $$a^8 \\cdot b^{-3} = \\frac{a^8}{b^3}$$\n\n7) \\textbf{Sustituimos los valores} $a = 4$ y $b = 2$:\n   $$\\frac{4^8}{2^3} = \\frac{65536}{8} = 8192$$\n\n\\textbf{Respuesta:} 8192\n\n\\textbf{Nota:} La expresión simplificada es $\\frac{a^8}{b^3}$, que es mucho más manejable que la expresión original.",
+      "archivo_origen": "matematicas_preuniversitaria/algebra/MATU_ALG_005.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.669396",
+      "youtube_url": "",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_ALG_006",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "algebra",
+      "subtema": "exponentes",
+      "nivel": "basico",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Ejemplo con formato 4 dígitos",
+      "visibilidad": "web_impreso",
+      "libros": "{algebra_pre",
+      "tags": [
+        "exponentes"
+      ],
+      "enunciado": "Calcula el valor de la siguiente expresión:\n\n$$5^2 \\cdot 5^3$$",
+      "solucion": "Para resolver esta expresión, aplicamos la propiedad de los exponentes:\n\n\\textbf{Propiedad:} $a^m \\cdot a^n = a^{m+n}$\n\nAplicando esta propiedad:\n\n$$5^2 \\cdot 5^3 = 5^{2+3} = 5^5 = 3125$$\n\n\\textbf{Respuesta:} 3125\n\n\\textbf{Nota:} Este es un ejemplo usando el formato de ID con 4 dígitos (ALG\\_EXP\\_0001).",
+      "archivo_origen": "matematicas_preuniversitaria/algebra/MATU_ALG_006.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.672255",
+      "youtube_url": "",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_FUN_007",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "funciones",
+      "subtema": "funciones",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Libro Cálculo Avanzado",
+      "visibilidad": "web_impreso",
+      "libros": "{calculo1",
+      "tags": [
+        "funciones"
+      ],
+      "enunciado": "Considera la función $f(x) = x^3 - 3x + 1$. Determina los puntos críticos y clasifícalos como máximos, mínimos o puntos de inflexión.\n\n\\textbf{Nota:} Utiliza la gráfica de la función para visualizar los puntos críticos.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/funcion_cubica_001.png}\n\\caption{Gráfica de la función f(x) = x³ - 3x + 1 con puntos críticos marcados}\n\\label{fig:funcion_cubica}\n\\end{figure}",
+      "solucion": "Para encontrar los puntos críticos, seguimos estos pasos:\n\n1) \\textbf{Calculamos la primera derivada:}\n   $$f'(x) = 3x^2 - 3 = 3(x^2 - 1) = 3(x+1)(x-1)$$\n\n2) \\textbf{Encontramos los puntos críticos:}\n   $$f'(x) = 0 \\Rightarrow x = -1 \\text{ o } x = 1$$\n\n3) \\textbf{Calculamos la segunda derivada:}\n   $$f''(x) = 6x$$\n\n4) \\textbf{Clasificamos los puntos críticos:}\n   \\begin{itemize}\n   \\item Para $x = -1$: $f''(-1) = -6 < 0$ → \\textbf{Máximo local}\n   \\item Para $x = 1$: $f''(1) = 6 > 0$ → \\textbf{Mínimo local}\n   \\end{itemize}\n\n5) \\textbf{Calculamos los valores de la función:}\n   \\begin{itemize}\n   \\item $f(-1) = (-1)^3 - 3(-1) + 1 = -1 + 3 + 1 = 3$\n   \\item $f(1) = (1)^3 - 3(1) + 1 = 1 - 3 + 1 = -1$\n   \\end{itemize}\n\n\\textbf{Respuesta:}\n\\begin{itemize}\n\\item Punto máximo local: $(-1, 3)$\n\\item Punto mínimo local: $(1, -1)$\n\\end{itemize}\n\n\\textbf{Nota:} La gráfica muestra claramente el comportamiento de la función y confirma nuestros cálculos.",
+      "archivo_origen": "matematicas_preuniversitaria/funciones/MATU_FUN_007.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.693425",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_calculo",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_FUN_008",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "funciones",
+      "subtema": "limites",
+      "nivel": "basico",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen CEPRE 2023",
+      "visibilidad": "web_impreso",
+      "libros": "{calculo1",
+      "tags": [
+        "limites"
+      ],
+      "enunciado": "Calcula el siguiente límite:\n\n$$\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$$",
+      "solucion": "Este es un límite de la forma $\\frac{0}{0}$ (indeterminación). Vamos a resolverlo:\n\n1) **Factorizamos el numerador**:\n   $$x^2 - 4 = (x + 2)(x - 2)$$\n\n2) **Simplificamos la fracción**:\n   $$\\frac{x^2 - 4}{x - 2} = \\frac{(x + 2)(x - 2)}{x - 2} = x + 2$$\n\n3) **Calculamos el límite**:\n   $$\\lim_{x \\to 2} (x + 2) = 2 + 2 = 4$$\n\n\\textbf{Respuesta:} 4\n\n\\textbf{Nota:} Este límite se puede resolver también aplicando la regla de L'Hôpital, pero la factorización es más directa.",
+      "archivo_origen": "matematicas_preuniversitaria/funciones/MATU_FUN_008.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.696576",
+      "youtube_url": "",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_GEO_010",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "geometria",
+      "subtema": "circunferencia",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen UNI 2024",
+      "visibilidad": "web_impreso",
+      "libros": "{geometria_pre",
+      "tags": [
+        "circunferencia"
+      ],
+      "enunciado": "En la figura adjunta, se muestra una circunferencia con centro en el punto $C(2,3)$ y radio $r = 5$ unidades. Si la recta $L$ es tangente a la circunferencia en el punto $P$, y la ecuación de $L$ es $3x + 4y = 25$, determina las coordenadas del punto $P$.\n\n\\textbf{Nota:} Utiliza la figura para visualizar el problema.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/circulo_001.png}\n\\caption{Circunferencia con centro en (2,3) y radio 5}\n\\label{fig:circulo}\n\\end{figure}",
+      "solucion": "Para resolver este problema, seguiremos estos pasos:\n\n1) \\textbf{Identificamos los datos:}\n   \\begin{itemize}\n   \\item Centro: $C(2,3)$\n   \\item Radio: $r = 5$\n   \\item Recta tangente: $3x + 4y = 25$\n   \\end{itemize}\n\n2) \\textbf{Aplicamos la propiedad de la tangente:}\n   La distancia del centro a la recta tangente es igual al radio.\n\n3) \\textbf{Calculamos la distancia:}\n   $$d = \\frac{|3(2) + 4(3) - 25|}{\\sqrt{3^2 + 4^2}} = \\frac{|6 + 12 - 25|}{5} = \\frac{7}{5}$$\n\n4) \\textbf{Verificamos:}\n   Como $d = \\frac{7}{5} \\neq 5$, hay un error en el enunciado.\n\n\\textbf{Respuesta:} El problema tiene un error en los datos proporcionados.\n\n\\textbf{Nota:} En la figura se puede observar la relación geométrica entre el centro, el radio y la recta tangente.\n\n\\begin{figure}[h]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{imagenes/solucion_circulo_001.png}\n\\caption{Solución gráfica del problema}\n\\label{fig:solucion_circulo}\n\\end{figure}",
+      "archivo_origen": "matematicas_preuniversitaria/geometria/MATU_GEO_010.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.704492",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_geometria",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    },
+    {
+      "id": "MATU_GEO_011",
+      "materia_principal": "matematicas_preuniversitaria",
+      "codigo_materia": "MATU",
+      "capitulo": "geometria",
+      "subtema": "triangulos",
+      "nivel": "intermedio",
+      "dificultad": 2,
+      "tiempo_estimado": 5,
+      "procedencia": "Examen UNI 2024",
+      "visibilidad": "web_impreso",
+      "libros": "{geometria_pre",
+      "tags": [
+        "triangulos"
+      ],
+      "enunciado": "En el triángulo $ABC$ mostrado en la figura, se tiene que $AB = 6$ cm, $BC = 8$ cm y $AC = 10$ cm. Si $D$ es el punto medio de $BC$ y $E$ es el punto medio de $AC$, determina la longitud del segmento $DE$.\n\n\\begin{center}\n\\begin{tikzpicture}[scale=0.6]\n\\coordinate (A) at (0,0);\n\\coordinate (B) at (6,0);\n\\coordinate (C) at (3,4);\n\\coordinate (D) at (4.5,2);\n\\coordinate (E) at (1.5,2);\n\n\\draw[thick] (A) -- (B) -- (C) -- cycle;\n\\draw[red, thick] (D) -- (E);\n\\draw[dashed, blue] (A) -- (D);\n\\draw[dashed, blue] (B) -- (E);\n\n\\node[below] at (A) {$A$};\n\\node[below] at (B) {$B$};\n\\node[above] at (C) {$C$};\n\\node[right] at (D) {$D$};\n\\node[left] at (E) {$E$};\n\n\\node[below] at (3,0) {$6$};\n\\node[right] at (4.5,2) {$8$};\n\\node[left] at (1.5,2) {$10$};\n\\end{tikzpicture}\n\\end{center}",
+      "solucion": "Para resolver este problema, utilizamos el teorema de la línea media:\n\n1) \\textbf{Identificamos los datos:}\n   \\begin{itemize}\n   \\item $AB = 6$ cm\n   \\item $BC = 8$ cm\n   \\item $AC = 10$ cm\n   \\item $D$ es punto medio de $BC$\n   \\item $E$ es punto medio de $AC$\n   \\end{itemize}\n\n2) \\textbf{Aplicamos el teorema de la línea media:}\n   La línea que une los puntos medios de dos lados de un triángulo es paralela al tercer lado y mide la mitad de su longitud.\n\n3) \\textbf{Calculamos:}\n   Como $DE$ es la línea media que une los puntos medios de $BC$ y $AC$, entonces:\n   $$DE \\parallel AB \\text{ y } DE = \\frac{AB}{2} = \\frac{6}{2} = 3 \\text{ cm}$$\n\n4) \\textbf{Verificamos con el teorema de Pitágoras:}\n   \\begin{itemize}\n   \\item $AB^2 + BC^2 = 6^2 + 8^2 = 36 + 64 = 100 = 10^2 = AC^2$\n   \\item El triángulo es rectángulo en $B$\n   \\end{itemize}\n\n\\textbf{Respuesta:} La longitud del segmento $DE$ es $3$ cm.\n\n\\textbf{Nota:} La figura muestra claramente la relación entre los puntos medios y confirma que $DE$ es paralela a $AB$.",
+      "archivo_origen": "matematicas_preuniversitaria/geometria/MATU_GEO_011.tex",
+      "fecha_procesado": "2025-07-28T00:41:39.707484",
+      "youtube_url": "https://www.youtube.com/watch?v=ejemplo_geometria_tri",
+      "mostrar_solucion": true,
+      "libro_promocion": ""
+    }
+  ]
+}

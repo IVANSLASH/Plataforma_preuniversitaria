@@ -1,0 +1,43 @@
+% PLANTILLA PARA CREAR EJERCICIOS
+% ===============================
+% Copia esta plantilla y modifica según tus necesidades
+% Guarda como: ejercicios/[MATERIA]/[CAPITULO]_[CODIGO].tex
+%
+% FORMATOS DE ID DISPONIBLES:
+% - 3 dígitos: ALG_EXP_001 (hasta 999 problemas)
+% - 4 dígitos: ALG_EXP_0001 (hasta 9,999 problemas)
+
+\begin{ejercicio}[
+  id=ALG_EXP_0001,  % Puedes usar ALG_EXP_001 o ALG_EXP_0001
+  materia=algebra,
+  capitulo=exponentes,
+  nivel=basico,
+  procedencia="Examen UNI 2023",
+  visibilidad=true,
+  libros={algebra_pre, algebra_basica}
+]
+% ENUNCIADO DEL PROBLEMA
+% Escribe aquí el enunciado de tu problema.
+% Usa LaTeX para matemáticas: $x^2$, $\frac{a}{b}$, $\sqrt{x}$
+
+Calcula el valor de la siguiente expresión:
+
+$$2^3 \cdot 2^4 \div 2^2$$
+
+\begin{solucion}
+% SOLUCIÓN DETALLADA
+% Escribe aquí la solución paso a paso.
+% Usa LaTeX para matemáticas y fórmulas.
+
+Para resolver esta expresión, aplicamos las propiedades de los exponentes:
+
+1) \textbf{Producto de potencias de igual base}: $a^m \cdot a^n = a^{m+n}$
+2) \textbf{Cociente de potencias de igual base}: $a^m \div a^n = a^{m-n}$
+
+Aplicando estas propiedades:
+
+$$2^3 \cdot 2^4 \div 2^2 = 2^{3+4} \div 2^2 = 2^7 \div 2^2 = 2^{7-2} = 2^5 = 32$$
+
+\textbf{Respuesta:} 32
+\end{solucion}
+\end{ejercicio} 

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Plataforma Preuniversitaria{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- MathJax para fórmulas matemáticas -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            ignoreHtmlClass: 'tex2jax_ignore',
+            processHtmlClass: 'tex2jax_process'
+        },
+        startup: {
+            pageReady: () => {
+                return MathJax.startup.defaultPageReady().then(() => {
+                    // Reprocesar después de que se cargue el contenido dinámico
+                    if (window.MathJax) {
+                        MathJax.typesetPromise();
+                    }
+                });
+            }
+        }
+    };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .navbar-brand i {
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .ejercicio-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .ejercicio-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .badge-nivel {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+        }
+        
+        .badge-basico {
+            background-color: var(--success-color);
+        }
+        
+        .badge-intermedio {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+        
+        .badge-avanzado {
+            background-color: var(--danger-color);
+        }
+        
+        .filtros-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        /* Estilos para el contenido procesado */
+        .enunciado strong, .solucion strong {
+            color: #007bff;
+        }
+        
+        .enunciado em, .solucion em {
+            color: #6c757d;
+        }
+        
+        /* Mejorar la presentación de las listas numeradas */
+        .solucion {
+            counter-reset: step-counter;
+        }
+        
+        .solucion br + br {
+            margin-top: 1em;
+        }
+        
+        /* Estilos para respuestas y notas */
+        .solucion strong:contains("Respuesta:"),
+        .solucion strong:contains("Nota:"),
+        .solucion strong:contains("Propiedad:") {
+            display: block;
+            margin-top: 1em;
+            padding: 0.5em;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            transform: translateY(-1px);
+        }
+        
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .enunciado {
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+        
+        .enunciado-content {
+            max-height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .enunciado-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(transparent, #f8f9fa);
+            pointer-events: none;
+        }
+        
+        .card .enunciado {
+            background: transparent;
+            border-left: none;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+        }
+        
+        .card .enunciado-content {
+            max-height: 150px;
+        }
+        
+        .card .enunciado-content::after {
+            background: linear-gradient(transparent, white);
+        }
+        
+        /* Estilos para botones de dificultad */
+        .btn-dificultad {
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .btn-dificultad:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-dificultad.active {
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .btn-dificultad-basico {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .btn-dificultad-intermedio {
+            background: linear-gradient(135deg, #17a2b8, #6f42c1);
+            color: white;
+        }
+        
+        .btn-dificultad-avanzado {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #212529;
+        }
+        
+        .btn-dificultad-premium {
+            background: linear-gradient(135deg, #dc3545, #6f42c1);
+            color: white;
+        }
+        
+        /* Estilos para pasos de filtrado */
+        .paso-activo {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .paso-inactivo {
+            opacity: 0.6;
+        }
+        
+        .solucion {
+            background: #e8f4fd;
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+        
+        .respuesta {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        
+        .nota {
+            background: #fff3cd;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        
+        /* Estilos para teoría y formularios */
+        .teoria-card, .formulario-card, .formulario-completo-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .teoria-card:hover, .formulario-card:hover, .formulario-completo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .propiedad-item, .ejemplo-item {
+            transition: all 0.3s ease;
+        }
+        
+        .propiedad-item:hover, .ejemplo-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+        
+        .formula, .ejemplo, .solucion {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            border-left: 3px solid #007bff;
+        }
+        
+        .breadcrumb {
+            background: transparent;
+            padding: 0.5rem 0;
+        }
+        
+        .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        /* Estilos para simulacro */
+        .pregunta-item {
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .pregunta-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .respuesta-pregunta {
+            background: #e8f4fd;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-top: 1rem;
+        }
+        
+        /* Estilos para botones de YouTube */
+        .btn-youtube {
+            background: #ff0000;
+            border-color: #ff0000;
+            color: white;
+        }
+        
+        .btn-youtube:hover {
+            background: #cc0000;
+            border-color: #cc0000;
+            color: white;
+        }
+        
+        /* Estilos para soluciones ocultas */
+        .solucion-oculta {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .solucion-oculta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .libro-promocion {
+            background: rgba(255,255,255,0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px dashed #007bff;
+        }
+        
+        .libro-promocion h5 {
+            margin: 0;
+            font-weight: bold;
+        }
+        
+        /* Estilos para anuncios */
+        .anuncio-principal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        
+        .libro-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .libro-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .testimonio-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid #007bff;
+        }
+        
+        .testimonio-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Estilos para imágenes de ejercicios */
+        .imagen-ejercicio, .imagen-solucion {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        
+        .imagen-ejercicio img, .imagen-solucion img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            transition: transform 0.3s ease;
+        }
+        
+        .imagen-ejercicio img:hover, .imagen-solucion img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .imagen-ejercicio .text-muted, .imagen-solucion .text-muted {
+            font-style: italic;
+            color: #6c757d !important;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .stats-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-graduation-cap"></i> Plataforma Preuniversitaria
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('teoria') }}">
+                            <i class="fas fa-book-open"></i> Teoría
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('formularios') }}">
+                            <i class="fas fa-download"></i> Formularios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('simulacro') }}">
+                            <i class="fas fa-clipboard-check"></i> Simulacro
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('estadisticas') }}">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('libros') }}">
+                            <i class="fas fa-book"></i> Libros
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-graduation-cap"></i> Plataforma Preuniversitaria</h5>
+                    <p>Ejercicios y recursos para estudiantes preuniversitarios</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p><i class="fas fa-code"></i> Desarrollado con Flask y Bootstrap</p>
+                    <p><i class="fas fa-calendar"></i> 2025</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para reprocesar MathJax -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Esperar a que MathJax esté listo y luego reprocesar
+        if (window.MathJax) {
+            MathJax.typesetPromise().then(() => {
+                console.log('MathJax procesado correctamente');
+            }).catch((err) => {
+                console.log('Error en MathJax:', err);
+            });
+        }
+        
+        // Reprocesar después de un pequeño delay para asegurar que todo esté cargado
+        setTimeout(() => {
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }, 1000);
+    });
+    
+    // Función global para reprocesar MathJax
+    function reprocessMathJax() {
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

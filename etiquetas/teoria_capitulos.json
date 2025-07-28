@@ -1,0 +1,170 @@
+{
+  "capitulos": {
+    "algebra": {
+      "exponentes": {
+        "titulo": "Exponentes y Radicales",
+        "introduccion": "Los exponentes son una herramienta fundamental en álgebra que nos permite expresar de manera compacta multiplicaciones repetidas y establecer relaciones matemáticas complejas.",
+        "conceptos_clave": [
+          "Potenciación como multiplicación repetida",
+          "Propiedades de los exponentes",
+          "Exponentes negativos y cero",
+          "Radicales como exponentes fraccionarios"
+        ],
+        "propiedades": [
+          {
+            "nombre": "Producto de potencias de igual base",
+            "formula": "$a^m \\cdot a^n = a^{m+n}$",
+            "ejemplo": "$2^3 \\cdot 2^4 = 2^{3+4} = 2^7 = 128$"
+          },
+          {
+            "nombre": "Cociente de potencias de igual base",
+            "formula": "$\\frac{a^m}{a^n} = a^{m-n}$",
+            "ejemplo": "$\\frac{3^5}{3^2} = 3^{5-2} = 3^3 = 27$"
+          },
+          {
+            "nombre": "Potencia de una potencia",
+            "formula": "$(a^m)^n = a^{m \\cdot n}$",
+            "ejemplo": "$(2^3)^2 = 2^{3 \\cdot 2} = 2^6 = 64$"
+          },
+          {
+            "nombre": "Potencia de un producto",
+            "formula": "$(a \\cdot b)^n = a^n \\cdot b^n$",
+            "ejemplo": "$(2 \\cdot 3)^3 = 2^3 \\cdot 3^3 = 8 \\cdot 27 = 216$"
+          },
+          {
+            "nombre": "Potencia de un cociente",
+            "formula": "$\\left(\\frac{a}{b}\\right)^n = \\frac{a^n}{b^n}$",
+            "ejemplo": "$\\left(\\frac{4}{2}\\right)^2 = \\frac{4^2}{2^2} = \\frac{16}{4} = 4$"
+          },
+          {
+            "nombre": "Exponente cero",
+            "formula": "$a^0 = 1$ (para $a \\neq 0$)",
+            "ejemplo": "$5^0 = 1$, $(-3)^0 = 1$"
+          },
+          {
+            "nombre": "Exponente negativo",
+            "formula": "$a^{-n} = \\frac{1}{a^n}$",
+            "ejemplo": "$2^{-3} = \\frac{1}{2^3} = \\frac{1}{8}$"
+          }
+        ],
+        "ejemplos_practicos": [
+          {
+            "titulo": "Simplificación de expresiones",
+            "descripcion": "Simplificar $\\frac{x^4 y^{-2}}{x^{-1} y^3}$",
+            "solucion": "Aplicando las propiedades: $\\frac{x^4 y^{-2}}{x^{-1} y^3} = x^{4-(-1)} \\cdot y^{-2-3} = x^5 \\cdot y^{-5} = \\frac{x^5}{y^5}$"
+          },
+          {
+            "titulo": "Evaluación con valores numéricos",
+            "descripcion": "Calcular $(2^3 \\cdot 2^{-1})^2$",
+            "solucion": "$(2^3 \\cdot 2^{-1})^2 = (2^{3+(-1)})^2 = (2^2)^2 = 2^4 = 16$"
+          }
+        ],
+        "consejos_estudio": [
+          "Memoriza las propiedades básicas de los exponentes",
+          "Practica con ejercicios de simplificación",
+          "Presta atención a los signos de los exponentes",
+          "Verifica tus resultados sustituyendo valores"
+        ]
+      }
+    },
+    "calculo": {
+      "limites": {
+        "titulo": "Límites y Continuidad",
+        "introduccion": "Los límites son la base del cálculo diferencial e integral. Nos permiten entender el comportamiento de una función cuando la variable independiente se acerca a un valor específico.",
+        "conceptos_clave": [
+          "Definición intuitiva de límite",
+          "Límites laterales",
+          "Límites infinitos",
+          "Continuidad de funciones"
+        ],
+        "propiedades": [
+          {
+            "nombre": "Límite de una constante",
+            "formula": "$\\lim_{x \\to a} c = c$",
+            "ejemplo": "$\\lim_{x \\to 2} 5 = 5$"
+          },
+          {
+            "nombre": "Límite de la función identidad",
+            "formula": "$\\lim_{x \\to a} x = a$",
+            "ejemplo": "$\\lim_{x \\to 3} x = 3$"
+          },
+          {
+            "nombre": "Límite de una suma",
+            "formula": "$\\lim_{x \\to a} [f(x) + g(x)] = \\lim_{x \\to a} f(x) + \\lim_{x \\to a} g(x)$",
+            "ejemplo": "$\\lim_{x \\to 2} (x^2 + 3x) = \\lim_{x \\to 2} x^2 + \\lim_{x \\to 2} 3x = 4 + 6 = 10$"
+          },
+          {
+            "nombre": "Límite de un producto",
+            "formula": "$\\lim_{x \\to a} [f(x) \\cdot g(x)] = \\lim_{x \\to a} f(x) \\cdot \\lim_{x \\to a} g(x)$",
+            "ejemplo": "$\\lim_{x \\to 1} (x \\cdot x^2) = \\lim_{x \\to 1} x \\cdot \\lim_{x \\to 1} x^2 = 1 \\cdot 1 = 1$"
+          },
+          {
+            "nombre": "Límite de un cociente",
+            "formula": "$\\lim_{x \\to a} \\frac{f(x)}{g(x)} = \\frac{\\lim_{x \\to a} f(x)}{\\lim_{x \\to a} g(x)}$ (si $\\lim_{x \\to a} g(x) \\neq 0$)",
+            "ejemplo": "$\\lim_{x \\to 2} \\frac{x^2}{x} = \\frac{\\lim_{x \\to 2} x^2}{\\lim_{x \\to 2} x} = \\frac{4}{2} = 2$"
+          }
+        ],
+        "ejemplos_practicos": [
+          {
+            "titulo": "Límite de forma indeterminada",
+            "descripcion": "Calcular $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$",
+            "solucion": "Factorizando: $\\frac{x^2 - 4}{x - 2} = \\frac{(x+2)(x-2)}{x-2} = x+2$. Luego $\\lim_{x \\to 2} (x+2) = 4$"
+          },
+          {
+            "titulo": "Límite con racionalización",
+            "descripcion": "Calcular $\\lim_{x \\to 0} \\frac{\\sqrt{x+1} - 1}{x}$",
+            "solucion": "Racionalizando: $\\frac{\\sqrt{x+1} - 1}{x} \\cdot \\frac{\\sqrt{x+1} + 1}{\\sqrt{x+1} + 1} = \\frac{x}{x(\\sqrt{x+1} + 1)} = \\frac{1}{\\sqrt{x+1} + 1}$. Luego $\\lim_{x \\to 0} \\frac{1}{\\sqrt{x+1} + 1} = \\frac{1}{2}$"
+          }
+        ],
+        "consejos_estudio": [
+          "Entiende la definición intuitiva antes de la formal",
+          "Practica factorización y racionalización",
+          "Identifica formas indeterminadas",
+          "Usa gráficas para visualizar límites"
+        ]
+      }
+    },
+    "geometria": {
+      "circulos": {
+        "titulo": "Círculos y Circunferencias",
+        "introduccion": "Los círculos son figuras geométricas fundamentales que aparecen en múltiples contextos matemáticos y aplicaciones prácticas.",
+        "conceptos_clave": [
+          "Definición de círculo y circunferencia",
+          "Radio, diámetro y centro",
+          "Área y perímetro",
+          "Ecuación de la circunferencia"
+        ],
+        "propiedades": [
+          {
+            "nombre": "Área del círculo",
+            "formula": "$A = \\pi r^2$",
+            "ejemplo": "Para $r = 5$: $A = \\pi \\cdot 5^2 = 25\\pi \\approx 78.54$"
+          },
+          {
+            "nombre": "Perímetro de la circunferencia",
+            "formula": "$P = 2\\pi r$",
+            "ejemplo": "Para $r = 3$: $P = 2\\pi \\cdot 3 = 6\\pi \\approx 18.85$"
+          },
+          {
+            "nombre": "Ecuación de la circunferencia",
+            "formula": "$(x-h)^2 + (y-k)^2 = r^2$",
+            "ejemplo": "Centro en $(2,3)$ y radio $4$: $(x-2)^2 + (y-3)^2 = 16$"
+          }
+        ],
+        "ejemplos_practicos": [
+          {
+            "titulo": "Calcular área y perímetro",
+            "descripcion": "Un círculo tiene radio de 7 cm. Calcular su área y perímetro.",
+            "solucion": "Área: $A = \\pi \\cdot 7^2 = 49\\pi \\approx 153.94$ cm². Perímetro: $P = 2\\pi \\cdot 7 = 14\\pi \\approx 43.98$ cm"
+          }
+        ],
+        "consejos_estudio": [
+          "Memoriza las fórmulas básicas",
+          "Practica con diferentes valores de radio",
+          "Entiende la relación entre radio, diámetro y perímetro",
+          "Usa aproximaciones de π según la precisión requerida"
+        ]
+      }
+    }
+  }
+} 

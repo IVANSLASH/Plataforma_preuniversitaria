@@ -1,0 +1,69 @@
+{
+  "formularios": {
+    "algebra": {
+      "exponentes": {
+        "titulo": "Formulario de Exponentes y Radicales",
+        "descripcion": "Todas las propiedades y fórmulas importantes de exponentes y radicales en un solo documento.",
+        "archivo": "formularios/algebra_exponentes.pdf",
+        "tamaño": "245 KB",
+        "version": "1.0",
+        "fecha_actualizacion": "2025-01-27",
+        "contenido": [
+          "Propiedades básicas de exponentes",
+          "Exponentes negativos y cero",
+          "Radicales y exponentes fraccionarios",
+          "Simplificación de expresiones",
+          "Ejemplos resueltos"
+        ]
+      }
+    },
+    "calculo": {
+      "limites": {
+        "titulo": "Formulario de Límites",
+        "descripcion": "Propiedades, técnicas y fórmulas para el cálculo de límites de funciones.",
+        "archivo": "formularios/calculo_limites.pdf",
+        "tamaño": "312 KB",
+        "version": "1.0",
+        "fecha_actualizacion": "2025-01-27",
+        "contenido": [
+          "Propiedades básicas de límites",
+          "Límites laterales",
+          "Límites infinitos",
+          "Formas indeterminadas",
+          "Técnicas de resolución"
+        ]
+      }
+    }
+  },
+  "formularios_generales": {
+    "algebra_completo": {
+      "titulo": "Formulario Completo de Álgebra",
+      "descripcion": "Compendio completo de todas las fórmulas y propiedades de álgebra preuniversitaria.",
+      "archivo": "formularios/algebra_completo.pdf",
+      "tamaño": "1.2 MB",
+      "version": "1.0",
+      "fecha_actualizacion": "2025-01-27",
+      "capitulos_incluidos": [
+        "Exponentes y Radicales",
+        "Ecuaciones Cuadráticas",
+        "Funciones",
+        "Logaritmos",
+        "Trigonometría"
+      ]
+    },
+    "calculo_completo": {
+      "titulo": "Formulario Completo de Cálculo",
+      "descripcion": "Todas las fórmulas de cálculo diferencial e integral en un solo documento.",
+      "archivo": "formularios/calculo_completo.pdf",
+      "tamaño": "2.1 MB",
+      "version": "1.0",
+      "fecha_actualizacion": "2025-01-27",
+      "capitulos_incluidos": [
+        "Límites y Continuidad",
+        "Derivadas",
+        "Integrales",
+        "Aplicaciones"
+      ]
+    }
+  }
+} 

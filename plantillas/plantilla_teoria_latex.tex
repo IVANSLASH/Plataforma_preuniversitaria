@@ -1,0 +1,396 @@
+% ========================================
+% PLANTILLA PARA GENERAR TEORÍA EN LATEX
+% ========================================
+% 
+% INSTRUCCIONES:
+% 1. Copia este archivo a teoria/[MATERIA]/[CAPITULO].tex
+% 2. Completa todos los campos marcados con [COMPLETAR]
+% 3. Escribe el contenido teórico
+% 4. Ejecuta: python exportador/exportar_json.py
+%
+% EJEMPLO DE NOMBRE: teoria/algebra/exponentes.tex
+% ========================================
+
+\begin{teoria}[
+  materia=[COMPLETAR_MATERIA],          % algebra, calculo, fisica, geometria
+  capitulo=[COMPLETAR_CAPITULO],        % exponentes, derivadas, cinematica, triangulos
+  nivel=[COMPLETAR_NIVEL],              % basico, intermedio, avanzado
+  titulo="[COMPLETAR_TITULO]",          % "Propiedades de Exponentes"
+  descripcion="[COMPLETAR_DESCRIPCION]", % "Conceptos fundamentales de exponentes"
+  tiempo_estimado=[COMPLETAR_TIEMPO],   % 15, 30, 45 (en minutos)
+  dificultad=[COMPLETAR_DIFICULTAD],    % 1-5 (1=fácil, 5=difícil)
+  prerequisitos={[COMPLETAR_PREREQ]},   % {aritmetica_basica}, {algebra_elemental}
+  objetivos={[COMPLETAR_OBJETIVOS]},    % {"Comprender propiedades", "Resolver ejercicios"}
+  tags={[COMPLETAR_TAGS]}               % {exponentes, potencias, propiedades}
+]
+
+% ========================================
+% INTRODUCCIÓN
+% ========================================
+
+\section{Introducción}
+
+[ESCRIBIR_INTRODUCCION_AQUI]
+
+% Ejemplo:
+% Los exponentes son una herramienta fundamental en matemáticas que nos permite
+% expresar de manera compacta la multiplicación repetida de un número por sí mismo.
+% En este capítulo aprenderemos las propiedades básicas y avanzadas de los exponentes.
+
+% ========================================
+% CONCEPTOS FUNDAMENTALES
+% ========================================
+
+\section{Conceptos Fundamentales}
+
+\subsection{Definición Básica}
+
+[ESCRIBIR_DEFINICION_AQUI]
+
+% Ejemplo:
+% Si $a$ es un número real y $n$ es un entero positivo, entonces:
+% $$a^n = \underbrace{a \cdot a \cdot a \cdots a}_{n \text{ veces}}$$
+% 
+% Donde:
+% - $a$ se llama la \textbf{base}
+% - $n$ se llama el \textbf{exponente}
+% - $a^n$ se llama la \textbf{potencia}
+
+\subsection{Propiedades Importantes}
+
+[ESCRIBIR_PROPIEDADES_AQUI]
+
+% Ejemplo:
+% \textbf{Propiedad 1:} $a^m \cdot a^n = a^{m+n}$
+% 
+% \textbf{Propiedad 2:} $\frac{a^m}{a^n} = a^{m-n}$ (con $a \neq 0$)
+% 
+% \textbf{Propiedad 3:} $(a^m)^n = a^{m \cdot n}$
+% 
+% \textbf{Propiedad 4:} $(a \cdot b)^n = a^n \cdot b^n$
+
+% ========================================
+% FÓRMULAS PRINCIPALES
+% ========================================
+
+\section{Fórmulas Principales}
+
+[ESCRIBIR_FORMULAS_AQUI]
+
+% Ejemplo:
+% \begin{center}
+% \begin{tabular}{|c|c|}
+% \hline
+% \textbf{Propiedad} & \textbf{Fórmula} \\
+% \hline
+% Producto de potencias & $a^m \cdot a^n = a^{m+n}$ \\
+% \hline
+% Cociente de potencias & $\frac{a^m}{a^n} = a^{m-n}$ \\
+% \hline
+% Potencia de potencia & $(a^m)^n = a^{m \cdot n}$ \\
+% \hline
+% Potencia de producto & $(a \cdot b)^n = a^n \cdot b^n$ \\
+% \hline
+% Potencia de cociente & $\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$ \\
+% \hline
+% Exponente cero & $a^0 = 1$ (con $a \neq 0$) \\
+% \hline
+% Exponente negativo & $a^{-n} = \frac{1}{a^n}$ \\
+% \hline
+% \end{tabular}
+% \end{center}
+
+% ========================================
+% EJEMPLOS RESUELTOS
+% ========================================
+
+\section{Ejemplos Resueltos}
+
+\subsection{Ejemplo 1: Propiedades Básicas}
+
+[ESCRIBIR_EJEMPLO_1_AQUI]
+
+% Ejemplo:
+% \textbf{Problema:} Simplifica la expresión $2^3 \cdot 2^4 \div 2^2$
+% 
+% \textbf{Solución:}
+% \begin{align*}
+% 2^3 \cdot 2^4 \div 2^2 &= 2^3 \cdot 2^4 \cdot 2^{-2} \\
+% &= 2^{3+4-2} \\
+% &= 2^5 \\
+% &= 32
+% \end{align*}
+% 
+% \textbf{Respuesta:} 32
+
+\subsection{Ejemplo 2: Exponentes Negativos}
+
+[ESCRIBIR_EJEMPLO_2_AQUI]
+
+% ========================================
+% DEMOSTRACIONES (OPCIONAL)
+% ========================================
+
+\section{Demostraciones}
+
+[ESCRIBIR_DEMOSTRACIONES_AQUI]
+
+% Ejemplo:
+% \textbf{Demostración de la Propiedad 1:} $a^m \cdot a^n = a^{m+n}$
+% 
+% Por definición:
+% \begin{align*}
+% a^m \cdot a^n &= \underbrace{a \cdot a \cdots a}_{m \text{ veces}} \cdot \underbrace{a \cdot a \cdots a}_{n \text{ veces}} \\
+% &= \underbrace{a \cdot a \cdots a}_{m+n \text{ veces}} \\
+% &= a^{m+n}
+% \end{align*}
+
+% ========================================
+% APLICACIONES PRÁCTICAS
+% ========================================
+
+\section{Aplicaciones Prácticas}
+
+[ESCRIBIR_APLICACIONES_AQUI]
+
+% Ejemplo:
+% Los exponentes tienen numerosas aplicaciones en:
+% 
+% \begin{itemize}
+% \item \textbf{Crecimiento poblacional:} $P(t) = P_0 \cdot (1+r)^t$
+% \item \textbf{Interés compuesto:} $A = P \cdot (1+\frac{r}{n})^{nt}$
+% \item \textbf{Decaimiento radioactivo:} $N(t) = N_0 \cdot e^{-\lambda t}$
+% \item \textbf{Escalas logarítmicas:} pH, decibelios, magnitud de terremotos
+% \end{itemize}
+
+% ========================================
+% ERRORES COMUNES
+% ========================================
+
+\section{Errores Comunes}
+
+[ESCRIBIR_ERRORES_COMUNES_AQUI]
+
+% Ejemplo:
+% \textbf{Error 1:} Confundir $(a+b)^2$ con $a^2 + b^2$
+% 
+% \textbf{Correcto:} $(a+b)^2 = a^2 + 2ab + b^2$
+% 
+% \textbf{Error 2:} Olvidar que $a^0 = 1$ solo cuando $a \neq 0$
+% 
+% \textbf{Correcto:} $0^0$ es una forma indeterminada
+
+% ========================================
+% CONSEJOS DE ESTUDIO
+% ========================================
+
+\section{Consejos de Estudio}
+
+[ESCRIBIR_CONSEJOS_AQUI]
+
+% Ejemplo:
+% \begin{enumerate}
+% \item \textbf{Practica con números pequeños:} Comienza con bases como 2, 3, 5
+% \item \textbf{Memoriza las propiedades básicas:} Son fundamentales para simplificar
+% \item \textbf{Verifica tus respuestas:} Usa la calculadora para comprobar
+% \item \textbf{Resuelve muchos ejercicios:} La práctica es la clave del dominio
+% \end{enumerate}
+
+% ========================================
+% EJERCICIOS DE PRÁCTICA
+% ========================================
+
+\section{Ejercicios de Práctica}
+
+[ESCRIBIR_EJERCICIOS_AQUI]
+
+% Ejemplo:
+% \textbf{Ejercicio 1:} Simplifica $3^2 \cdot 3^3 \cdot 3^{-1}$
+% 
+% \textbf{Ejercicio 2:} Calcula $\left(\frac{2}{3}\right)^{-2}$
+% 
+% \textbf{Ejercicio 3:} Resuelve la ecuación $2^x = 8$
+% 
+% \textbf{Ejercicio 4:} Simplifica $\frac{x^5 \cdot y^3}{x^2 \cdot y^4}$
+
+% ========================================
+% RESUMEN
+% ========================================
+
+\section{Resumen}
+
+[ESCRIBIR_RESUMEN_AQUI]
+
+% Ejemplo:
+% En este capítulo hemos aprendido:
+% 
+% \begin{itemize}
+% \item Las propiedades fundamentales de los exponentes
+% \item Cómo simplificar expresiones con potencias
+% \item Aplicaciones prácticas en la vida real
+% \item Errores comunes a evitar
+% \end{itemize}
+% 
+% Estas herramientas son esenciales para el estudio de álgebra avanzada,
+% cálculo y otras ramas de las matemáticas.
+
+% ========================================
+% REFERENCIAS Y ENLACES
+% ========================================
+
+\section{Referencias y Enlaces}
+
+[ESCRIBIR_REFERENCIAS_AQUI]
+
+% Ejemplo:
+% \begin{itemize}
+% \item \textbf{Libro recomendado:} "Álgebra Elemental" por Charles P. McKeague
+% \item \textbf{Videos:} Canal de YouTube "Matemáticas Fáciles"
+% \item \textbf{Páginas web:} Khan Academy - Exponentes
+% \item \textbf{Ejercicios adicionales:} Problemas del libro de texto
+% \end{itemize}
+
+\end{teoria}
+
+% ========================================
+% EJEMPLOS DE USO
+% ========================================
+
+% EJEMPLO 1: TEORÍA BÁSICA DE EXPONENTES
+% ----------------------------------------
+% \begin{teoria}[
+%   materia=algebra,
+%   capitulo=exponentes,
+%   nivel=basico,
+%   titulo="Propiedades de Exponentes",
+%   descripcion="Conceptos fundamentales de exponentes y sus propiedades",
+%   tiempo_estimado=30,
+%   dificultad=2,
+%   prerequisitos={aritmetica_basica},
+%   objetivos={"Comprender propiedades básicas", "Simplificar expresiones"},
+%   tags={exponentes, potencias, propiedades}
+% ]
+% 
+% \section{Introducción}
+% Los exponentes son una herramienta fundamental...
+% 
+% \section{Conceptos Fundamentales}
+% \subsection{Definición Básica}
+% Si $a$ es un número real y $n$ es un entero positivo...
+% 
+% \section{Fórmulas Principales}
+% \begin{center}
+% \begin{tabular}{|c|c|}
+% \hline
+% \textbf{Propiedad} & \textbf{Fórmula} \\
+% \hline
+% Producto de potencias & $a^m \cdot a^n = a^{m+n}$ \\
+% \hline
+% \end{tabular}
+% \end{center}
+% 
+% \section{Ejemplos Resueltos}
+% \subsection{Ejemplo 1: Propiedades Básicas}
+% \textbf{Problema:} Simplifica $2^3 \cdot 2^4$...
+% 
+% \section{Resumen}
+% En este capítulo hemos aprendido...
+% 
+% \end{teoria}
+
+% ========================================
+% COMANDOS ÚTILES PARA TEORÍA
+% ========================================
+
+% ESTRUCTURA:
+% -----------
+% \section{Título de Sección}
+% \subsection{Subtítulo}
+% \subsubsection{Sub-subtítulo}
+% \paragraph{Párrafo}
+% \subparagraph{Sub-párrafo}
+
+% LISTAS:
+% -------
+% \begin{itemize}
+% \item Elemento 1
+% \item Elemento 2
+% \end{itemize}
+% 
+% \begin{enumerate}
+% \item Elemento 1
+% \item Elemento 2
+% \end{enumerate}
+% 
+% \begin{description}
+% \item[Término] Definición
+% \item[Concepto] Explicación
+% \end{description}
+
+% TABLAS:
+% --------
+% \begin{center}
+% \begin{tabular}{|c|c|}
+% \hline
+% Columna 1 & Columna 2 \\
+% \hline
+% Dato 1 & Dato 2 \\
+% \hline
+% \end{tabular}
+% \end{center}
+
+% ALINEACIÓN DE ECUACIONES:
+% -------------------------
+% \begin{align*}
+% x &= a + b \\
+% &= c + d \\
+% &= e + f
+% \end{align*}
+
+% CASOS:
+% -------
+% \begin{cases}
+% x + y = 5 \\
+% 2x - y = 1
+% \end{cases}
+
+% MATRICES:
+% ----------
+% \begin{pmatrix}
+% a & b \\
+% c & d
+% \end{pmatrix}
+
+% ========================================
+% ESTRUCTURA DE CARPETAS PARA TEORÍA
+% ========================================
+%
+% teoria/
+% ├── algebra/
+% │   ├── exponentes.tex
+% │   ├── polinomios.tex
+% │   ├── ecuaciones.tex
+% │   └── imagenes/
+% │       ├── grafico_exponencial.png
+% │       └── diagrama_polinomio.png
+% ├── calculo/
+% │   ├── derivadas.tex
+% │   ├── integrales.tex
+% │   ├── limites.tex
+% │   └── imagenes/
+% │       ├── grafico_derivada.png
+% │       └── area_integral.png
+% ├── fisica/
+% │   ├── cinematica.tex
+% │   ├── dinamica.tex
+% │   ├── termodinamica.tex
+% │   └── imagenes/
+% │       ├── diagrama_fuerzas.png
+% │       └── grafico_movimiento.png
+% └── geometria/
+%     ├── triangulos.tex
+%     ├── circunferencia.tex
+%     ├── poligonos.tex
+%     └── imagenes/
+%         ├── figura_triangulo.png
+%         └── diagrama_circulo.png 

@@ -1,0 +1,235 @@
+% ========================================
+% PLANTILLA PARA GENERAR PROBLEMAS EN LATEX
+% ========================================
+% 
+% INSTRUCCIONES:
+% 1. Copia este archivo a ejercicios/[MATERIA]/[NOMBRE_PROBLEMA].tex
+% 2. Completa todos los campos marcados con [COMPLETAR]
+% 3. Escribe tu enunciado y solución
+% 4. Ejecuta: python exportador/exportar_json.py
+%
+% EJEMPLO DE NOMBRE: ejercicios/algebra/exponentes_exp_006.tex
+% ========================================
+
+\begin{ejercicio}[
+  id=[COMPLETAR_ID],                    % Ejemplo: ALG_EXP_006, CAL_DER_002, FIS_CIN_003
+  materia=[COMPLETAR_MATERIA],          % algebra, calculo, fisica, geometria
+  capitulo=[COMPLETAR_CAPITULO],        % exponentes, derivadas, cinematica, triangulos
+  nivel=[COMPLETAR_NIVEL],              % basico, intermedio, avanzado
+  procedencia="[COMPLETAR_ORIGEN]",     % "Examen UNI 2024", "Libro Álgebra 1", etc.
+  visibilidad=true,                     % true (visible) o false (oculto)
+  libros={[COMPLETAR_LIBROS]},          % {algebra_pre}, {calculo1, calculo_avanzado}
+  youtube_url="[COMPLETAR_URL]",        % URL del video explicativo (opcional)
+  mostrar_solucion=true,                % true (mostrar) o false (ocultar)
+  libro_promocion=""                    % Libro promocional (opcional)
+]
+% ========================================
+% ENUNCIADO DEL PROBLEMA
+% ========================================
+% 
+% Escribe aquí el enunciado del problema. Puedes usar:
+% - Fórmulas matemáticas: $x^2 + 3x + 1 = 0$
+% - Fórmulas display: $$\int_0^1 x^2 dx = \frac{1}{3}$$
+% - Texto en negrita: \textbf{Importante:}
+% - Texto en cursiva: \textit{Nota:}
+% - Listas: \begin{itemize} ... \end{itemize}
+% - Imágenes: \begin{figure}[h] ... \end{figure}
+
+[ESCRIBIR_ENUNCIADO_AQUI]
+
+% ========================================
+% IMAGENES (OPCIONAL)
+% ========================================
+% 
+% Si necesitas incluir una imagen, usa este formato:
+% 
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\textwidth]{imagenes/[NOMBRE_IMAGEN].png}
+% \caption{[DESCRIPCION_DE_LA_IMAGEN]}
+% \label{fig:[ETIQUETA]}
+% \end{figure}
+% 
+% NOTA: Guarda las imágenes en ejercicios/[MATERIA]/imagenes/
+
+% ========================================
+% DIAGRAMAS TIKZ (OPCIONAL)
+% ========================================
+% 
+% Para diagramas geométricos, puedes usar TikZ:
+% 
+% \begin{center}
+% \begin{tikzpicture}[scale=0.6]
+% \coordinate (A) at (0,0);
+% \coordinate (B) at (4,0);
+% \coordinate (C) at (2,3);
+% 
+% \draw[thick] (A) -- (B) -- (C) -- cycle;
+% \node[below] at (A) {$A$};
+% \node[below] at (B) {$B$};
+% \node[above] at (C) {$C$};
+% \end{tikzpicture}
+% \end{center}
+
+\begin{solucion}
+% ========================================
+% SOLUCIÓN DEL PROBLEMA
+% ========================================
+% 
+% Escribe aquí la solución paso a paso. Puedes usar:
+% - Numeración: 1), 2), 3)
+% - Listas: \begin{itemize} ... \end{itemize}
+% - Fórmulas: $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$
+% - Texto destacado: \textbf{Respuesta:}
+% - Notas: \textbf{Nota:}
+
+[ESCRIBIR_SOLUCION_AQUI]
+
+% ========================================
+% RESPUESTA FINAL
+% ========================================
+% 
+% Siempre incluye la respuesta final de manera clara:
+% 
+% \textbf{Respuesta:} [RESPUESTA_FINAL]
+
+% ========================================
+% NOTAS ADICIONALES (OPCIONAL)
+% ========================================
+% 
+% \textbf{Nota:} [EXPLICACION_ADICIONAL_O_CONSEJO]
+
+\end{solucion}
+\end{ejercicio}
+
+% ========================================
+% EJEMPLOS DE USO
+% ========================================
+
+% EJEMPLO 1: PROBLEMA BÁSICO DE ÁLGEBRA
+% ----------------------------------------
+% \begin{ejercicio}[
+%   id=ALG_EXP_006,
+%   materia=algebra,
+%   capitulo=exponentes,
+%   nivel=basico,
+%   procedencia="Examen UNI 2024",
+%   visibilidad=true,
+%   libros={algebra_pre},
+%   youtube_url="https://www.youtube.com/watch?v=ejemplo",
+%   mostrar_solucion=true,
+%   libro_promocion=""
+% ]
+% Calcula el valor de: $2^3 \cdot 2^4 \div 2^2$
+% 
+% \begin{solucion}
+% Aplicando las propiedades de exponentes:
+% 
+% 1) $2^3 \cdot 2^4 = 2^{3+4} = 2^7$
+% 2) $2^7 \div 2^2 = 2^{7-2} = 2^5 = 32$
+% 
+% \textbf{Respuesta:} 32
+% \end{solucion}
+% \end{ejercicio}
+
+% EJEMPLO 2: PROBLEMA CON IMAGEN
+% ----------------------------------------
+% \begin{ejercicio}[
+%   id=GEO_TRI_007,
+%   materia=geometria,
+%   capitulo=triangulos,
+%   nivel=intermedio,
+%   procedencia="Libro Geometría Avanzada",
+%   visibilidad=true,
+%   libros={geometria_avanzado},
+%   youtube_url="",
+%   mostrar_solucion=true,
+%   libro_promocion=""
+% ]
+% En el triángulo mostrado en la figura, determina el valor de $x$.
+% 
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\textwidth]{imagenes/triangulo_007.png}
+% \caption{Triángulo con ángulos marcados}
+% \label{fig:triangulo}
+% \end{figure}
+% 
+% \begin{solucion}
+% Por la propiedad de la suma de ángulos internos:
+% 
+% $x + 45° + 60° = 180°$
+% $x = 180° - 45° - 60° = 75°$
+% 
+% \textbf{Respuesta:} $x = 75°$
+% \end{solucion}
+% \end{ejercicio}
+
+% ========================================
+% COMANDOS ÚTILES
+% ========================================
+
+% MATEMÁTICAS:
+% ------------
+% Fracciones: $\frac{a}{b}$
+% Exponentes: $x^2$, $x^{n+1}$
+% Raíces: $\sqrt{x}$, $\sqrt[n]{x}$
+% Integrales: $\int_a^b f(x) dx$
+% Derivadas: $\frac{d}{dx}f(x)$
+% Límites: $\lim_{x \to a} f(x)$
+% Sumatorias: $\sum_{i=1}^n x_i$
+% Productorias: $\prod_{i=1}^n x_i$
+
+% GEOMETRÍA:
+% ----------
+% Ángulos: $\angle ABC$
+% Triángulos: $\triangle ABC$
+% Paralelo: $\parallel$
+% Perpendicular: $\perp$
+% Congruente: $\cong$
+% Similar: $\sim$
+% Grados: $45^\circ$
+
+% FÍSICA:
+% --------
+% Velocidad: $v = \frac{d}{t}$
+% Aceleración: $a = \frac{v}{t}$
+% Fuerza: $F = ma$
+% Energía: $E = mc^2$
+% Presión: $P = \frac{F}{A}$
+% Densidad: $\rho = \frac{m}{V}$
+
+% FORMATO:
+% ---------
+% Negrita: \textbf{texto}
+% Cursiva: \textit{texto}
+% Subrayado: \underline{texto}
+% Tachado: \sout{texto}
+% Centrado: \begin{center} ... \end{center}
+
+% ========================================
+% ESTRUCTURA DE CARPETAS RECOMENDADA
+% ========================================
+%
+% ejercicios/
+% ├── algebra/
+% │   ├── exponentes_exp_001.tex
+% │   ├── exponentes_exp_002.tex
+% │   ├── polinomios_pol_001.tex
+% │   └── imagenes/
+% │       └── grafico_polinomio_001.png
+% ├── calculo/
+% │   ├── derivadas_der_001.tex
+% │   ├── integrales_int_001.tex
+% │   └── imagenes/
+% │       └── grafico_funcion_001.png
+% ├── fisica/
+% │   ├── cinematica_cin_001.tex
+% │   ├── dinamica_din_001.tex
+% │   └── imagenes/
+% │       └── diagrama_fuerzas_001.png
+% └── geometria/
+%     ├── triangulos_tri_001.tex
+%     ├── circunferencia_cir_001.tex
+%     └── imagenes/
+%         └── figura_geometrica_001.png 

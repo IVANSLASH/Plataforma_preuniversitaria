@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Formularios - Plataforma Preuniversitaria{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card ejercicio-card">
+                <div class="card-body text-center">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-download"></i> Formularios Descargables
+                    </h1>
+                    <p class="lead mb-0">
+                        Descarga formularios PDF con todas las propiedades y fórmulas organizadas por materia y capítulo
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formularios por materia -->
+    {% for materia, capitulos in formularios.formularios.items() %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="fas fa-graduation-cap"></i> 
+                        {{ materia|title }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for capitulo_id, formulario in capitulos.items() %}
+                        <div class="col-lg-6 col-md-12 mb-3">
+                            <div class="card h-100 formulario-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-file-pdf text-danger"></i> 
+                                            {{ formulario.titulo }}
+                                        </h5>
+                                        <span class="badge bg-secondary">{{ formulario.tamaño }}</span>
+                                    </div>
+                                    
+                                    <p class="card-text">{{ formulario.descripcion }}</p>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Contenido:</strong>
+                                        <ul class="list-unstyled">
+                                            {% for item in formulario.contenido[:3] %}
+                                            <li><i class="fas fa-check text-success"></i> {{ item }}</li>
+                                            {% endfor %}
+                                            {% if formulario.contenido|length > 3 %}
+                                            <li><i class="fas fa-ellipsis-h text-muted"></i> Y más...</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="formulario-info">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i> {{ formulario.fecha_actualizacion }}<br>
+                                                <i class="fas fa-code-branch"></i> v{{ formulario.version }}
+                                            </small>
+                                        </div>
+                                        <a href="/descargar/{{ materia }}/{{ capitulo_id }}" class="btn btn-success">
+                                            <i class="fas fa-download"></i> Descargar
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Formularios completos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-book"></i> Formularios Completos</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for id, formulario in formularios.formularios_generales.items() %}
+                        <div class="col-lg-6 col-md-12 mb-3">
+                            <div class="card h-100 formulario-completo-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-book text-primary"></i> 
+                                            {{ formulario.titulo }}
+                                        </h5>
+                                        <span class="badge bg-warning">{{ formulario.tamaño }}</span>
+                                    </div>
+                                    
+                                    <p class="card-text">{{ formulario.descripcion }}</p>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Capítulos incluidos:</strong>
+                                        <div class="row">
+                                            {% for capitulo in formulario.capitulos_incluidos %}
+                                            <div class="col-md-6">
+                                                <small><i class="fas fa-chapter text-info"></i> {{ capitulo }}</small>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="formulario-info">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i> {{ formulario.fecha_actualizacion }}<br>
+                                                <i class="fas fa-code-branch"></i> v{{ formulario.version }}
+                                            </small>
+                                        </div>
+                                        <a href="/descargar/{{ id }}" class="btn btn-primary">
+                                            <i class="fas fa-download"></i> Descargar Completo
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> Información de Descarga</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                                <h6>Formato PDF</h6>
+                                <p class="text-muted">Todos los formularios están en formato PDF para fácil impresión</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                                <h6>Compatible</h6>
+                                <p class="text-muted">Funciona en cualquier dispositivo y sistema operativo</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-sync fa-3x text-success mb-3"></i>
+                                <h6>Actualizado</h6>
+                                <p class="text-muted">Contenido actualizado regularmente con las últimas versiones</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación rápida -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-compass"></i> Navegación Rápida</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="/teoria" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-book-open"></i> Ver Teoría
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-list"></i> Ejercicios
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/estadisticas" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-pie"></i> Estadísticas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Animación de entrada para las tarjetas
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.formulario-card, .formulario-completo-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 150);
+    });
+});
+</script>
+{% endblock %} 

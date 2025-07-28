@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio Interactivo - Plataforma Preuniversitaria</title>
+    
+    <!-- MathJax para renderizado de matemáticas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Configuración de MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .ejercicio-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #007bff;
+        }
+        
+        .ejercicio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .ejercicio-id {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .ejercicio-metadata {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .metadata-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .tag-materia {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .tag-nivel {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .tag-capitulo {
+            background-color: #e8f5e8;
+            color: #388e3c;
+        }
+        
+        .tag-libro {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .ejercicio-enunciado {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        
+        .ejercicio-enunciado h3 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .solucion-toggle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .solucion-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .solucion-toggle:active {
+            transform: translateY(0);
+        }
+        
+        .solucion-container {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .solucion-container.show {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .solucion-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .solucion-icon {
+            width: 24px;
+            height: 24px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .solucion-content {
+            color: #2c3e50;
+            line-height: 1.7;
+        }
+        
+        .solucion-content h4 {
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .ejercicio-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .procedencia {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .acciones {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-accion {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            background-color: white;
+            color: #495057;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-accion:hover {
+            background-color: #f8f9fa;
+            border-color: #adb5bd;
+        }
+        
+        .btn-accion.primary {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .btn-accion.primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .ejercicio-card {
+                padding: 20px;
+            }
+            
+            .ejercicio-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .ejercicio-metadata {
+                justify-content: flex-start;
+            }
+            
+            .ejercicio-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        /* Estilos para MathJax */
+        .MathJax {
+            font-size: 1.1em !important;
+        }
+        
+        .MathJax_Display {
+            margin: 1em 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Ejemplo de ejercicio cargado dinámicamente -->
+        <div class="ejercicio-card" id="ejercicio-container">
+            <div class="ejercicio-header">
+                <div class="ejercicio-id" id="ejercicio-id">ALG_EXP_001</div>
+                <div class="ejercicio-metadata" id="ejercicio-metadata">
+                    <span class="metadata-tag tag-materia" id="tag-materia">Álgebra</span>
+                    <span class="metadata-tag tag-nivel" id="tag-nivel">Básico</span>
+                    <span class="metadata-tag tag-capitulo" id="tag-capitulo">Exponentes</span>
+                    <span class="metadata-tag tag-libro" id="tag-libro">Álgebra Pre</span>
+                </div>
+            </div>
+            
+            <div class="ejercicio-enunciado" id="ejercicio-enunciado">
+                <h3>Calcula el valor de la siguiente expresión:</h3>
+                <p>$$2^3 \cdot 2^4 \div 2^2$$</p>
+            </div>
+            
+            <button class="solucion-toggle" id="solucion-toggle" onclick="toggleSolucion()">
+                <span id="toggle-text">Mostrar Solución</span>
+            </button>
+            
+            <div class="solucion-container" id="solucion-container">
+                <div class="solucion-header">
+                    <div class="solucion-icon">✓</div>
+                    <h4>Solución Detallada</h4>
+                </div>
+                <div class="solucion-content" id="solucion-content">
+                    <p>Para resolver esta expresión, aplicamos las propiedades de los exponentes:</p>
+                    <ol>
+                        <li><strong>Producto de potencias de igual base</strong>: $a^m \cdot a^n = a^{m+n}$</li>
+                        <li><strong>Cociente de potencias de igual base</strong>: $a^m \div a^n = a^{m-n}$</li>
+                    </ol>
+                    <p>Aplicando estas propiedades:</p>
+                    <p>$$2^3 \cdot 2^4 \div 2^2 = 2^{3+4} \div 2^2 = 2^7 \div 2^2 = 2^{7-2} = 2^5 = 32$$</p>
+                    <p><strong>Respuesta:</strong> 32</p>
+                </div>
+            </div>
+            
+            <div class="ejercicio-footer">
+                <div class="procedencia" id="procedencia">
+                    Procedencia: Examen UNI 2022
+                </div>
+                <div class="acciones">
+                    <button class="btn-accion" onclick="marcarFavorito()">
+                        ⭐ Favorito
+                    </button>
+                    <button class="btn-accion" onclick="compartirEjercicio()">
+                        📤 Compartir
+                    </button>
+                    <button class="btn-accion primary" onclick="siguienteEjercicio()">
+                        Siguiente →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos del ejercicio (normalmente vendrían de una API)
+        const ejercicioData = {
+            id: "ALG_EXP_001",
+            materia: "algebra",
+            capitulo: "exponentes",
+            nivel: "basico",
+            procedencia: "Examen UNI 2022",
+            visibilidad: true,
+            libros: ["algebra_pre", "algebra_basica"],
+            enunciado: "Calcula el valor de la siguiente expresión:\n\n$$2^3 \\cdot 2^4 \\div 2^2$$",
+            solucion: "Para resolver esta expresión, aplicamos las propiedades de los exponentes:\n\n1) **Producto de potencias de igual base**: $a^m \\cdot a^n = a^{m+n}$\n2) **Cociente de potencias de igual base**: $a^m \\div a^n = a^{m-n}$\n\nAplicando estas propiedades:\n\n$$2^3 \\cdot 2^4 \\div 2^2 = 2^{3+4} \\div 2^2 = 2^7 \\div 2^2 = 2^{7-2} = 2^5 = 32$$\n\n**Respuesta:** 32"
+        };
+
+        // Función para cargar ejercicio desde JSON
+        function cargarEjercicio(ejercicio) {
+            document.getElementById('ejercicio-id').textContent = ejercicio.id;
+            document.getElementById('tag-materia').textContent = ejercicio.materia.charAt(0).toUpperCase() + ejercicio.materia.slice(1);
+            document.getElementById('tag-nivel').textContent = ejercicio.nivel.charAt(0).toUpperCase() + ejercicio.nivel.slice(1);
+            document.getElementById('tag-capitulo').textContent = ejercicio.capitulo.charAt(0).toUpperCase() + ejercicio.capitulo.slice(1);
+            document.getElementById('tag-libro').textContent = ejercicio.libros[0] ? ejercicio.libros[0].replace('_', ' ').toUpperCase() : 'Sin libro';
+            document.getElementById('ejercicio-enunciado').innerHTML = ejercicio.enunciado.replace(/\n/g, '<br>');
+            document.getElementById('solucion-content').innerHTML = ejercicio.solucion.replace(/\n/g, '<br>');
+            document.getElementById('procedencia').textContent = `Procedencia: ${ejercicio.procedencia}`;
+            
+            // Reprocesar MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // Función para mostrar/ocultar solución
+        function toggleSolucion() {
+            const container = document.getElementById('solucion-container');
+            const toggleText = document.getElementById('toggle-text');
+            const button = document.getElementById('solucion-toggle');
+            
+            if (container.classList.contains('show')) {
+                container.classList.remove('show');
+                toggleText.textContent = 'Mostrar Solución';
+                button.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            } else {
+                container.classList.add('show');
+                toggleText.textContent = 'Ocultar Solución';
+                button.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+            }
+        }
+
+        // Función para marcar como favorito
+        function marcarFavorito() {
+            const button = event.target;
+            if (button.textContent.includes('Favorito')) {
+                button.textContent = '❤️ Favorito';
+                button.style.color = '#dc3545';
+                // Aquí se guardaría en localStorage o se enviaría a la API
+            } else {
+                button.textContent = '⭐ Favorito';
+                button.style.color = '#495057';
+            }
+        }
+
+        // Función para compartir ejercicio
+        function compartirEjercicio() {
+            const ejercicioId = document.getElementById('ejercicio-id').textContent;
+            const url = `${window.location.origin}/ejercicio/${ejercicioId}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: `Ejercicio ${ejercicioId} - Plataforma Preuniversitaria`,
+                    text: 'Mira este ejercicio de matemáticas',
+                    url: url
+                });
+            } else {
+                // Fallback: copiar al portapapeles
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Enlace copiado al portapapeles');
+                });
+            }
+        }
+
+        // Función para siguiente ejercicio
+        function siguienteEjercicio() {
+            // Aquí se cargaría el siguiente ejercicio desde la API
+            alert('Cargando siguiente ejercicio...');
+        }
+
+        // Cargar ejercicio al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEjercicio(ejercicioData);
+        });
+
+        // Función para cargar ejercicio desde API
+        async function cargarEjercicioDesdeAPI(ejercicioId) {
+            try {
+                const response = await fetch(`/api/ejercicios/${ejercicioId}`);
+                const ejercicio = await response.json();
+                cargarEjercicio(ejercicio);
+            } catch (error) {
+                console.error('Error cargando ejercicio:', error);
+            }
+        }
+
+        // Función para filtrar ejercicios
+        async function filtrarEjercicios(filtros) {
+            try {
+                const queryParams = new URLSearchParams(filtros);
+                const response = await fetch(`/api/ejercicios?${queryParams}`);
+                const ejercicios = await response.json();
+                return ejercicios;
+            } catch (error) {
+                console.error('Error filtrando ejercicios:', error);
+                return [];
+            }
+        }
+    </script>
+</body>
+</html> 

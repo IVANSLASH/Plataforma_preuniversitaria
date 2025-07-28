@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ejercicio.id }} - Detalle{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('index') }}">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('index', materia=ejercicio.materia) }}">
+                {{ ejercicio.materia|title }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ url_for('index', capitulo=ejercicio.capitulo) }}">
+                {{ ejercicio.capitulo|title }}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ ejercicio.id }}</li>
+    </ol>
+</nav>
+
+<!-- Header del ejercicio -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card ejercicio-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5 mb-2">
+                            <i class="fas fa-calculator"></i> {{ ejercicio.id }}
+                        </h1>
+                        <p class="lead mb-0">{{ ejercicio.procedencia }}</p>
+                    </div>
+                                            <div class="col-md-4 text-md-end">
+                            <div class="mb-2">
+                                <span class="badge badge-nivel badge-{{ ejercicio.nivel }} fs-6">
+                                    {{ ejercicio.nivel|title }}
+                                </span>
+                            </div>
+                            <div class="text-white-50">
+                                <small>
+                                    <i class="fas fa-book"></i> {{ ejercicio.materia|title }}<br>
+                                    <i class="fas fa-chapter"></i> {{ ejercicio.capitulo|title }}
+                                </small>
+                            </div>
+                            {% if ejercicio.youtube_url %}
+                            <div class="mt-3">
+                                <a href="{{ ejercicio.youtube_url }}" target="_blank" class="btn btn-danger btn-sm">
+                                    <i class="fab fa-youtube"></i> Ver Video Explicativo
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido del ejercicio -->
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Enunciado -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3><i class="fas fa-question-circle"></i> Enunciado</h3>
+            </div>
+            <div class="card-body">
+                <div class="enunciado" style="font-size: 1.1em; line-height: 1.6;">
+                    {{ ejercicio.enunciado|safe }}
+                    
+                    <!-- Imágenes del enunciado -->
+                    {% if ejercicio.imagenes %}
+                        {% for imagen in ejercicio.imagenes %}
+                            {% if imagen.posicion == 'enunciado' %}
+                                <div class="imagen-ejercicio mt-3 mb-3">
+                                    <img src="{{ url_for('static', filename='ejercicios/' + imagen.archivo) }}" 
+                                         class="img-fluid rounded shadow" 
+                                         alt="{{ imagen.alt }}"
+                                         title="{{ imagen.descripcion }}">
+                                    {% if imagen.descripcion %}
+                                        <div class="text-center mt-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-image"></i> {{ imagen.descripcion }}
+                                            </small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Solución -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-lightbulb"></i> Solución</h3>
+            </div>
+            <div class="card-body">
+                {% if ejercicio.mostrar_solucion %}
+                    <div class="solucion" style="font-size: 1.1em; line-height: 1.6;">
+                        {{ ejercicio.solucion|safe }}
+                        
+                        <!-- Imágenes de la solución -->
+                        {% if ejercicio.imagenes %}
+                            {% for imagen in ejercicio.imagenes %}
+                                {% if imagen.posicion == 'solucion' %}
+                                    <div class="imagen-solucion mt-3 mb-3">
+                                        <img src="{{ url_for('static', filename='ejercicios/' + imagen.archivo) }}" 
+                                             class="img-fluid rounded shadow" 
+                                             alt="{{ imagen.alt }}"
+                                             title="{{ imagen.descripcion }}">
+                                        {% if imagen.descripcion %}
+                                            <div class="text-center mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-image"></i> {{ imagen.descripcion }}
+                                                </small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="solucion-oculta text-center p-4">
+                        <i class="fas fa-lock fa-3x text-warning mb-3"></i>
+                        <h4 class="text-warning">Solución Exclusiva</h4>
+                        <p class="lead">
+                            Descubre la solución completa de este problema comprando el libro:
+                        </p>
+                        <div class="libro-promocion mb-3">
+                            <h5 class="text-primary">{{ ejercicio.libro_promocion }}</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="/libros" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-shopping-cart"></i> Comprar Libro
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/teoria/{{ ejercicio.materia }}/{{ ejercicio.capitulo }}" class="btn btn-outline-primary btn-lg w-100">
+                                    <i class="fas fa-book-open"></i> Ver Teoría Relacionada
+                                </a>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Este problema de nivel {{ ejercicio.nivel }} incluye técnicas avanzadas 
+                                explicadas paso a paso en el libro.
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Información del ejercicio -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <strong><i class="fas fa-hashtag"></i> ID:</strong>
+                        <span class="badge bg-primary">{{ ejercicio.id }}</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong><i class="fas fa-book"></i> Materia:</strong>
+                        <span class="badge bg-secondary">{{ ejercicio.materia|title }}</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong><i class="fas fa-chapter"></i> Capítulo:</strong>
+                        <span class="badge bg-info">{{ ejercicio.capitulo|title }}</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong><i class="fas fa-signal"></i> Nivel:</strong>
+                        <span class="badge badge-nivel badge-{{ ejercicio.nivel }}">
+                            {{ ejercicio.nivel|title }}
+                        </span>
+                    </li>
+                    <li class="mb-2">
+                        <strong><i class="fas fa-tag"></i> Procedencia:</strong>
+                        <br><span class="text-muted">{{ ejercicio.procedencia }}</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong><i class="fas fa-eye"></i> Visibilidad:</strong>
+                        {% if ejercicio.visibilidad %}
+                        <span class="badge bg-success">Público</span>
+                        {% else %}
+                        <span class="badge bg-warning">Privado</span>
+                        {% endif %}
+                    </li>
+                    <li class="mb-2">
+                        <strong><i class="fas fa-file-alt"></i> Archivo:</strong>
+                        <br><small class="text-muted">{{ ejercicio.archivo_origen.split('\\')[-1] }}</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Libros relacionados -->
+        {% if ejercicio.libros %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-book-open"></i> Libros Relacionados</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for libro in ejercicio.libros.split(',') %}
+                    <li class="mb-1">
+                        <i class="fas fa-book"></i> {{ libro.strip() }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Navegación -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-compass"></i> Navegación</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> Volver al Inicio
+                    </a>
+                    <a href="{{ url_for('index', materia=ejercicio.materia) }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-book"></i> Ver {{ ejercicio.materia|title }}
+                    </a>
+                    <a href="{{ url_for('index', nivel=ejercicio.nivel) }}" class="btn btn-outline-info">
+                        <i class="fas fa-signal"></i> Ver {{ ejercicio.nivel|title }}
+                    </a>
+                    <a href="{{ url_for('estadisticas') }}" class="btn btn-outline-success">
+                        <i class="fas fa-chart-bar"></i> Estadísticas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ejercicios relacionados -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-link"></i> Ejercicios Relacionados</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-calculator"></i> Mismo Capítulo
+                                </h6>
+                                <p class="card-text">
+                                    Ejercicios de {{ ejercicio.capitulo|title }}
+                                </p>
+                                <a href="{{ url_for('index', capitulo=ejercicio.capitulo) }}" 
+                                   class="btn btn-primary btn-sm">
+                                    Ver Ejercicios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-signal"></i> Mismo Nivel
+                                </h6>
+                                <p class="card-text">
+                                    Ejercicios de nivel {{ ejercicio.nivel|title }}
+                                </p>
+                                <a href="{{ url_for('index', nivel=ejercicio.nivel) }}" 
+                                   class="btn btn-primary btn-sm">
+                                    Ver Ejercicios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-book"></i> Misma Materia
+                                </h6>
+                                <p class="card-text">
+                                    Ejercicios de {{ ejercicio.materia|title }}
+                                </p>
+                                <a href="{{ url_for('index', materia=ejercicio.materia) }}" 
+                                   class="btn btn-primary btn-sm">
+                                    Ver Ejercicios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Animación de entrada
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 150);
+    });
+    
+    // Reprocesar MathJax después de las animaciones
+    setTimeout(() => {
+        reprocessMathJax();
+    }, 2000);
+});
+
+// Copiar ID del ejercicio al portapapeles
+function copiarId() {
+    navigator.clipboard.writeText('{{ ejercicio.id }}').then(function() {
+        // Mostrar notificación
+        const toast = document.createElement('div');
+        toast.className = 'position-fixed bottom-0 end-0 p-3';
+        toast.style.zIndex = '11';
+        toast.innerHTML = `
+            <div class="toast show" role="alert">
+                <div class="toast-header">
+                    <strong class="me-auto">Copiado</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                    ID del ejercicio copiado al portapapeles
+                </div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 3000);
+    });
+}
+</script>
+{% endblock %} 

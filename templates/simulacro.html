@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}Simulacro de Examen - Plataforma Preuniversitaria{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card ejercicio-card">
+                <div class="card-body text-center">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-clipboard-check"></i> Simulacro de Examen
+                    </h1>
+                    <p class="lead mb-0">
+                        Genera exámenes personalizados con ejercicios aleatorios según tus preferencias
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuración del simulacro -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-cog"></i> Configuración del Simulacro</h4>
+                </div>
+                <div class="card-body">
+                    <form id="simulacroForm">
+                        <!-- Número de preguntas -->
+                        <div class="mb-4">
+                            <label for="numPreguntas" class="form-label">
+                                <strong><i class="fas fa-list-ol"></i> Número de Preguntas</strong>
+                            </label>
+                            <select class="form-select" id="numPreguntas" name="numPreguntas" required>
+                                <option value="5">5 preguntas</option>
+                                <option value="7">7 preguntas</option>
+                                <option value="8">8 preguntas</option>
+                                <option value="10" selected>10 preguntas</option>
+                                <option value="12">12 preguntas</option>
+                                <option value="15">15 preguntas</option>
+                                <option value="20">20 preguntas (máximo)</option>
+                            </select>
+                        </div>
+
+                        <!-- Nivel de complejidad -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <strong><i class="fas fa-signal"></i> Nivel de Complejidad (Selecciona múltiples)</strong>
+                            </label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="todosNiveles" checked>
+                                <label class="form-check-label" for="todosNiveles">
+                                    Todos los niveles
+                                </label>
+                            </div>
+                            {% for nivel, count in metadatos.niveles.items() %}
+                            <div class="form-check">
+                                <input class="form-check-input nivel-checkbox" type="checkbox" id="nivel{{ nivel }}" value="{{ nivel }}">
+                                <label class="form-check-label" for="nivel{{ nivel }}">
+                                    {{ nivel|title }} ({{ count }} ejercicios disponibles)
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Materia -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <strong><i class="fas fa-book"></i> Materia (Selecciona solo una)</strong>
+                            </label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="materia" id="todasMaterias" value="" checked>
+                                <label class="form-check-label" for="todasMaterias">
+                                    Todas las materias
+                                </label>
+                            </div>
+                            {% for materia, count in metadatos.materias.items() %}
+                            <div class="form-check">
+                                <input class="form-check-input materia-radio" type="radio" name="materia" id="materia{{ materia }}" value="{{ materia }}">
+                                <label class="form-check-label" for="materia{{ materia }}">
+                                    {{ materia|title }} ({{ count }} ejercicios disponibles)
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Capítulos -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <strong><i class="fas fa-chapter"></i> Capítulos</strong>
+                            </label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="todosCapitulos" checked>
+                                <label class="form-check-label" for="todosCapitulos">
+                                    Todos los capítulos
+                                </label>
+                            </div>
+                            <div id="capitulosContainer">
+                                {% for capitulo, count in metadatos.capitulos.items() %}
+                                <div class="form-check">
+                                    <input class="form-check-input capitulo-checkbox" type="checkbox" id="capitulo{{ capitulo }}" value="{{ capitulo }}">
+                                    <label class="form-check-label" for="capitulo{{ capitulo }}">
+                                        {{ capitulo|title }} ({{ count }} ejercicios disponibles)
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Botón generar -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-magic"></i> Generar Simulacro
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar con información -->
+        <div class="col-lg-4">
+            <!-- Estadísticas -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-primary">{{ metadatos.total_ejercicios }}</h4>
+                                <small class="text-muted">Total Ejercicios</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-success">{{ metadatos.materias|length }}</h4>
+                                <small class="text-muted">Materias</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center mt-3">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-info">{{ metadatos.capitulos|length }}</h4>
+                                <small class="text-muted">Capítulos</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-warning">{{ metadatos.niveles|length }}</h4>
+                                <small class="text-muted">Niveles</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> Información</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> Máximo 20 preguntas
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> Selecciona una materia
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> Capítulos específicos
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> Múltiples niveles
+                        </li>
+                    </ul>
+                    <div class="d-grid gap-2">
+                        <a href="/" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Volver al Inicio
+                        </a>
+                        <a href="/teoria" class="btn btn-outline-info">
+                            <i class="fas fa-book-open"></i> Teoría
+                        </a>
+                        <a href="/formularios" class="btn btn-outline-success">
+                            <i class="fas fa-download"></i> Formularios
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultado del simulacro (se mostrará dinámicamente) -->
+    <div id="resultadoSimulacro" class="row mt-4" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-clipboard-list"></i> Simulacro Generado</h4>
+                </div>
+                <div class="card-body">
+                    <div id="simulacroContent">
+                        <!-- El contenido del simulacro se cargará aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mapeo de materias a capítulos
+const materiasCapitulos = {
+    'algebra': ['exponentes'],
+    'calculo': ['limites', 'funciones'],
+    'geometria': ['circunferencia', 'triangulos'],
+    'fisica': ['movimiento']
+};
+
+// Manejo de selección de materia
+document.querySelectorAll('.materia-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        actualizarCapitulos(this.value);
+    });
+});
+
+// Manejo de "todas las materias"
+document.getElementById('todasMaterias').addEventListener('change', function() {
+    if (this.checked) {
+        actualizarCapitulos('');
+    }
+});
+
+// Función para actualizar capítulos según la materia seleccionada
+function actualizarCapitulos(materia) {
+    const container = document.getElementById('capitulosContainer');
+    const todosCapitulos = document.getElementById('todosCapitulos');
+    
+    if (!materia) {
+        // Mostrar todos los capítulos
+        container.innerHTML = '';
+        const capitulosData = {{ metadatos.capitulos|tojson }};
+        for (const capitulo in capitulosData) {
+            const count = capitulosData[capitulo];
+            container.innerHTML += `
+                <div class="form-check">
+                    <input class="form-check-input capitulo-checkbox" type="checkbox" id="capitulo${capitulo}" value="${capitulo}">
+                    <label class="form-check-label" for="capitulo${capitulo}">
+                        ${capitulo.charAt(0).toUpperCase() + capitulo.slice(1)} (${count} ejercicios disponibles)
+                    </label>
+                </div>
+            `;
+        }
+    } else {
+        // Mostrar solo capítulos de la materia seleccionada
+        container.innerHTML = '';
+        const capitulos = materiasCapitulos[materia] || [];
+        const capitulosData = {{ metadatos.capitulos|tojson }};
+        capitulos.forEach(capitulo => {
+            const count = capitulosData[capitulo] || 0;
+            container.innerHTML += `
+                <div class="form-check">
+                    <input class="form-check-input capitulo-checkbox" type="checkbox" id="capitulo${capitulo}" value="${capitulo}">
+                    <label class="form-check-label" for="capitulo${capitulo}">
+                        ${capitulo.charAt(0).toUpperCase() + capitulo.slice(1)} (${count} ejercicios disponibles)
+                    </label>
+                </div>
+            `;
+        });
+    }
+    
+    // Reinicializar el evento de "todos los capítulos"
+    todosCapitulos.checked = true;
+    actualizarCapitulosCheckboxes();
+}
+
+// Manejo de "todos los capítulos"
+document.getElementById('todosCapitulos').addEventListener('change', function() {
+    actualizarCapitulosCheckboxes();
+});
+
+function actualizarCapitulosCheckboxes() {
+    const todosCapitulos = document.getElementById('todosCapitulos');
+    const capitulosCheckboxes = document.querySelectorAll('.capitulo-checkbox');
+    capitulosCheckboxes.forEach(checkbox => {
+        checkbox.checked = todosCapitulos.checked;
+        checkbox.disabled = todosCapitulos.checked;
+    });
+}
+
+// Manejo de "todos los niveles"
+document.getElementById('todosNiveles').addEventListener('change', function() {
+    actualizarNivelesCheckboxes();
+});
+
+function actualizarNivelesCheckboxes() {
+    const todosNiveles = document.getElementById('todosNiveles');
+    const nivelesCheckboxes = document.querySelectorAll('.nivel-checkbox');
+    nivelesCheckboxes.forEach(checkbox => {
+        checkbox.checked = todosNiveles.checked;
+        checkbox.disabled = todosNiveles.checked;
+    });
+}
+
+// Manejo del formulario
+document.getElementById('simulacroForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Mostrar loading
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+    submitBtn.disabled = true;
+    
+    // Recopilar datos del formulario
+    const materiaSeleccionada = document.querySelector('input[name="materia"]:checked').value;
+    const formData = {
+        num_preguntas: parseInt(document.getElementById('numPreguntas').value),
+        niveles: Array.from(document.querySelectorAll('.nivel-checkbox:checked')).map(cb => cb.value),
+        materias: materiaSeleccionada ? [materiaSeleccionada] : [],
+        capitulos: Array.from(document.querySelectorAll('.capitulo-checkbox:checked')).map(cb => cb.value)
+    };
+    
+    // Enviar solicitud al servidor
+    fetch('/generar_simulacro', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.error || 'Error del servidor');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        mostrarSimulacro(data);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+function mostrarSimulacro(data) {
+    const resultadoDiv = document.getElementById('resultadoSimulacro');
+    const contentDiv = document.getElementById('simulacroContent');
+    
+    // Generar HTML del simulacro
+    let html = `
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <h5><i class="fas fa-info-circle"></i> Configuración</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Preguntas:</strong> ${data.configuracion.num_preguntas}</li>
+                    <li><strong>Niveles:</strong> ${data.configuracion.niveles.length > 0 ? data.configuracion.niveles.join(', ') : 'Todos'}</li>
+                    <li><strong>Materias:</strong> ${data.configuracion.materias.length > 0 ? data.configuracion.materias.join(', ') : 'Todas'}</li>
+                    <li><strong>Capítulos:</strong> ${data.configuracion.capitulos.length > 0 ? data.configuracion.capitulos.join(', ') : 'Todos'}</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5><i class="fas fa-chart-bar"></i> Estadísticas</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Total generado:</strong> ${data.total} ejercicios</li>
+                    <li><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</li>
+                    <li><strong>Hora:</strong> ${new Date().toLocaleTimeString()}</li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="mb-3">
+            <button class="btn btn-success me-2" onclick="mostrarRespuestas()">
+                <i class="fas fa-eye"></i> Ver Respuestas
+            </button>
+            <button class="btn btn-primary" onclick="ocultarRespuestas()">
+                <i class="fas fa-eye-slash"></i> Ocultar Respuestas
+            </button>
+        </div>
+    `;
+    
+    // Agregar ejercicios
+    data.ejercicios.forEach((ejercicio, index) => {
+        html += `
+            <div class="pregunta-item mb-4 p-3 border rounded">
+                <h5>Pregunta ${index + 1}</h5>
+                <div class="mb-2">
+                    <small class="text-muted">
+                        <i class="fas fa-tag"></i> ${ejercicio.id} |
+                        <i class="fas fa-book"></i> ${ejercicio.materia} |
+                        <i class="fas fa-signal"></i> ${ejercicio.nivel}
+                    </small>
+                </div>
+                <div class="enunciado">
+                    ${ejercicio.enunciado}
+                </div>
+                <div class="respuesta-pregunta" style="display: none;">
+                    <hr>
+                    <h6><i class="fas fa-lightbulb"></i> Solución:</h6>
+                    <div class="solucion">
+                        ${ejercicio.solucion}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    contentDiv.innerHTML = html;
+    resultadoDiv.style.display = 'block';
+    
+    // Scroll hacia el resultado
+    resultadoDiv.scrollIntoView({ behavior: 'smooth' });
+    
+    // Reprocesar MathJax
+    if (typeof MathJax !== 'undefined') {
+        MathJax.typeset();
+    }
+}
+
+function mostrarRespuestas() {
+    document.querySelectorAll('.respuesta-pregunta').forEach(respuesta => {
+        respuesta.style.display = 'block';
+    });
+}
+
+function ocultarRespuestas() {
+    document.querySelectorAll('.respuesta-pregunta').forEach(respuesta => {
+        respuesta.style.display = 'none';
+    });
+}
+
+// Inicializar capítulos al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarCapitulos('');
+});
+</script>
+{% endblock %} 

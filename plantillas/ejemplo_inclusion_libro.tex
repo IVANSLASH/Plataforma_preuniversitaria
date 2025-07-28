@@ -1,0 +1,36 @@
+% Ejemplo de cómo incluir ejercicios con imágenes en el libro principal
+% Archivo: libros/algebra_pre.tex
+
+\documentclass[12pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{float}
+
+% Configuración de geometría
+\geometry{margin=2.5cm}
+
+% Configuración de gráficos
+\graphicspath{{../ejercicios/}}
+
+\begin{document}
+
+\chapter{Álgebra}
+
+\section{Ejercicios Resueltos}
+
+% Incluir ejercicio de física (ejemplo de imagen)
+\input{../ejercicios/fisica/fisica_mov_001.tex}
+
+% Incluir ejercicio de geometría (ejemplo de múltiples imágenes)
+\input{../ejercicios/geometria/geometria_circ_001.tex}
+
+\end{document}
+
+% Notas importantes:
+% 1. \graphicspath{{../ejercicios/}} permite que LaTeX encuentre las imágenes
+% 2. Las imágenes están en ejercicios/fisica/imagenes/ y ejercicios/geometria/imagenes/
+% 3. Los archivos .tex referencian las imágenes con rutas relativas
+% 4. Flask sirve las mismas imágenes desde static/ejercicios/ (enlace simbólico) 
