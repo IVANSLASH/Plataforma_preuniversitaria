@@ -1,0 +1,102 @@
+Te ayudo a analizar esta situación. Es una pregunta interesante sobre la implementación de un sistema de registro obligatorio basado en tiempo de uso. Vamos a explorar las posibilidades técnicas y las consideraciones que deberías tener en cuenta.
+
+Search files...
+Read file: app.py
+Read file: auth.py
+Read file: models.py
+Perfecto, ahora tengo una comprensión completa del sistema de autenticación actual. Te voy a analizar la situación y las posibilidades técnicas para implementar un registro obligatorio basado en tiempo de uso.
+
+## Análisis de la Situación Actual
+
+### ✅ **Lo que ya tienes implementado:**
+
+1. **Sistema de autenticación completo** con Flask-Login
+2. **Base de datos SQLite** con modelos de Usuario y SesionUsuario
+3. **Registro y login** tradicional y con Google OAuth
+4. **Sistema de sesiones** con tracking de IP y User-Agent
+5. **Middleware de autenticación** que puede proteger rutas
+
+### 🎯 **Posibilidades técnicas para registro obligatorio:**
+
+## **Opción 1: Tracking de Tiempo de Sesión (Recomendada)**
+
+**Cómo funcionaría:**
+- Crear un middleware que registre el tiempo de primera visita
+- Almacenar en sesión del navegador o en base de datos temporal
+- Después de 10 minutos, mostrar modal/redirect obligatorio
+
+**Ventajas:**
+- ✅ Fácil de implementar
+- ✅ No requiere cambios grandes en la arquitectura
+- ✅ Funciona con usuarios anónimos
+- ✅ Puedes personalizar el mensaje
+
+**Implementación técnica:**
+```python
+# Middleware para tracking de tiempo
+@app.before_request
+def check_session_time():
+    if not current_user.is_authenticated:
+        first_visit = session.get('first_visit_time')
+        if not first_visit:
+            session['first_visit_time'] = datetime.utcnow().timestamp()
+        elif (datetime.utcnow().timestamp() - first_visit) > 600:  # 10 minutos
+            # Forzar registro
+            return redirect(url_for('auth.register', forced=True))
+```
+
+## **Opción 2: Límite de Acceso por IP**
+
+**Cómo funcionaría:**
+- Registrar visitas por IP en base de datos temporal
+- Contar tiempo total de uso por IP
+- Bloquear acceso después del límite
+
+**Ventajas:**
+- ✅ Más robusto contra evasión
+- ✅ Funciona incluso si limpian cookies
+
+**Desventajas:**
+- ❌ Puede afectar a múltiples usuarios en la misma IP
+- ❌ Más complejo de implementar
+
+## **Opción 3: Sistema de "Freemium" con Límites**
+
+**Cómo funcionaría:**
+- Permitir acceso limitado sin registro (ej: 5 ejercicios)
+- Después del límite, requerir registro
+- Mostrar contador de ejercicios restantes
+
+**Ventajas:**
+- ✅ Más amigable al usuario
+- ✅ Da valor antes de pedir registro
+- ✅ Transparente sobre los límites
+
+## **Consideraciones Importantes:**
+
+### **Aspectos Legales y de UX:**
+1. **Transparencia**: Informar claramente sobre el límite de tiempo
+2. **Consentimiento**: Considerar aspectos de GDPR/privacidad
+3. **Experiencia de usuario**: No ser demasiado agresivo
+
+### **Aspectos Técnicos:**
+1. **Persistencia**: ¿Qué pasa si el usuario cierra y vuelve a abrir?
+2. **Múltiples pestañas**: ¿Cómo manejar sesiones simultáneas?
+3. **Dispositivos móviles**: ¿Cómo afecta el cambio de apps?
+
+### **Alternativas más suaves:**
+1. **Modal no intrusivo** después de 10 minutos
+2. **Banner persistente** que no bloquea el contenido
+3. **Descuento o beneficios** por registrarse
+4. **Contenido premium** solo para usuarios registrados
+
+## **Mi Recomendación:**
+
+Te sugiero implementar la **Opción 1** con estas mejoras:
+
+1. **Modal suave** en lugar de redirect forzado
+2. **Contador visible** del tiempo restante
+3. **Opción de "recordar más tarde"** (extender 5 minutos más)
+4. **Mensaje claro** sobre los beneficios del registro
+
+¿Te gustaría que profundice en alguna de estas opciones o prefieres que analicemos algún aspecto específico de la implementación?

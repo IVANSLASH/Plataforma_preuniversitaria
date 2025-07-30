@@ -77,7 +77,7 @@
                                     Todas las materias
                                 </label>
                             </div>
-                            {% for materia, count in metadatos.materias.items() %}
+                            {% for materia, count in metadatos.codigos_materia.items() %}
                             <div class="form-check">
                                 <input class="form-check-input materia-radio" type="radio" name="materia" id="materia{{ materia }}" value="{{ materia }}">
                                 <label class="form-check-label" for="materia{{ materia }}">
@@ -110,6 +110,27 @@
                             </div>
                         </div>
 
+                        <!-- Dificultad -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <strong><i class="fas fa-star"></i> Dificultad (Selecciona múltiples)</strong>
+                            </label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="todasDificultades" checked>
+                                <label class="form-check-label" for="todasDificultades">
+                                    Todas las dificultades
+                                </label>
+                            </div>
+                            {% for dificultad, count in metadatos.dificultades.items() %}
+                            <div class="form-check">
+                                <input class="form-check-input dificultad-checkbox" type="checkbox" id="dificultad{{ dificultad }}" value="{{ dificultad }}">
+                                <label class="form-check-label" for="dificultad{{ dificultad }}">
+                                    Dificultad {{ dificultad }} ({{ count }} ejercicios disponibles)
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
                         <!-- Botón generar -->
                         <div class="d-grid">
                             <button type="submit" class="btn btn-danger btn-lg">
@@ -138,7 +159,7 @@
                         </div>
                         <div class="col-6">
                             <div class="stat-item">
-                                <h4 class="text-success">{{ metadatos.materias|length }}</h4>
+                                <h4 class="text-success">{{ metadatos.codigos_materia|length }}</h4>
                                 <small class="text-muted">Materias</small>
                             </div>
                         </div>
@@ -216,13 +237,8 @@
 
 {% block extra_js %}
 <script>
-// Mapeo de materias a capítulos
-const materiasCapitulos = {
-    'algebra': ['exponentes'],
-    'calculo': ['limites', 'funciones'],
-    'geometria': ['circunferencia', 'triangulos'],
-    'fisica': ['movimiento']
-};
+// Mapeo dinámico de materias a capítulos (se actualiza desde el servidor)
+const materiasCapitulos = {{ metadatos.capitulos|tojson }};
 
 // Manejo de selección de materia
 document.querySelectorAll('.materia-radio').forEach(radio => {
@@ -259,12 +275,11 @@ function actualizarCapitulos(materia) {
             `;
         }
     } else {
-        // Mostrar solo capítulos de la materia seleccionada
+        // Mostrar todos los capítulos ya que no tenemos mapeo específico por materia
         container.innerHTML = '';
-        const capitulos = materiasCapitulos[materia] || [];
         const capitulosData = {{ metadatos.capitulos|tojson }};
-        capitulos.forEach(capitulo => {
-            const count = capitulosData[capitulo] || 0;
+        for (const capitulo in capitulosData) {
+            const count = capitulosData[capitulo];
             container.innerHTML += `
                 <div class="form-check">
                     <input class="form-check-input capitulo-checkbox" type="checkbox" id="capitulo${capitulo}" value="${capitulo}">
@@ -273,7 +288,7 @@ function actualizarCapitulos(materia) {
                     </label>
                 </div>
             `;
-        });
+        }
     }
     
     // Reinicializar el evento de "todos los capítulos"
@@ -309,6 +324,20 @@ function actualizarNivelesCheckboxes() {
     });
 }
 
+// Manejo de "todas las dificultades"
+document.getElementById('todasDificultades').addEventListener('change', function() {
+    actualizarDificultadesCheckboxes();
+});
+
+function actualizarDificultadesCheckboxes() {
+    const todasDificultades = document.getElementById('todasDificultades');
+    const dificultadesCheckboxes = document.querySelectorAll('.dificultad-checkbox');
+    dificultadesCheckboxes.forEach(checkbox => {
+        checkbox.checked = todasDificultades.checked;
+        checkbox.disabled = todasDificultades.checked;
+    });
+}
+
 // Manejo del formulario
 document.getElementById('simulacroForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -324,8 +353,9 @@ document.getElementById('simulacroForm').addEventListener('submit', function(e) 
     const formData = {
         num_preguntas: parseInt(document.getElementById('numPreguntas').value),
         niveles: Array.from(document.querySelectorAll('.nivel-checkbox:checked')).map(cb => cb.value),
-        materias: materiaSeleccionada ? [materiaSeleccionada] : [],
-        capitulos: Array.from(document.querySelectorAll('.capitulo-checkbox:checked')).map(cb => cb.value)
+        codigos_materia: materiaSeleccionada ? [materiaSeleccionada] : [],
+        capitulos: Array.from(document.querySelectorAll('.capitulo-checkbox:checked')).map(cb => cb.value),
+        dificultades: Array.from(document.querySelectorAll('.dificultad-checkbox:checked')).map(cb => cb.value)
     };
     
     // Enviar solicitud al servidor
@@ -369,8 +399,9 @@ function mostrarSimulacro(data) {
                 <ul class="list-unstyled">
                     <li><strong>Preguntas:</strong> ${data.configuracion.num_preguntas}</li>
                     <li><strong>Niveles:</strong> ${data.configuracion.niveles.length > 0 ? data.configuracion.niveles.join(', ') : 'Todos'}</li>
-                    <li><strong>Materias:</strong> ${data.configuracion.materias.length > 0 ? data.configuracion.materias.join(', ') : 'Todas'}</li>
+                    <li><strong>Materias:</strong> ${data.configuracion.codigos_materia.length > 0 ? data.configuracion.codigos_materia.join(', ') : 'Todas'}</li>
                     <li><strong>Capítulos:</strong> ${data.configuracion.capitulos.length > 0 ? data.configuracion.capitulos.join(', ') : 'Todos'}</li>
+                    <li><strong>Dificultades:</strong> ${data.configuracion.dificultades.length > 0 ? data.configuracion.dificultades.join(', ') : 'Todas'}</li>
                 </ul>
             </div>
             <div class="col-md-6">
@@ -403,7 +434,7 @@ function mostrarSimulacro(data) {
                 <div class="mb-2">
                     <small class="text-muted">
                         <i class="fas fa-tag"></i> ${ejercicio.id} |
-                        <i class="fas fa-book"></i> ${ejercicio.materia} |
+                        <i class="fas fa-book"></i> ${ejercicio.info_materia ? ejercicio.info_materia.nombre : ejercicio.codigo_materia} |
                         <i class="fas fa-signal"></i> ${ejercicio.nivel}
                     </small>
                 </div>

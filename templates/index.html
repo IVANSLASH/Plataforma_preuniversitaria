@@ -55,6 +55,39 @@
     </div>
 </div>
 
+<!-- Búsqueda Rápida -->
+<div class="busqueda-section mb-4">
+    <div class="card">
+        <div class="card-body">
+            <h3><i class="fas fa-search"></i> Búsqueda Rápida</h3>
+            <p class="text-muted mb-3">
+                Busca ejercicios por palabras clave. Ejemplos: "parcial", "umsa", "algebra", "primer parcial umsa"
+            </p>
+            <form method="GET" action="{{ url_for('index') }}" class="d-flex">
+                <input type="text" 
+                       class="form-control form-control-lg me-2" 
+                       name="busqueda" 
+                       value="{{ filtros_activos.busqueda or '' }}"
+                       placeholder="Buscar ejercicios... (ej: parcial umsa algebra)"
+                       id="campoBusqueda">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+            {% if filtros_activos.busqueda %}
+            <div class="mt-2">
+                <small class="text-muted">
+                    Búsqueda: "{{ filtros_activos.busqueda }}" - 
+                    <a href="{{ url_for('index') }}" class="text-decoration-none">
+                        <i class="fas fa-times"></i> Limpiar búsqueda
+                    </a>
+                </small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 <!-- Filtros -->
 <div class="filtros-section">
     <h3><i class="fas fa-filter"></i> Filtros Paso a Paso</h3>
@@ -119,12 +152,23 @@
     <div class="col-12">
         <h3>
             <i class="fas fa-list"></i> Ejercicios 
-            {% if filtros.materia or filtros.nivel or filtros.capitulo %}
-            <small class="text-muted">(Filtrados)</small>
+            {% if filtros.materia or filtros.nivel or filtros.capitulo or filtros_activos.busqueda %}
+            <small class="text-muted">
+                {% if filtros_activos.busqueda %}
+                    (Búsqueda: "{{ filtros_activos.busqueda }}")
+                {% else %}
+                    (Filtrados)
+                {% endif %}
+            </small>
             {% endif %}
         </h3>
         <p class="text-muted">
             Mostrando {{ ejercicios_filtrados|length }} de {{ metadatos.total_ejercicios }} ejercicios
+            {% if filtros_activos.busqueda %}
+                <span class="badge bg-info ms-2">
+                    <i class="fas fa-search"></i> Búsqueda activa
+                </span>
+            {% endif %}
         </p>
     </div>
 </div>
@@ -394,6 +438,159 @@ document.addEventListener('DOMContentLoaded', function() {
             reprocessMathJax();
         }
     }, 1500);
+    
+    // ============================================
+    // BÚSQUEDA EN TIEMPO REAL
+    // ============================================
+    
+    const campoBusqueda = document.getElementById('campoBusqueda');
+    let timeoutBusqueda = null;
+    
+    if (campoBusqueda) {
+        campoBusqueda.addEventListener('input', function() {
+            const busqueda = this.value.trim();
+            
+            // Limpiar timeout anterior
+            if (timeoutBusqueda) {
+                clearTimeout(timeoutBusqueda);
+            }
+            
+            // Si la búsqueda está vacía, no hacer nada
+            if (!busqueda) {
+                return;
+            }
+            
+            // Esperar 500ms antes de hacer la búsqueda
+            timeoutBusqueda = setTimeout(() => {
+                realizarBusquedaEnTiempoReal(busqueda);
+            }, 500);
+        });
+    }
+    
+    function realizarBusquedaEnTiempoReal(busqueda) {
+        console.log('Realizando búsqueda en tiempo real:', busqueda);
+        
+        // Mostrar indicador de carga
+        const resultadosContainer = document.querySelector('.row:has(.card)');
+        if (resultadosContainer) {
+            resultadosContainer.innerHTML = `
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Buscando...</span>
+                    </div>
+                    <p class="mt-2">Buscando ejercicios...</p>
+                </div>
+            `;
+        }
+        
+        // Realizar búsqueda via API
+        fetch(`/api/buscar?q=${encodeURIComponent(busqueda)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Resultados de búsqueda:', data);
+                mostrarResultadosBusqueda(data, busqueda);
+            })
+            .catch(error => {
+                console.error('Error en búsqueda:', error);
+                mostrarErrorBusqueda();
+            });
+    }
+    
+    function mostrarResultadosBusqueda(data, busqueda) {
+        const resultadosContainer = document.querySelector('.row:has(.card)');
+        if (!resultadosContainer) return;
+        
+        if (data.ejercicios.length === 0) {
+            resultadosContainer.innerHTML = `
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        <i class="fas fa-search"></i>
+                        <strong>No se encontraron ejercicios</strong><br>
+                        para la búsqueda: "${busqueda}"
+                    </div>
+                    <p class="text-muted">
+                        Intenta con otras palabras clave o revisa la ortografía.
+                    </p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Generar HTML para los resultados
+        let html = '';
+        data.ejercicios.forEach(ejercicio => {
+            const infoMateria = ejercicio.info_materia || {};
+            html += `
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-calculator"></i> ${ejercicio.id}
+                                    ${!ejercicio.mostrar_solucion ? '<i class="fas fa-lock text-warning ms-2" title="Solución exclusiva en libro"></i>' : ''}
+                                </h5>
+                                <div>
+                                    <span class="badge badge-nivel badge-${ejercicio.nivel || 'basico'}">
+                                        ${(ejercicio.nivel || 'basico').charAt(0).toUpperCase() + (ejercicio.nivel || 'basico').slice(1)}
+                                    </span>
+                                    <span class="badge" style="background-color: ${infoMateria.color || '#6b7280'}; color: white;">
+                                        ${infoMateria.nombre || ejercicio.codigo_materia}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ejercicio-content">
+                                ${ejercicio.enunciado || 'Sin enunciado disponible'}
+                            </div>
+                            <div class="mt-3">
+                                <a href="/ejercicio/${ejercicio.id}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> Ver Detalle
+                                </a>
+                                <span class="text-muted ms-2">
+                                    <i class="fas fa-star"></i> Dificultad: ${ejercicio.dificultad || 'N/A'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        // Agregar información sobre resultados
+        html += `
+            <div class="col-12">
+                <div class="alert alert-success">
+                    <i class="fas fa-search"></i>
+                    <strong>Búsqueda completada</strong><br>
+                    Mostrando ${data.mostrados} de ${data.total} ejercicios encontrados para: "${busqueda}"
+                    ${data.total > data.mostrados ? `<br><small>Usa los filtros para ver más resultados</small>` : ''}
+                </div>
+            </div>
+        `;
+        
+        resultadosContainer.innerHTML = html;
+        
+        // Reprocesar MathJax para los nuevos elementos
+        setTimeout(() => {
+            if (typeof reprocessMathJax === 'function') {
+                reprocessMathJax();
+            }
+        }, 100);
+    }
+    
+    function mostrarErrorBusqueda() {
+        const resultadosContainer = document.querySelector('.row:has(.card)');
+        if (resultadosContainer) {
+            resultadosContainer.innerHTML = `
+                <div class="col-12 text-center">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Error en la búsqueda</strong><br>
+                        No se pudo completar la búsqueda. Intenta nuevamente.
+                    </div>
+                </div>
+            `;
+        }
+    }
 });
 </script>
 {% endblock %} 

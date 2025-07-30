@@ -12,22 +12,52 @@ Nueva estructura soportada:
 - Códigos de 4 caracteres (MATU, FISU, QUIM, etc.)
 - Metadatos expandidos (dificultad, tiempo_estimado, tags, etc.)
 - Sistema de visibilidad flexible
+- Sistema de autenticación completo
 
 Autor: Plataforma Preuniversitaria
 Fecha: 2024 - Versión Nueva Estructura
 """
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, flash, redirect, url_for
+from flask_login import LoginManager, login_required, current_user
 import json
 import os
 import re
 from datetime import datetime
 from pathlib import Path
 
+# Importar modelos y rutas de autenticación
+from models import db, Usuario, init_db
+from auth import auth
+
 app = Flask(__name__)
 
 # Configuración de la aplicación
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
+# Configuración de la base de datos
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///plataforma.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configuración de sesiones
+app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui_cambiala_en_produccion'
+
+# Inicializar extensiones
+db.init_app(app)
+
+# Configurar Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
+login_manager.login_message_category = 'info'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
+
+# Registrar blueprints
+app.register_blueprint(auth, url_prefix='/auth')
 
 # Mapeo de códigos de materia a nombres amigables
 CODIGOS_MATERIAS = {
@@ -241,6 +271,58 @@ def obtener_info_materia(codigo_materia):
         'color': '#6b7280'
     })
 
+def buscar_ejercicios_por_palabras(ejercicios, palabras_busqueda):
+    """
+    Busca ejercicios que contengan las palabras clave en cualquier atributo
+    
+    Args:
+        ejercicios: Lista de ejercicios
+        palabras_busqueda: String con palabras separadas por espacios
+    
+    Returns:
+        Lista de ejercicios que coinciden con la búsqueda
+    """
+    if not palabras_busqueda or not palabras_busqueda.strip():
+        return ejercicios
+    
+    # Normalizar y dividir las palabras de búsqueda
+    palabras = [palabra.lower().strip() for palabra in palabras_busqueda.split() if palabra.strip()]
+    
+    if not palabras:
+        return ejercicios
+    
+    ejercicios_coincidentes = []
+    
+    for ejercicio in ejercicios:
+        # Crear un texto combinado de todos los atributos relevantes
+        texto_completo = ' '.join([
+            str(ejercicio.get('id', '')),
+            str(ejercicio.get('codigo_materia', '')),
+            str(ejercicio.get('materia_principal', '')),
+            str(ejercicio.get('capitulo', '')),
+            str(ejercicio.get('nivel', '')),
+            str(ejercicio.get('dificultad', '')),
+            str(ejercicio.get('visibilidad', '')),
+            str(ejercicio.get('procedencia', '')),
+            str(ejercicio.get('enunciado', '')),
+            str(ejercicio.get('solucion', '')),
+            str(ejercicio.get('tags', '')),
+            str(ejercicio.get('institucion', '')),
+            str(ejercicio.get('año', '')),
+            str(ejercicio.get('periodo', '')),
+            str(ejercicio.get('tipo_examen', '')),
+            # Agregar información de la materia
+            str(CODIGOS_MATERIAS.get(ejercicio.get('codigo_materia', ''), {}).get('nombre', ''))
+        ]).lower()
+        
+        # Verificar si todas las palabras están presentes
+        todas_palabras_encontradas = all(palabra in texto_completo for palabra in palabras)
+        
+        if todas_palabras_encontradas:
+            ejercicios_coincidentes.append(ejercicio)
+    
+    return ejercicios_coincidentes
+
 @app.route('/')
 def index():
     """Página principal con todos los ejercicios"""
@@ -254,10 +336,16 @@ def index():
     capitulo = request.args.get('capitulo', '')
     dificultad = request.args.get('dificultad', '')
     visibilidad = request.args.get('visibilidad', '')
+    busqueda = request.args.get('busqueda', '')  # Nuevo parámetro de búsqueda
     
     # Aplicar filtros
     ejercicios_filtrados = ejercicios.copy()
     
+    # Aplicar búsqueda por palabras primero
+    if busqueda:
+        ejercicios_filtrados = buscar_ejercicios_por_palabras(ejercicios_filtrados, busqueda)
+    
+    # Aplicar filtros adicionales
     if codigo_materia:
         ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('codigo_materia') == codigo_materia]
     if materia_principal:
@@ -294,7 +382,8 @@ def index():
         'nivel': nivel,
         'capitulo': capitulo,
         'dificultad': dificultad,
-        'visibilidad': visibilidad
+        'visibilidad': visibilidad,
+        'busqueda': busqueda
     }
     
     # Crear variable filtros para compatibilidad con templates
@@ -536,9 +625,38 @@ def api_formularios():
     """API para obtener formularios"""
     return jsonify(cargar_formularios())
 
+@app.route('/api/buscar')
+def api_buscar():
+    """API para búsqueda en tiempo real de ejercicios"""
+    busqueda = request.args.get('q', '')
+    ejercicios = cargar_ejercicios()
+    
+    if not busqueda:
+        return jsonify({'ejercicios': [], 'total': 0})
+    
+    ejercicios_encontrados = buscar_ejercicios_por_palabras(ejercicios, busqueda)
+    
+    # Limitar resultados para respuesta rápida
+    resultados_limitados = ejercicios_encontrados[:10]
+    
+    # Preparar datos para JSON (sin procesar LaTeX para velocidad)
+    for ejercicio in resultados_limitados:
+        ejercicio['info_materia'] = obtener_info_materia(ejercicio.get('codigo_materia', ''))
+    
+    return jsonify({
+        'ejercicios': resultados_limitados,
+        'total': len(ejercicios_encontrados),
+        'mostrados': len(resultados_limitados),
+        'busqueda': busqueda
+    })
+
 if __name__ == '__main__':
     print("🚀 Iniciando servidor de ejercicios preuniversitarios (NUEVA ESTRUCTURA)...")
     print("📚 Cargando ejercicios desde nueva estructura jerárquica...")
+    
+    # Inicializar base de datos
+    with app.app_context():
+        init_db(app)
     
     ejercicios = cargar_ejercicios()
     metadatos = cargar_metadatos()
@@ -556,14 +674,24 @@ if __name__ == '__main__':
     print("   - /simulacro (Simulacros personalizados)")
     print("   - /estadisticas (Estadísticas detalladas)")
     print("   - /libros (Libros disponibles)")
+    print("\n🔐 Sistema de autenticación:")
+    print("   - /auth/login (Iniciar sesión)")
+    print("   - /auth/register (Registrarse)")
+    print("   - /auth/google/login (Login con Google)")
+    print("   - /auth/google/register (Registro con Google)")
+    print("   - /auth/complete_profile (Completar perfil - Google)")
+    print("   - /auth/profile (Mi perfil)")
+    print("   - /auth/admin/users (Administrar usuarios - solo admin)")
     print("\n🔍 Filtros soportados:")
     print("   - ?codigo_materia=MATU (por código de materia)")
     print("   - ?nivel=basico (por nivel)")
     print("   - ?dificultad=2 (por dificultad 1-5)")
     print("   - ?visibilidad=web_impreso (por visibilidad)")
+    print("   - ?busqueda=parcial umsa (búsqueda por palabras)")
     print("\n🛠️  APIs disponibles:")
     print("   - /api/ejercicios (JSON con ejercicios)")
     print("   - /api/metadatos (JSON con estadísticas)")
+    print("   - /api/buscar?q=parcial (búsqueda en tiempo real)")
     print("   - /generar_simulacro (POST - crear simulacro)")
     
     app.run(debug=True, host='0.0.0.0', port=5000)

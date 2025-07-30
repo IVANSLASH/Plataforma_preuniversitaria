@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}Completar Perfil - Plataforma Preuniversitaria{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 0;
+    }
+    
+    .auth-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .auth-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .auth-header h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .auth-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+    }
+    
+    .auth-body {
+        padding: 2rem;
+    }
+    
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    
+    .form-floating input, .form-floating select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating input:focus, .form-floating select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-complete {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-complete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+        margin-bottom: 1rem;
+    }
+    
+    .alert-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+    }
+    
+    .user-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .user-info img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .user-info h5 {
+        margin: 0;
+        color: #667eea;
+    }
+    
+    .user-info p {
+        margin: 0.25rem 0 0 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2><i class="fas fa-user-edit"></i></h2>
+            <h2>Completar Perfil</h2>
+            <p>Necesitamos algunos datos adicionales para personalizar tu experiencia</p>
+        </div>
+        
+        <div class="auth-body">
+            <!-- Información del usuario -->
+            <div class="user-info">
+                {% if current_user.google_picture %}
+                <img src="{{ current_user.google_picture }}" alt="Foto de perfil">
+                {% else %}
+                <i class="fas fa-user-circle fa-3x text-muted"></i>
+                {% endif %}
+                <h5>{{ current_user.nombre_completo }}</h5>
+                <p>{{ current_user.email }}</p>
+                <p><small>Registrado con Google</small></p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'error' if category == 'error' else category }}">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" id="completeProfileForm">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="institucion" name="institucion" 
+                           placeholder="Institución educativa" required>
+                    <label for="institucion">
+                        <i class="fas fa-school"></i> Institución educativa <span class="text-danger">*</span>
+                    </label>
+                    <div class="invalid-feedback">
+                        La institución educativa es obligatoria.
+                    </div>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="tel" class="form-control" id="whatsapp" name="whatsapp" 
+                           placeholder="WhatsApp (opcional)">
+                    <label for="whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp (opcional)
+                    </label>
+                    <div class="invalid-feedback">
+                        Formato inválido (ej: +591 12345678 o 12345678)
+                    </div>
+                </div>
+                
+                <div class="form-floating">
+                    <select class="form-select" id="nivel_educativo" name="nivel_educativo">
+                        <option value="">Selecciona tu nivel</option>
+                        <option value="Secundaria">Secundaria</option>
+                        <option value="Preuniversitario">Preuniversitario</option>
+                        <option value="Universidad">Universidad</option>
+                        <option value="Profesional">Profesional</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <label for="nivel_educativo">
+                        <i class="fas fa-graduation-cap"></i> Nivel educativo
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-complete">
+                    <i class="fas fa-check"></i> Completar Perfil
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('completeProfileForm');
+    const institucion = document.getElementById('institucion');
+    const whatsapp = document.getElementById('whatsapp');
+    
+    // Validación de institución
+    function validateInstitucion(value) {
+        if (!value || !value.trim()) {
+            return { valid: false, message: 'La institución educativa es obligatoria' };
+        }
+        if (value.trim().length < 2) {
+            return { valid: false, message: 'La institución debe tener al menos 2 caracteres' };
+        }
+        if (value.trim().length > 100) {
+            return { valid: false, message: 'La institución no puede exceder 100 caracteres' };
+        }
+        return { valid: true, message: '' };
+    }
+    
+    // Validación de WhatsApp
+    function validateWhatsApp(value) {
+        if (!value || !value.trim()) {
+            return { valid: true, message: '' }; // Es opcional
+        }
+        
+        // Limpiar el número
+        const numeroLimpio = value.replace(/[\s\-\(\)]/g, '');
+        
+        // Verificar formato
+        if (!/^\+?[0-9]{7,15}$/.test(numeroLimpio)) {
+            return { valid: false, message: 'Formato inválido (ej: +591 12345678 o 12345678)' };
+        }
+        
+        return { valid: true, message: '' };
+    }
+    
+    // Event listeners para validación en tiempo real
+    institucion.addEventListener('blur', function() {
+        const validation = validateInstitucion(this.value);
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+            let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                this.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = validation.message;
+        } else {
+            this.classList.remove('is-invalid');
+            const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+    });
+    
+    whatsapp.addEventListener('blur', function() {
+        const validation = validateWhatsApp(this.value);
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+            let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                this.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = validation.message;
+        } else {
+            this.classList.remove('is-invalid');
+            const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+    });
+    
+    // Validación del formulario antes de enviar
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validar todos los campos
+        const institucionValidation = validateInstitucion(institucion.value);
+        const whatsappValidation = validateWhatsApp(whatsapp.value);
+        
+        if (!institucionValidation.valid) {
+            institucion.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!whatsappValidation.valid) {
+            whatsapp.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %} 

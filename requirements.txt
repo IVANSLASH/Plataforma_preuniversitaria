@@ -25,6 +25,23 @@ click==8.1.7                    # Interface de línea de comandos
 blinker==1.6.3                  # Sistema de señales para Flask
 
 # ============================================
+# SISTEMA DE AUTENTICACIÓN
+# ============================================
+# Instalar: pip install flask-login flask-sqlalchemy werkzeug
+Flask-Login==0.6.3              # Sistema de autenticación para Flask
+Flask-SQLAlchemy==3.0.5         # ORM para bases de datos
+Werkzeug==2.3.7                 # Utilidades de seguridad (ya incluido arriba)
+
+# ============================================
+# AUTENTICACIÓN CON GOOGLE OAUTH
+# ============================================
+# Instalar: pip install requests-oauthlib
+requests-oauthlib>=1.3.1        # Cliente OAuth para Google
+google-auth>=2.17.3             # Autenticación de Google
+google-auth-oauthlib>=1.0.0     # OAuth para Google
+google-auth-httplib2>=0.1.0     # HTTP client para Google APIs
+
+# ============================================
 # DEPENDENCIAS CORE (PROCESAMIENTO)
 # ============================================
 # Instalar: pip install pathlib2 regex
@@ -97,6 +114,7 @@ tempfile2>=0.1.0                # Manejo seguro de archivos temporales
 # VERIFICAR INSTALACIÓN:
 # python -c "import flask; print('Flask OK')"
 # python -c "import regex; print('Regex OK')"
+# python -c "import flask_login; print('Flask-Login OK')"
 # 
 # EJECUTAR APLICACIÓN:
 # python app.py

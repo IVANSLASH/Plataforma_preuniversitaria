@@ -140,3 +140,12 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 ---
 
 *Desarrollado con ❤️ para la educación preuniversitaria* 
+
+git --version
+git status
+
+# crar un commit con mensaje
+git commit -m "actualizacion primer intento surface"
+
+cargar
+git push

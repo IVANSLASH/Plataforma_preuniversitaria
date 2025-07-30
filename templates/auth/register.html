@@ -1,0 +1,554 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - Plataforma Preuniversitaria{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 0;
+    }
+    
+    .auth-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .auth-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .auth-header h2 {
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .auth-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+    }
+    
+    .auth-body {
+        padding: 2rem;
+    }
+    
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    
+    .form-floating input, .form-floating select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating input:focus, .form-floating select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-register {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .auth-footer {
+        text-align: center;
+        padding: 1rem 2rem 2rem;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .auth-footer a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+        margin-bottom: 1rem;
+    }
+    
+    .alert-error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+        color: white;
+    }
+    
+    .password-strength {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .strength-weak { color: #dc3545; }
+    .strength-medium { color: #ffc107; }
+    .strength-strong { color: #28a745; }
+    
+    .form-row {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .form-row .form-floating {
+        flex: 1;
+    }
+    
+    @media (max-width: 576px) {
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2><i class="fas fa-user-plus"></i></h2>
+            <h2>Crear Cuenta</h2>
+            <p>Únete a la Plataforma Preuniversitaria</p>
+        </div>
+        
+        <div class="auth-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'error' if category == 'error' else category }}">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" id="registerForm">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" 
+                           placeholder="Nombre de usuario" required>
+                    <label for="username">
+                        <i class="fas fa-user"></i> Nombre de usuario
+                    </label>
+                    <div class="invalid-feedback">
+                        El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números y guiones bajos.
+                    </div>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" name="email" 
+                           placeholder="Email" required>
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <div class="invalid-feedback">
+                        Por favor ingresa un email válido.
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Contraseña" required>
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Contraseña
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                               placeholder="Confirmar contraseña" required>
+                        <label for="confirm_password">
+                            <i class="fas fa-lock"></i> Confirmar
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="password-strength" id="passwordStrength"></div>
+                
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" 
+                           placeholder="Nombre completo" required>
+                    <label for="nombre_completo">
+                        <i class="fas fa-id-card"></i> Nombre completo <span class="text-danger">*</span>
+                    </label>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="institucion" name="institucion" 
+                           placeholder="Institución educativa" required>
+                    <label for="institucion">
+                        <i class="fas fa-school"></i> Institución educativa <span class="text-danger">*</span>
+                    </label>
+                    <div class="invalid-feedback">
+                        La institución educativa es obligatoria.
+                    </div>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="tel" class="form-control" id="whatsapp" name="whatsapp" 
+                           placeholder="WhatsApp (opcional)">
+                    <label for="whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp (opcional)
+                    </label>
+                    <div class="invalid-feedback">
+                        Formato inválido (ej: +591 12345678 o 12345678)
+                    </div>
+                </div>
+                
+                <div class="form-floating">
+                    <select class="form-select" id="nivel_educativo" name="nivel_educativo">
+                        <option value="">Selecciona tu nivel</option>
+                        <option value="Secundaria">Secundaria</option>
+                        <option value="Preuniversitario">Preuniversitario</option>
+                        <option value="Universidad">Universidad</option>
+                        <option value="Profesional">Profesional</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <label for="nivel_educativo">
+                        <i class="fas fa-graduation-cap"></i> Nivel educativo
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-register">
+                    <i class="fas fa-user-plus"></i> Crear Cuenta
+                </button>
+            </form>
+            
+            <!-- Separador -->
+            <div class="text-center my-4">
+                <span class="text-muted">o</span>
+            </div>
+            
+            <!-- Botón de Google -->
+            <a href="{{ url_for('auth.google_register') }}" class="btn btn-outline-secondary w-100 mb-3" 
+               style="border-radius: 10px; padding: 0.75rem 2rem; font-weight: 600;">
+                <i class="fab fa-google" style="color: #DB4437;"></i> 
+                Registrarse con Google
+            </a>
+        </div>
+        
+        <div class="auth-footer">
+            <p>¿Ya tienes una cuenta? 
+                <a href="{{ url_for('auth.login') }}">
+                    <i class="fas fa-sign-in-alt"></i> Inicia sesión aquí
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const nombreCompleto = document.getElementById('nombre_completo');
+    const institucion = document.getElementById('institucion');
+    const whatsapp = document.getElementById('whatsapp');
+    const passwordStrength = document.getElementById('passwordStrength');
+    
+    // Validación de username
+    function validateUsername(value) {
+        const minLength = 3;
+        const pattern = /^[a-zA-Z0-9_]+$/;
+        
+        if (value.length < minLength) {
+            return { valid: false, message: `Mínimo ${minLength} caracteres` };
+        }
+        if (!pattern.test(value)) {
+            return { valid: false, message: 'Solo letras, números y guiones bajos' };
+        }
+        return { valid: true, message: '' };
+    }
+    
+    // Validación de email
+    function validateEmail(value) {
+        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return pattern.test(value);
+    }
+    
+    // Validación de contraseña
+    function validatePassword(value) {
+        const minLength = 6;
+        let strength = 0;
+        let message = '';
+        
+        if (value.length >= minLength) strength++;
+        if (/[a-z]/.test(value)) strength++;
+        if (/[A-Z]/.test(value)) strength++;
+        if (/[0-9]/.test(value)) strength++;
+        if (/[^A-Za-z0-9]/.test(value)) strength++;
+        
+        if (value.length < minLength) {
+            message = `Mínimo ${minLength} caracteres`;
+        } else if (strength < 3) {
+            message = 'Contraseña débil';
+        } else if (strength < 4) {
+            message = 'Contraseña media';
+        } else {
+            message = 'Contraseña fuerte';
+        }
+        
+        return { valid: value.length >= minLength, strength, message };
+    }
+    
+    // Validación de confirmación de contraseña
+    function validateConfirmPassword(value) {
+        return value === password.value;
+    }
+    
+    // Validación de nombre completo
+    function validateNombreCompleto(value) {
+        if (!value || !value.trim()) {
+            return { valid: false, message: 'El nombre completo es obligatorio' };
+        }
+        if (value.trim().length < 2) {
+            return { valid: false, message: 'El nombre completo debe tener al menos 2 caracteres' };
+        }
+        if (value.trim().length > 100) {
+            return { valid: false, message: 'El nombre completo no puede exceder 100 caracteres' };
+        }
+        if (!value.trim().includes(' ')) {
+            return { valid: false, message: 'El nombre completo debe incluir nombre y apellido' };
+        }
+        return { valid: true, message: '' };
+    }
+    
+    // Validación de institución
+    function validateInstitucion(value) {
+        if (!value || !value.trim()) {
+            return { valid: false, message: 'La institución educativa es obligatoria' };
+        }
+        if (value.trim().length < 2) {
+            return { valid: false, message: 'La institución debe tener al menos 2 caracteres' };
+        }
+        if (value.trim().length > 100) {
+            return { valid: false, message: 'La institución no puede exceder 100 caracteres' };
+        }
+        return { valid: true, message: '' };
+    }
+    
+    // Validación de WhatsApp
+    function validateWhatsApp(value) {
+        if (!value || !value.trim()) {
+            return { valid: true, message: '' }; // Es opcional
+        }
+        
+        // Limpiar el número
+        const numeroLimpio = value.replace(/[\s\-\(\)]/g, '');
+        
+        // Verificar formato
+        if (!/^\+?[0-9]{7,15}$/.test(numeroLimpio)) {
+            return { valid: false, message: 'Formato inválido (ej: +591 12345678 o 12345678)' };
+        }
+        
+        return { valid: true, message: '' };
+    }
+    
+    // Event listeners para validación en tiempo real
+    username.addEventListener('blur', function() {
+        const validation = validateUsername(this.value);
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    email.addEventListener('blur', function() {
+        if (!validateEmail(this.value)) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    nombreCompleto.addEventListener('blur', function() {
+        const validation = validateNombreCompleto(this.value);
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+            // Mostrar mensaje de error
+            let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                this.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = validation.message;
+        } else {
+            this.classList.remove('is-invalid');
+            const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+    });
+    
+    institucion.addEventListener('blur', function() {
+        const validation = validateInstitucion(this.value);
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+            let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                this.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = validation.message;
+        } else {
+            this.classList.remove('is-invalid');
+            const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+    });
+    
+    whatsapp.addEventListener('blur', function() {
+        const validation = validateWhatsApp(this.value);
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+            let errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                this.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = validation.message;
+        } else {
+            this.classList.remove('is-invalid');
+            const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+    });
+    
+    password.addEventListener('input', function() {
+        const validation = validatePassword(this.value);
+        passwordStrength.textContent = validation.message;
+        passwordStrength.className = 'password-strength';
+        
+        if (validation.strength < 3) {
+            passwordStrength.classList.add('strength-weak');
+        } else if (validation.strength < 4) {
+            passwordStrength.classList.add('strength-medium');
+        } else {
+            passwordStrength.classList.add('strength-strong');
+        }
+        
+        if (!validation.valid) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+        
+        // Validar confirmación de contraseña
+        if (confirmPassword.value) {
+            if (!validateConfirmPassword(confirmPassword.value)) {
+                confirmPassword.classList.add('is-invalid');
+            } else {
+                confirmPassword.classList.remove('is-invalid');
+            }
+        }
+    });
+    
+    confirmPassword.addEventListener('blur', function() {
+        if (!validateConfirmPassword(this.value)) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    // Validación del formulario antes de enviar
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validar todos los campos
+        const usernameValidation = validateUsername(username.value);
+        const emailValidation = validateEmail(email.value);
+        const nombreCompletoValidation = validateNombreCompleto(nombreCompleto.value);
+        const institucionValidation = validateInstitucion(institucion.value);
+        const whatsappValidation = validateWhatsApp(whatsapp.value);
+        const passwordValidation = validatePassword(password.value);
+        const confirmPasswordValidation = validateConfirmPassword(confirmPassword.value);
+        
+        if (!usernameValidation.valid) {
+            username.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!emailValidation) {
+            email.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!nombreCompletoValidation.valid) {
+            nombreCompleto.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!institucionValidation.valid) {
+            institucion.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!whatsappValidation.valid) {
+            whatsapp.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!passwordValidation.valid) {
+            password.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!confirmPasswordValidation) {
+            confirmPassword.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %} 
