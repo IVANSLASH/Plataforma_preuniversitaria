@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Administración de Usuarios - Plataforma Preuniversitaria{% endblock %}
+{% block title %}Panel de Administración - Plataforma Preuniversitaria{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -39,6 +39,129 @@
         padding: 2rem;
     }
     
+    .stats-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    }
+    
+    .stat-card.premium {
+        border-left-color: #ffc107;
+    }
+    
+    .stat-card.admin {
+        border-left-color: #dc3545;
+    }
+    
+    .stat-card.google {
+        border-left-color: #28a745;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-card.premium .stat-number {
+        color: #ffc107;
+    }
+    
+    .stat-card.admin .stat-number {
+        color: #dc3545;
+    }
+    
+    .stat-card.google .stat-number {
+        color: #28a745;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .controls-section {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-box {
+        margin-bottom: 1rem;
+    }
+    
+    .search-input {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        outline: none;
+    }
+    
+    .bulk-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .btn-bulk {
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn-bulk.activate {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+    
+    .btn-bulk.deactivate {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+    }
+    
+    .btn-bulk.delete {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+    }
+    
+    .btn-bulk:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
     .user-table {
         background: white;
         border-radius: 15px;
@@ -73,6 +196,15 @@
         font-weight: 600;
     }
     
+    .badge-premium {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: #212529;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
     .badge-active {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
@@ -91,80 +223,159 @@
         font-weight: 600;
     }
     
-    .btn-toggle {
-        border: none;
+    .badge-google {
+        background: linear-gradient(135deg, #DB4437 0%, #EA4335 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
         border-radius: 20px;
-        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .btn-action {
+        border: none;
+        border-radius: 8px;
+        padding: 0.4rem 0.8rem;
         font-size: 0.8rem;
         font-weight: 600;
         transition: all 0.3s ease;
+        cursor: pointer;
+        margin: 0.1rem;
     }
     
-    .btn-toggle.active {
+    .btn-toggle {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
     }
     
     .btn-toggle.inactive {
         background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    }
+    
+    .btn-admin {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         color: white;
     }
     
-    .btn-toggle:hover {
+    .btn-premium {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: #212529;
+    }
+    
+    .btn-delete {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+    }
+    
+    .btn-action:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     
-    .stats-summary {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
+    .checkbox-user {
+        transform: scale(1.2);
+        margin-right: 0.5rem;
     }
     
-    .stat-card {
-        background: white;
-        border-radius: 15px;
-        padding: 1.5rem;
-        text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-left: 4px solid #667eea;
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #667eea;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: #6c757d;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .search-box {
-        background: white;
-        border-radius: 10px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .search-input {
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
+    /* Modales */
+    .modal-premium {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
         width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 2rem;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+    }
+    
+    .modal-header {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 1rem;
         transition: all 0.3s ease;
     }
     
-    .search-input:focus {
+    .form-control:focus {
         border-color: #667eea;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         outline: none;
+    }
+    
+    .btn-modal {
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+    }
+    
+    .btn-modal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
     }
 </style>
 {% endblock %}
@@ -174,36 +385,54 @@
     <div class="container">
         <div class="admin-card">
             <div class="admin-header">
-                <h2><i class="fas fa-users-cog"></i></h2>
-                <h2>Administración de Usuarios</h2>
-                <p>Gestiona las cuentas de usuarios de la plataforma</p>
+                <h2><i class="fas fa-crown"></i> Panel de Administración</h2>
+                <p>Gestiona usuarios, cuentas premium y configuración del sistema</p>
             </div>
             
             <div class="admin-body">
                 <!-- Estadísticas -->
                 <div class="stats-summary">
                     <div class="stat-card">
-                        <div class="stat-number">{{ usuarios|length }}</div>
+                        <div class="stat-number">{{ total_usuarios }}</div>
                         <div class="stat-label">Total de Usuarios</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">{{ usuarios|selectattr('es_activo', 'equalto', true)|list|length }}</div>
+                        <div class="stat-number">{{ usuarios_activos }}</div>
                         <div class="stat-label">Usuarios Activos</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card premium">
+                        <div class="stat-number">{{ usuarios_premium }}</div>
+                        <div class="stat-label">Usuarios Premium</div>
+                    </div>
+                    <div class="stat-card admin">
                         <div class="stat-number">{{ usuarios|selectattr('es_admin', 'equalto', true)|list|length }}</div>
                         <div class="stat-label">Administradores</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">{{ usuarios|selectattr('es_activo', 'equalto', false)|list|length }}</div>
-                        <div class="stat-label">Usuarios Inactivos</div>
+                    <div class="stat-card google">
+                        <div class="stat-number">{{ usuarios_google }}</div>
+                        <div class="stat-label">Usuarios Google</div>
                     </div>
                 </div>
                 
-                <!-- Búsqueda -->
-                <div class="search-box">
-                    <input type="text" class="search-input" id="searchUsers" 
-                           placeholder="Buscar usuarios por nombre, email o institución...">
+                <!-- Controles -->
+                <div class="controls-section">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="searchUsers" 
+                               placeholder="Buscar usuarios por nombre, email o institución...">
+                    </div>
+                    
+                    <div class="bulk-actions">
+                        <span><strong>Acciones masivas:</strong></span>
+                        <button class="btn-bulk activate" onclick="bulkAction('activate')">
+                            <i class="fas fa-check"></i> Activar Seleccionados
+                        </button>
+                        <button class="btn-bulk deactivate" onclick="bulkAction('deactivate')">
+                            <i class="fas fa-times"></i> Desactivar Seleccionados
+                        </button>
+                        <button class="btn-bulk delete" onclick="bulkAction('delete')">
+                            <i class="fas fa-trash"></i> Eliminar Seleccionados
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Tabla de usuarios -->
@@ -211,6 +440,9 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
+                                <th style="width: 50px;">
+                                    <input type="checkbox" id="selectAll" class="checkbox-user">
+                                </th>
                                 <th><i class="fas fa-user"></i> Usuario</th>
                                 <th><i class="fas fa-envelope"></i> Email</th>
                                 <th><i class="fas fa-school"></i> Institución</th>
@@ -224,21 +456,38 @@
                             {% for usuario in usuarios %}
                             <tr class="user-row" data-username="{{ usuario.username|lower }}" 
                                 data-email="{{ usuario.email|lower }}" 
-                                data-institucion="{{ (usuario.institucion or '')|lower }}">
+                                data-institucion="{{ (usuario.ultima_unidad_educativa or '')|lower }}">
+                                <td>
+                                    <input type="checkbox" class="checkbox-user user-checkbox" 
+                                           value="{{ usuario.id }}" 
+                                           {% if usuario.es_admin and usuario.id != current_user.id %}disabled{% endif %}>
+                                </td>
                                 <td>
                                     <div>
                                         <strong>{{ usuario.nombre_completo }}</strong>
                                         <br>
                                         <small class="text-muted">@{{ usuario.username }}</small>
-                                        {% if usuario.es_admin %}
-                                            <br><span class="badge-admin">
-                                                <i class="fas fa-crown"></i> Admin
-                                            </span>
-                                        {% endif %}
+                                        <div>
+                                            {% if usuario.es_admin %}
+                                                <span class="badge-admin">
+                                                    <i class="fas fa-crown"></i> Admin
+                                                </span>
+                                            {% endif %}
+                                            {% if usuario.is_premium_active() %}
+                                                <span class="badge-premium">
+                                                    <i class="fas fa-star"></i> Premium
+                                                </span>
+                                            {% endif %}
+                                            {% if usuario.auth_provider == 'google' %}
+                                                <span class="badge-google">
+                                                    <i class="fab fa-google"></i> Google
+                                                </span>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </td>
                                 <td>{{ usuario.email }}</td>
-                                <td>{{ usuario.institucion or 'No especificada' }}</td>
+                                <td>{{ usuario.ultima_unidad_educativa or 'No especificada' }}</td>
                                 <td>
                                     {% if usuario.fecha_registro %}
                                         {{ usuario.fecha_registro.strftime('%d/%m/%Y') }}
@@ -265,16 +514,37 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if not usuario.es_admin or usuario.id != current_user.id %}
-                                        <a href="{{ url_for('auth.admin_toggle_user', user_id=usuario.id) }}" 
-                                           class="btn-toggle {{ 'active' if usuario.es_activo else 'inactive' }}"
-                                           onclick="return confirm('¿Estás seguro de que quieres {{ 'desactivar' if usuario.es_activo else 'activar' }} la cuenta de {{ usuario.username }}?')">
-                                            <i class="fas fa-{{ 'check' if usuario.es_activo else 'times' }}"></i>
-                                            {{ 'Desactivar' if usuario.es_activo else 'Activar' }}
-                                        </a>
-                                    {% else %}
-                                        <span class="text-muted">No disponible</span>
-                                    {% endif %}
+                                    <div class="btn-group" role="group">
+                                        {% if not usuario.es_admin or usuario.id != current_user.id %}
+                                            <button class="btn-action btn-toggle {{ 'inactive' if usuario.es_activo else '' }}"
+                                                    onclick="toggleUser({{ usuario.id }}, {{ usuario.es_activo|lower }})"
+                                                    title="{{ 'Desactivar' if usuario.es_activo else 'Activar' }} usuario">
+                                                <i class="fas fa-{{ 'check' if usuario.es_activo else 'times' }}"></i>
+                                            </button>
+                                        {% endif %}
+                                        
+                                        {% if usuario.id != current_user.id %}
+                                            <button class="btn-action btn-admin"
+                                                    onclick="toggleAdmin({{ usuario.id }})"
+                                                    title="{{ 'Quitar admin' if usuario.es_admin else 'Hacer admin' }}">
+                                                <i class="fas fa-crown"></i>
+                                            </button>
+                                            
+                                            <button class="btn-action btn-premium"
+                                                    onclick="showPremiumModal({{ usuario.id }}, '{{ usuario.username }}')"
+                                                    title="Gestionar premium">
+                                                <i class="fas fa-star"></i>
+                                            </button>
+                                            
+                                            {% if not usuario.es_admin %}
+                                                <button class="btn-action btn-delete"
+                                                        onclick="deleteUser({{ usuario.id }}, '{{ usuario.username }}')"
+                                                        title="Eliminar usuario">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -291,11 +561,69 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para gestionar premium -->
+<div id="premiumModal" class="modal-premium">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-star"></i> Gestionar Premium</h4>
+        </div>
+        
+        <form id="premiumForm">
+            <input type="hidden" id="premiumUserId">
+            
+            <div class="form-group">
+                <label class="form-label">Usuario:</label>
+                <input type="text" id="premiumUsername" class="form-control" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Acción:</label>
+                <select id="premiumAction" class="form-control" onchange="togglePremiumFields()">
+                    <option value="grant">Otorgar Premium</option>
+                    <option value="revoke">Revocar Premium</option>
+                </select>
+            </div>
+            
+            <div id="grantFields">
+                <div class="form-group">
+                    <label class="form-label">Tipo de Premium:</label>
+                    <select id="premiumType" class="form-control">
+                        <option value="mensual">Mensual (30 días)</option>
+                        <option value="anual">Anual (365 días)</option>
+                        <option value="permanente">Permanente</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="durationField">
+                    <label class="form-label">Duración (días):</label>
+                    <input type="number" id="premiumDuration" class="form-control" value="30" min="1" max="3650">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Razón:</label>
+                <input type="text" id="premiumReason" class="form-control" 
+                       placeholder="Razón para otorgar/revocar premium">
+            </div>
+            
+            <div class="text-end">
+                <button type="button" class="btn-modal btn-secondary" onclick="closePremiumModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn-modal btn-primary">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Búsqueda de usuarios
     const searchInput = document.getElementById('searchUsers');
     const userRows = document.querySelectorAll('.user-row');
     
@@ -319,19 +647,211 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Agregar efectos de hover a las tarjetas de estadísticas
-    const statCards = document.querySelectorAll('.stat-card');
-    statCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.2)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+    // Seleccionar todos
+    const selectAll = document.getElementById('selectAll');
+    const userCheckboxes = document.querySelectorAll('.user-checkbox');
+    
+    selectAll.addEventListener('change', function() {
+        userCheckboxes.forEach(checkbox => {
+            if (!checkbox.disabled) {
+                checkbox.checked = this.checked;
+            }
         });
     });
+    
+    // Formulario premium
+    document.getElementById('premiumForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const userId = document.getElementById('premiumUserId').value;
+        const action = document.getElementById('premiumAction').value;
+        const reason = document.getElementById('premiumReason').value;
+        
+        if (action === 'grant') {
+            const type = document.getElementById('premiumType').value;
+            const duration = document.getElementById('premiumDuration').value;
+            
+            grantPremium(userId, type, duration, reason);
+        } else {
+            revokePremium(userId, reason);
+        }
+    });
+});
+
+// Funciones de administración
+function toggleUser(userId, isActive) {
+    const action = isActive ? 'desactivar' : 'activar';
+    if (confirm(`¿Estás seguro de que quieres ${action} este usuario?`)) {
+        window.location.href = `{{ url_for('auth.admin_toggle_user', user_id=0) }}`.replace('0', userId);
+    }
+}
+
+function toggleAdmin(userId) {
+    if (confirm('¿Estás seguro de que quieres cambiar el estado de administrador de este usuario?')) {
+        window.location.href = `{{ url_for('auth.admin_toggle_admin', user_id=0) }}`.replace('0', userId);
+    }
+}
+
+function deleteUser(userId, username) {
+    if (confirm(`¿Estás seguro de que quieres eliminar al usuario ${username}? Esta acción no se puede deshacer.`)) {
+        fetch(`{{ url_for('auth.admin_delete_user', user_id=0) }}`.replace('0', userId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            showAlert('Error al eliminar usuario', 'danger');
+        });
+    }
+}
+
+function showPremiumModal(userId, username) {
+    document.getElementById('premiumUserId').value = userId;
+    document.getElementById('premiumUsername').value = username;
+    document.getElementById('premiumModal').style.display = 'block';
+}
+
+function closePremiumModal() {
+    document.getElementById('premiumModal').style.display = 'none';
+}
+
+function togglePremiumFields() {
+    const action = document.getElementById('premiumAction').value;
+    const grantFields = document.getElementById('grantFields');
+    
+    if (action === 'grant') {
+        grantFields.style.display = 'block';
+    } else {
+        grantFields.style.display = 'none';
+    }
+}
+
+function grantPremium(userId, type, duration, reason) {
+    const formData = new FormData();
+    formData.append('tipo', type);
+    formData.append('duracion', duration);
+    formData.append('razon', reason);
+    
+    fetch(`{{ url_for('auth.admin_grant_premium', user_id=0) }}`.replace('0', userId), {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert(data.message, 'success');
+            closePremiumModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showAlert(data.message, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Error al otorgar premium', 'danger');
+    });
+}
+
+function revokePremium(userId, reason) {
+    const formData = new FormData();
+    formData.append('razon', reason);
+    
+    fetch(`{{ url_for('auth.admin_revoke_premium', user_id=0) }}`.replace('0', userId), {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert(data.message, 'success');
+            closePremiumModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showAlert(data.message, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Error al revocar premium', 'danger');
+    });
+}
+
+function bulkAction(action) {
+    const selectedUsers = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                              .map(cb => cb.value);
+    
+    if (selectedUsers.length === 0) {
+        showAlert('Por favor selecciona al menos un usuario', 'danger');
+        return;
+    }
+    
+    let confirmMessage = '';
+    switch(action) {
+        case 'activate':
+            confirmMessage = `¿Estás seguro de que quieres activar ${selectedUsers.length} usuarios?`;
+            break;
+        case 'deactivate':
+            confirmMessage = `¿Estás seguro de que quieres desactivar ${selectedUsers.length} usuarios?`;
+            break;
+        case 'delete':
+            confirmMessage = `¿Estás seguro de que quieres eliminar ${selectedUsers.length} usuarios? Esta acción no se puede deshacer.`;
+            break;
+    }
+    
+    if (confirm(confirmMessage)) {
+        const formData = new FormData();
+        formData.append('action', action);
+        selectedUsers.forEach(id => formData.append('user_ids[]', id));
+        
+        fetch('{{ url_for("auth.admin_bulk_actions") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            showAlert('Error en acción masiva', 'danger');
+        });
+    }
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.admin-body');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('premiumModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
 });
 </script>
 {% endblock %} 

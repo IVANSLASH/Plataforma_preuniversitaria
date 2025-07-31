@@ -12,7 +12,6 @@ Fecha: 2025
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -38,20 +37,33 @@ class Usuario(UserMixin, db.Model):
     google_picture = db.Column(db.String(500), nullable=True)
     auth_provider = db.Column(db.String(20), default='local')  # 'local' o 'google'
     
-    # Campos adicionales para el perfil
-    institucion = db.Column(db.String(100), nullable=False)  # Obligatorio para todos
-    whatsapp = db.Column(db.String(20), nullable=True)  # Opcional
-    nivel_educativo = db.Column(db.String(50), nullable=True)
+    # Campos adicionales para el perfil universitario
+    ultima_unidad_educativa = db.Column(db.String(100), nullable=True)  # Última institución educativa
+    nivel_academico_actual = db.Column(db.String(50), nullable=True)  # Nivel académico actual
+    nivel_academico_otro = db.Column(db.String(100), nullable=True) # Especificación para 'otro' nivel
+    intereses = db.Column(db.Text, nullable=True)  # Intereses académicos/profesionales
+    whatsapp = db.Column(db.String(20), nullable=True)  # Opcional - para ofertas y anuncios
+    ciudad = db.Column(db.String(50), nullable=True)  # Ciudad
+    carrera_interes = db.Column(db.String(100), nullable=True)  # Carrera de interés
     materias_favoritas = db.Column(db.Text, nullable=True)  # JSON como string
     preferencias = db.Column(db.Text, nullable=True)  # JSON como string
+    acepta_anuncios = db.Column(db.Boolean, default=False)  # Si acepta recibir anuncios
+    profile_completed = db.Column(db.Boolean, default=False) # Si el perfil ha sido completado
+    
+    # Campos para sistema premium
+    es_premium = db.Column(db.Boolean, default=False)  # Si tiene cuenta premium
+    fecha_premium_inicio = db.Column(db.DateTime, nullable=True)  # Fecha de inicio de premium
+    fecha_premium_fin = db.Column(db.DateTime, nullable=True)  # Fecha de fin de premium
+    tipo_premium = db.Column(db.String(20), nullable=True)  # 'mensual', 'anual', 'permanente'
+    razon_premium = db.Column(db.String(100), nullable=True)  # Razón por la que se otorgó premium
     
     def __init__(self, username, email, password=None, nombre_completo=None, google_id=None, google_picture=None):
         self.username = username
         self.email = email
         self.nombre_completo = nombre_completo
         
-        # Inicializar campos obligatorios con valores por defecto
-        self.institucion = 'Sin especificar'  # Campo obligatorio
+        # Inicializar campos con valores por defecto
+        self.acepta_anuncios = False
         
         if google_id:
             self.google_id = google_id
@@ -59,21 +71,8 @@ class Usuario(UserMixin, db.Model):
             self.auth_provider = 'google'
             # Para usuarios de Google, no necesitamos password_hash
         else:
-            self.auth_provider = 'local'
-            if password:
-                self.set_password(password)
-            else:
-                raise ValueError("Se requiere contraseña para usuarios locales")
-    
-    def set_password(self, password):
-        """Genera un hash seguro de la contraseña"""
-        self.password_hash = generate_password_hash(password)
-    
-    def check_password(self, password):
-        """Verifica si la contraseña es correcta"""
-        if self.auth_provider == 'google':
-            return False  # Usuarios de Google no usan contraseñas locales
-        return check_password_hash(self.password_hash, password)
+            # Solo permitir usuarios de Google
+            raise ValueError("Solo se permite registro mediante Google OAuth")
     
     def actualizar_ultimo_acceso(self):
         """Actualiza la fecha del último acceso"""
@@ -94,6 +93,48 @@ class Usuario(UserMixin, db.Model):
         """Verifica si el usuario se registró con Google"""
         return self.auth_provider == 'google'
     
+    def is_premium_active(self):
+        """Verifica si el usuario tiene premium activo"""
+        if not self.es_premium:
+            return False
+        
+        # Si es premium permanente
+        if self.tipo_premium == 'permanente':
+            return True
+        
+        # Si tiene fecha de fin y ya expiró
+        if self.fecha_premium_fin and datetime.utcnow() > self.fecha_premium_fin:
+            self.es_premium = False
+            db.session.commit()
+            return False
+        
+        return True
+    
+    def grant_premium(self, tipo='mensual', duracion_dias=30, razon='Otorgado por administrador'):
+        """Otorga premium al usuario"""
+        from datetime import timedelta
+        
+        self.es_premium = True
+        self.fecha_premium_inicio = datetime.utcnow()
+        self.tipo_premium = tipo
+        self.razon_premium = razon
+        
+        if tipo == 'permanente':
+            self.fecha_premium_fin = None
+        else:
+            self.fecha_premium_fin = datetime.utcnow() + timedelta(days=duracion_dias)
+        
+        db.session.commit()
+    
+    def revoke_premium(self, razon='Revocado por administrador'):
+        """Revoca premium al usuario"""
+        self.es_premium = False
+        self.fecha_premium_inicio = None
+        self.fecha_premium_fin = None
+        self.tipo_premium = None
+        self.razon_premium = razon
+        db.session.commit()
+    
     def to_dict(self):
         """Convierte el usuario a diccionario (sin información sensible)"""
         return {
@@ -107,9 +148,17 @@ class Usuario(UserMixin, db.Model):
             'es_admin': self.es_admin,
             'auth_provider': self.auth_provider,
             'google_picture': self.google_picture,
-            'institucion': self.institucion,
+            'ultima_unidad_educativa': self.ultima_unidad_educativa,
+            'nivel_academico_actual': self.nivel_academico_actual,
+            'intereses': self.intereses,
             'whatsapp': self.whatsapp,
-            'nivel_educativo': self.nivel_educativo
+            'ciudad': self.ciudad,
+            'carrera_interes': self.carrera_interes,
+            'acepta_anuncios': self.acepta_anuncios,
+            'es_premium': self.es_premium,
+            'premium_activo': self.is_premium_active(),
+            'tipo_premium': self.tipo_premium,
+            'fecha_premium_fin': self.fecha_premium_fin.isoformat() if self.fecha_premium_fin else None
         }
     
     def __repr__(self):
@@ -146,41 +195,12 @@ def init_db(app):
         
         # Verificar que las tablas se crearon correctamente
         try:
-            # Crear usuario administrador por defecto si no existe
-            admin = Usuario.query.filter_by(username='admin').first()
-            if not admin:
-                admin = Usuario(
-                    username='admin',
-                    email='admin@plataforma.edu',
-                    password='admin123',
-                    nombre_completo='Administrador del Sistema'
-                )
-                admin.es_admin = True
-                admin.institucion = 'Sistema'  # Campo obligatorio
-                db.session.add(admin)
-                db.session.commit()
-                print("✅ Usuario administrador creado: admin / admin123")
-            
             print(f"✅ Base de datos inicializada con {Usuario.query.count()} usuarios")
+            print("🔒 Sistema configurado para autenticación exclusiva con Google OAuth")
         except Exception as e:
             print(f"❌ Error al inicializar base de datos: {e}")
             # Intentar recrear las tablas
             db.drop_all()
             db.create_all()
-            print("🔄 Tablas recreadas, intentando crear usuario admin...")
-            
-            try:
-                admin = Usuario(
-                    username='admin',
-                    email='admin@plataforma.edu',
-                    password='admin123',
-                    nombre_completo='Administrador del Sistema'
-                )
-                admin.es_admin = True
-                admin.institucion = 'Sistema'
-                db.session.add(admin)
-                db.session.commit()
-                print("✅ Usuario administrador creado después de recrear tablas")
-            except Exception as e2:
-                print(f"❌ Error crítico: {e2}")
-                raise 
+            print("🔄 Tablas recreadas")
+            print("🔒 Sistema configurado para autenticación exclusiva con Google OAuth") 

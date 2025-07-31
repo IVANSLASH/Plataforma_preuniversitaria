@@ -131,6 +131,26 @@
         text-decoration: none;
     }
     
+    .btn-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 1.5rem;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -185,6 +205,153 @@
         font-size: 0.8rem;
         font-weight: 600;
     }
+    
+    /* Estilos para campos editables */
+    .editable-field {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .editable-field:hover {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 2px 5px;
+    }
+    
+    .editable-field:hover::after {
+        content: "✏️";
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        opacity: 0.7;
+    }
+    
+    .edit-input {
+        width: 100%;
+        border: 2px solid #667eea;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 1rem;
+        background: white;
+    }
+    
+    .edit-textarea {
+        width: 100%;
+        border: 2px solid #667eea;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 1rem;
+        background: white;
+        min-height: 60px;
+        resize: vertical;
+    }
+    
+    .edit-select {
+        width: 100%;
+        border: 2px solid #667eea;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 1rem;
+        background: white;
+    }
+    
+    .edit-checkbox {
+        margin-left: 10px;
+        transform: scale(1.2);
+    }
+    
+    .save-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 15px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    .cancel-btn {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 15px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+    
+    .delete-account-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .delete-account-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 2rem;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+    }
+    
+    .delete-account-content h3 {
+        color: #dc3545;
+        margin-bottom: 1rem;
+    }
+    
+    .delete-account-content p {
+        margin-bottom: 1.5rem;
+        color: #6c757d;
+    }
+    
+    .delete-account-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    /* Estilos para alertas en el modal */
+    .delete-account-content .alert {
+        margin-bottom: 1.5rem;
+        border-radius: 10px;
+    }
+    
+    .delete-account-content .alert ul {
+        margin-bottom: 0;
+        padding-left: 1.5rem;
+    }
+    
+    .delete-account-content .alert li {
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Estilos para botones deshabilitados */
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    /* Animación para el spinner */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .fa-spin {
+        animation: spin 1s linear infinite;
+    }
 </style>
 {% endblock %}
 
@@ -196,7 +363,11 @@
                 <div class="profile-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
+                            {% if usuario.google_picture %}
+                                <img src="{{ usuario.google_picture }}" alt="Foto de perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                                <i class="fas fa-user"></i>
+                            {% endif %}
                         </div>
                         <div class="profile-name">{{ usuario.nombre_completo }}</div>
                         <div class="profile-username">@{{ usuario.username }}</div>
@@ -221,169 +392,284 @@
                     <div class="profile-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3><i class="fas fa-user-circle"></i> Información Personal</h3>
-                            <a href="{{ url_for('auth.edit_profile') }}" class="btn-edit">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                        </div>
-                        
-                        <div class="info-section">
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Email</div>
-                                    <div class="info-value">{{ usuario.email }}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-id-card"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Nombre Completo</div>
-                                    <div class="info-value">{{ usuario.nombre_completo or 'No especificado' }}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-school"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Institución</div>
-                                    <div class="info-value {{ 'empty' if not usuario.institucion else '' }}">
-                                        {{ usuario.institucion or 'No especificada' }}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-graduation-cap"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Nivel Educativo</div>
-                                    <div class="info-value {{ 'empty' if not usuario.nivel_educativo else '' }}">
-                                        {{ usuario.nivel_educativo or 'No especificado' }}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fab fa-whatsapp"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">WhatsApp</div>
-                                    <div class="info-value {{ 'empty' if not usuario.whatsapp else '' }}">
-                                        {% if usuario.whatsapp %}
-                                            <a href="https://wa.me/{{ usuario.whatsapp.replace('+', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '') }}" 
-                                               target="_blank" class="text-decoration-none">
-                                                <i class="fab fa-whatsapp text-success"></i> {{ usuario.whatsapp }}
-                                            </a>
-                                        {% else %}
-                                            No especificado
-                                        {% endif %}
-                                    </div>
-                                </div>
+                            <div>
+                                <button id="toggleEdit" class="btn-edit">
+                                    <i class="fas fa-edit"></i> <span id="editText">Editar</span>
+                                </button>
                             </div>
                         </div>
                         
-                        <div class="info-section">
-                            <h3><i class="fas fa-calendar-alt"></i> Información de Cuenta</h3>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-calendar-plus"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Fecha de Registro</div>
-                                    <div class="info-value">
-                                        {{ usuario.fecha_registro.strftime('%d/%m/%Y a las %H:%M') if usuario.fecha_registro else 'No disponible' }}
+                        <form id="profileForm" method="POST" action="{{ url_for('auth.update_profile') }}">
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-envelope"></i>
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Último Acceso</div>
-                                    <div class="info-value">
-                                        {% if usuario.ultimo_acceso %}
-                                            {{ usuario.ultimo_acceso.strftime('%d/%m/%Y a las %H:%M') }}
-                                        {% else %}
-                                            <span class="empty">Primera vez</span>
-                                        {% endif %}
+                                    <div class="info-content">
+                                        <div class="info-label">Email</div>
+                                        <div class="info-value">{{ usuario.email }}</div>
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <div class="info-content">
-                                    <div class="info-label">Método de Autenticación</div>
-                                    <div class="info-value">
-                                        {% if usuario.auth_provider == 'google' %}
-                                            <i class="fab fa-google" style="color: #DB4437;"></i> Google
-                                        {% else %}
-                                            <i class="fas fa-user-lock"></i> Local
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="info-section">
-                            <h3><i class="fas fa-chart-bar"></i> Estadísticas</h3>
-                            
-                            <div class="stats-grid">
-                                <div class="stat-card">
-                                    <div class="stat-number">{{ usuario.sesiones|length }}</div>
-                                    <div class="stat-label">Sesiones</div>
                                 </div>
                                 
-                                <div class="stat-card">
-                                    <div class="stat-number">
-                                        {% if usuario.ultimo_acceso %}
-                                            {{ ((moment().timestamp - usuario.ultimo_acceso.timestamp()) / 86400)|round(0) }}
-                                        {% else %}
-                                            0
-                                        {% endif %}
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-id-card"></i>
                                     </div>
-                                    <div class="stat-label">Días desde último acceso</div>
+                                    <div class="info-content">
+                                        <div class="info-label">Nombre Completo</div>
+                                        <div class="info-value editable-field" data-field="nombre_completo">
+                                            <span class="display-value">{{ usuario.nombre_completo or 'No especificado' }}</span>
+                                            <input type="text" class="edit-input" name="nombre_completo" value="{{ usuario.nombre_completo or '' }}" style="display: none;">
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="stat-card">
-                                    <div class="stat-number">
-                                        {% if usuario.fecha_registro %}
-                                            {{ ((moment().timestamp - usuario.fecha_registro.timestamp()) / 86400)|round(0) }}
-                                        {% else %}
-                                            0
-                                        {% endif %}
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-school"></i>
                                     </div>
-                                    <div class="stat-label">Días como miembro</div>
+                                    <div class="info-content">
+                                        <div class="info-label">Última Unidad Educativa</div>
+                                        <div class="info-value editable-field" data-field="ultima_unidad_educativa">
+                                            <span class="display-value">{{ usuario.ultima_unidad_educativa or 'No especificada' }}</span>
+                                            <input type="text" class="edit-input" name="ultima_unidad_educativa" value="{{ usuario.ultima_unidad_educativa or '' }}" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Nivel Académico Actual</div>
+                                        <div class="info-value editable-field" data-field="nivel_academico_actual">
+                                            <span class="display-value">{{ usuario.nivel_academico_actual or 'No especificado' }}</span>
+                                            <select class="edit-select" name="nivel_academico_actual" style="display: none;">
+                                                <option value="">Seleccionar nivel</option>
+                                                <option value="Secundaria" {{ 'selected' if usuario.nivel_academico_actual == 'Secundaria' else '' }}>Secundaria</option>
+                                                <option value="Preuniversitario" {{ 'selected' if usuario.nivel_academico_actual == 'Preuniversitario' else '' }}>Preuniversitario</option>
+                                                <option value="Universidad" {{ 'selected' if usuario.nivel_academico_actual == 'Universidad' else '' }}>Universidad</option>
+                                                <option value="Profesional" {{ 'selected' if usuario.nivel_academico_actual == 'Profesional' else '' }}>Profesional</option>
+                                                <option value="otro" {{ 'selected' if usuario.nivel_academico_actual == 'otro' else '' }}>Otro</option>
+                                            </select>
+                                            <input type="text" class="edit-input" name="nivel_academico_otro" value="{{ usuario.nivel_academico_otro or '' }}" placeholder="Especificar otro nivel" style="display: none; margin-top: 5px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Ciudad</div>
+                                        <div class="info-value editable-field" data-field="ciudad">
+                                            <span class="display-value">{{ usuario.ciudad or 'No especificada' }}</span>
+                                            <input type="text" class="edit-input" name="ciudad" value="{{ usuario.ciudad or '' }}" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">WhatsApp</div>
+                                        <div class="info-value editable-field" data-field="whatsapp">
+                                            <span class="display-value">{{ usuario.whatsapp or 'No especificado' }}</span>
+                                            <input type="text" class="edit-input" name="whatsapp" value="{{ usuario.whatsapp or '' }}" placeholder="+591 12345678" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Carrera de Interés</div>
+                                        <div class="info-value editable-field" data-field="carrera_interes">
+                                            <span class="display-value">{{ usuario.carrera_interes or 'No especificada' }}</span>
+                                            <input type="text" class="edit-input" name="carrera_interes" value="{{ usuario.carrera_interes or '' }}" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Intereses Académicos</div>
+                                        <div class="info-value editable-field" data-field="intereses">
+                                            <span class="display-value">{{ usuario.intereses or 'No especificados' }}</span>
+                                            <textarea class="edit-textarea" name="intereses" style="display: none;">{{ usuario.intereses or '' }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Recibir Anuncios</div>
+                                        <div class="info-value editable-field" data-field="acepta_anuncios">
+                                            <span class="display-value">
+                                                {% if usuario.acepta_anuncios %}
+                                                    <i class="fas fa-check-circle text-success"></i> Sí, acepto recibir anuncios
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-muted"></i> No acepto recibir anuncios
+                                                {% endif %}
+                                            </span>
+                                            <label style="display: none;">
+                                                <input type="checkbox" class="edit-checkbox" name="acepta_anuncios" {{ 'checked' if usuario.acepta_anuncios else '' }}>
+                                                Acepto recibir anuncios por WhatsApp
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-4">
-                            <a href="{{ url_for('auth.change_password') }}" class="btn-edit">
-                                <i class="fas fa-key"></i> Cambiar Contraseña
-                            </a>
                             
-                            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                            </a>
-                        </div>
+                            <div class="info-section">
+                                <h3><i class="fas fa-calendar-alt"></i> Información de Cuenta</h3>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Fecha de Registro</div>
+                                        <div class="info-value">
+                                            {{ usuario.fecha_registro.strftime('%d/%m/%Y a las %H:%M') if usuario.fecha_registro else 'No disponible' }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Último Acceso</div>
+                                        <div class="info-value">
+                                            {% if usuario.ultimo_acceso %}
+                                                {{ usuario.ultimo_acceso.strftime('%d/%m/%Y a las %H:%M') }}
+                                            {% else %}
+                                                <span class="empty">Primera vez</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Método de Autenticación</div>
+                                        <div class="info-value">
+                                            {% if usuario.auth_provider == 'google' %}
+                                                <i class="fab fa-google" style="color: #DB4437;"></i> Google
+                                            {% else %}
+                                                <i class="fas fa-user-lock"></i> Local
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="info-section">
+                                <h3><i class="fas fa-chart-bar"></i> Estadísticas</h3>
+                                
+                                <div class="stats-grid">
+                                    <div class="stat-card">
+                                        <div class="stat-number">{{ usuario.sesiones|length }}</div>
+                                        <div class="stat-label">Sesiones</div>
+                                    </div>
+                                    
+                                    <div class="stat-card">
+                                        <div class="stat-number">
+                                            {% if usuario.ultimo_acceso %}
+                                                {{ ((now - usuario.ultimo_acceso).days) }}
+                                            {% else %}
+                                                0
+                                            {% endif %}
+                                        </div>
+                                        <div class="stat-label">Días desde último acceso</div>
+                                    </div>
+                                    
+                                    <div class="stat-card">
+                                        <div class="stat-number">
+                                            {% if usuario.fecha_registro %}
+                                                {{ ((now - usuario.fecha_registro).days) }}
+                                            {% else %}
+                                                0
+                                            {% endif %}
+                                        </div>
+                                        <div class="stat-label">Días como miembro</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div>
+                                    <button type="submit" id="saveBtn" class="btn-edit" style="display: none;">
+                                        <i class="fas fa-save"></i> Guardar Cambios
+                                    </button>
+                                    <button type="button" id="cancelBtn" class="cancel-btn" style="display: none;">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    {% if usuario.es_admin %}
+                                        <a href="{{ url_for('auth.admin_users') }}" class="btn-edit">
+                                            <i class="fas fa-crown"></i> Panel de Administración
+                                        </a>
+                                    {% endif %}
+                                    
+                                    <button type="button" id="deleteAccountBtn" class="btn-danger">
+                                        <i class="fas fa-trash"></i> Eliminar Cuenta
+                                    </button>
+                                    
+                                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">
+                                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para eliminar cuenta -->
+<div id="deleteAccountModal" class="delete-account-modal">
+    <div class="delete-account-content">
+        <h3><i class="fas fa-exclamation-triangle"></i> Eliminar Cuenta</h3>
+        <div class="alert alert-warning">
+            <h5><i class="fas fa-warning"></i> Advertencia Importante</h5>
+            <p>Esta acción es <strong>IRREVERSIBLE</strong> y eliminará permanentemente:</p>
+            <ul>
+                <li>Tu cuenta de usuario</li>
+                <li>Todos tus datos personales</li>
+                <li>Tu historial de sesiones</li>
+                <li>Acceso a todos los recursos de la plataforma</li>
+            </ul>
+        </div>
+        <p><strong>¿Estás completamente seguro de que quieres proceder?</strong></p>
+        <div class="delete-account-buttons">
+            <button id="confirmDelete" class="btn-danger">
+                <i class="fas fa-trash"></i> Sí, eliminar mi cuenta permanentemente
+            </button>
+            <button id="cancelDelete" class="cancel-btn">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
         </div>
     </div>
 </div>
@@ -392,6 +678,9 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    let isEditing = false;
+    let originalValues = {};
+    
     // Agregar efectos de hover a las tarjetas de estadísticas
     const statCards = document.querySelectorAll('.stat-card');
     statCards.forEach(card => {
@@ -405,6 +694,214 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.boxShadow = 'none';
         });
     });
+    
+    // Función para alternar modo de edición
+    function toggleEditMode() {
+        isEditing = !isEditing;
+        const editText = document.getElementById('editText');
+        const saveBtn = document.getElementById('saveBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const editableFields = document.querySelectorAll('.editable-field');
+        
+        if (isEditing) {
+            editText.textContent = 'Cancelar';
+            saveBtn.style.display = 'inline-flex';
+            cancelBtn.style.display = 'inline-flex';
+            
+            // Guardar valores originales y mostrar campos de edición
+            editableFields.forEach(field => {
+                const displayValue = field.querySelector('.display-value');
+                const input = field.querySelector('input, select, textarea');
+                const fieldName = field.dataset.field;
+                
+                originalValues[fieldName] = displayValue.textContent.trim();
+                
+                if (input) {
+                    input.style.display = 'block';
+                    displayValue.style.display = 'none';
+                }
+                
+                // Manejo especial para nivel académico
+                if (fieldName === 'nivel_academico_actual') {
+                    const select = field.querySelector('select');
+                    const otherInput = field.querySelector('input[name="nivel_academico_otro"]');
+                    
+                    select.addEventListener('change', function() {
+                        if (this.value === 'otro') {
+                            otherInput.style.display = 'block';
+                        } else {
+                            otherInput.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        } else {
+            editText.textContent = 'Editar';
+            saveBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            
+            // Restaurar valores originales y ocultar campos de edición
+            editableFields.forEach(field => {
+                const displayValue = field.querySelector('.display-value');
+                const input = field.querySelector('input, select, textarea');
+                const fieldName = field.dataset.field;
+                
+                if (input) {
+                    input.style.display = 'none';
+                    displayValue.style.display = 'block';
+                }
+                
+                // Restaurar valor original
+                if (originalValues[fieldName]) {
+                    displayValue.textContent = originalValues[fieldName];
+                }
+            });
+        }
+    }
+    
+    // Event listeners
+    document.getElementById('toggleEdit').addEventListener('click', toggleEditMode);
+    document.getElementById('cancelBtn').addEventListener('click', toggleEditMode);
+    
+    // Guardar cambios
+    document.getElementById('saveBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Mostrar indicador de carga
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        this.disabled = true;
+        
+        // Enviar formulario
+        const form = document.getElementById('profileForm');
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Actualizar valores mostrados
+                const editableFields = document.querySelectorAll('.editable-field');
+                editableFields.forEach(field => {
+                    const displayValue = field.querySelector('.display-value');
+                    const input = field.querySelector('input, select, textarea');
+                    const fieldName = field.dataset.field;
+                    
+                    if (input) {
+                        let newValue = input.value;
+                        
+                        // Manejo especial para checkbox
+                        if (input.type === 'checkbox') {
+                            newValue = input.checked ? 'Sí, acepto recibir anuncios' : 'No acepto recibir anuncios';
+                        }
+                        
+                        // Manejo especial para select
+                        if (input.tagName === 'SELECT') {
+                            const selectedOption = input.options[input.selectedIndex];
+                            newValue = selectedOption.text;
+                        }
+                        
+                        displayValue.textContent = newValue || 'No especificado';
+                        originalValues[fieldName] = newValue;
+                    }
+                });
+                
+                toggleEditMode();
+                
+                // Mostrar mensaje de éxito
+                showMessage(data.message || 'Perfil actualizado correctamente', 'success');
+            } else {
+                showMessage(data.message || 'Error al actualizar el perfil', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showMessage('Error al actualizar el perfil', 'error');
+        })
+        .finally(() => {
+            // Restaurar botón
+            this.innerHTML = originalText;
+            this.disabled = false;
+        });
+    });
+    
+    // Eliminar cuenta
+    document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+        document.getElementById('deleteAccountModal').style.display = 'block';
+    });
+    
+    document.getElementById('cancelDelete').addEventListener('click', function() {
+        document.getElementById('deleteAccountModal').style.display = 'none';
+    });
+    
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        // Mostrar confirmación adicional
+        const confirmText = prompt('Para confirmar la eliminación, escribe "ELIMINAR" en mayúsculas:');
+        if (confirmText === 'ELIMINAR') {
+            // Mostrar indicador de carga
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+            this.disabled = true;
+            
+            fetch('{{ url_for("auth.delete_account") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Cuenta eliminada correctamente. Redirigiendo...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("index") }}';
+                    }, 2000);
+                } else {
+                    showMessage(data.message || 'Error al eliminar la cuenta', 'error');
+                    // Restaurar botón
+                    this.innerHTML = '<i class="fas fa-trash"></i> Sí, eliminar mi cuenta permanentemente';
+                    this.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Error al eliminar la cuenta', 'error');
+                // Restaurar botón
+                this.innerHTML = '<i class="fas fa-trash"></i> Sí, eliminar mi cuenta permanentemente';
+                this.disabled = false;
+            });
+        } else if (confirmText !== null) {
+            showMessage('Texto de confirmación incorrecto', 'error');
+        }
+    });
+    
+    // Cerrar modal al hacer clic fuera
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('deleteAccountModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Función para mostrar mensajes
+    function showMessage(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const container = document.querySelector('.profile-body');
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
 });
 </script>
 {% endblock %} 

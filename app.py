@@ -17,6 +17,7 @@ Nueva estructura soportada:
 Autor: Plataforma Preuniversitaria
 Fecha: 2024 - Versión Nueva Estructura
 """
+# python -m pip install -r requirements.txt
 
 from flask import Flask, render_template, jsonify, request, flash, redirect, url_for
 from flask_login import LoginManager, login_required, current_user
@@ -28,7 +29,7 @@ from pathlib import Path
 
 # Importar modelos y rutas de autenticación
 from models import db, Usuario, init_db
-from auth import auth
+from auth import auth_bp, init_oauth
 
 app = Flask(__name__)
 
@@ -44,6 +45,7 @@ app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui_cambiala_en_produccion'
 
 # Inicializar extensiones
 db.init_app(app)
+init_oauth(app)  # Inicializar OAuth
 
 # Configurar Flask-Login
 login_manager = LoginManager()
@@ -57,7 +59,7 @@ def load_user(user_id):
     return Usuario.query.get(int(user_id))
 
 # Registrar blueprints
-app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(auth_bp)
 
 # Mapeo de códigos de materia a nombres amigables
 CODIGOS_MATERIAS = {
@@ -674,14 +676,13 @@ if __name__ == '__main__':
     print("   - /simulacro (Simulacros personalizados)")
     print("   - /estadisticas (Estadísticas detalladas)")
     print("   - /libros (Libros disponibles)")
-    print("\n🔐 Sistema de autenticación:")
-    print("   - /auth/login (Iniciar sesión)")
-    print("   - /auth/register (Registrarse)")
-    print("   - /auth/google/login (Login con Google)")
-    print("   - /auth/google/register (Registro con Google)")
-    print("   - /auth/complete_profile (Completar perfil - Google)")
-    print("   - /auth/profile (Mi perfil)")
-    print("   - /auth/admin/users (Administrar usuarios - solo admin)")
+    print("\n🔐 Sistema de autenticación (Solo Google OAuth):")
+    print("   - /auth/login (Autenticación exclusiva con Google OAuth)")
+    print("   - /auth/logout (Cerrar sesión)")
+    print("   - /auth/profile (Perfil de usuario)")
+    print("   - /auth/admin/users (Panel de administración)")
+    print("   \n   📝 NOTA: Solo se permite autenticación mediante Google OAuth.")
+    print("           El sistema tradicional de contraseñas ha sido deshabilitado por seguridad.")
     print("\n🔍 Filtros soportados:")
     print("   - ?codigo_materia=MATU (por código de materia)")
     print("   - ?nivel=basico (por nivel)")
