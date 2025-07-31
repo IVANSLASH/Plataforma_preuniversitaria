@@ -11,18 +11,18 @@
                     <h3 class="card-title">Completa tu Perfil</h3>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">¡Bienvenido! Para continuar, por favor completa los siguientes datos. Esto nos ayudará a personalizar tu experiencia.</p>
+                    <p class="card-text">¡Bienvenido! Para personalizar tu experiencia, puedes completar los siguientes datos. No es obligatorio completar todo ahora.</p>
                     
                     <form method="POST" action="{{ url_for('auth.complete_profile') }}">
                         <div class="mb-3">
-                            <label for="institucion_educativa_secundaria" class="form-label">Institución Educativa Secundaria</label>
-                            <input type="text" class="form-control" id="institucion_educativa_secundaria" name="institucion_educativa_secundaria" required>
+                            <label for="institucion_educativa_secundaria" class="form-label">Institución Educativa Secundaria (Opcional)</label>
+                            <input type="text" class="form-control" id="institucion_educativa_secundaria" name="institucion_educativa_secundaria">
                         </div>
                         
                         <div class="mb-3">
-                            <label for="nivel_academico_actual" class="form-label">Nivel Académico Actual</label>
-                            <select class="form-select" id="nivel_academico_actual" name="nivel_academico_actual" required onchange="toggleOtroNivel(this)">
-                                <option selected disabled value="">Elige una opción...</option>
+                            <label for="nivel_academico_actual" class="form-label">Nivel Académico Actual (Opcional)</label>
+                            <select class="form-select" id="nivel_academico_actual" name="nivel_academico_actual" onchange="toggleOtroNivel(this)">
+                                <option selected value="">Elige una opción...</option>
                                 <option value="secundaria">Secundaria</option>
                                 <option value="bachillerato">Bachillerato</option>
                                 <option value="egresado">Egresado</option>
@@ -39,8 +39,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="ciudad" class="form-label">Ciudad / Región de Residencia</label>
-                            <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                            <label for="ciudad" class="form-label">Ciudad / Región de Residencia (Opcional)</label>
+                            <input type="text" class="form-control" id="ciudad" name="ciudad">
                         </div>
 
                         <div class="mb-3">
@@ -53,7 +53,10 @@
                             <input type="text" class="form-control" id="carrera_interes" name="carrera_interes" placeholder="Ej: Ingeniería de Software, Medicina, etc.">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Guardar y Continuar</button>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Guardar y Continuar</button>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Omitir por ahora</a>
+                        </div>
                     </form>
                 </div>
             </div>

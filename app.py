@@ -19,13 +19,14 @@ Fecha: 2024 - Versión Nueva Estructura
 """
 # python -m pip install -r requirements.txt
 
-from flask import Flask, render_template, jsonify, request, flash, redirect, url_for
+from flask import Flask, render_template, jsonify, request, flash, redirect, url_for, send_file
 from flask_login import LoginManager, login_required, current_user
 import json
 import os
 import re
 from datetime import datetime
 from pathlib import Path
+from io import BytesIO
 
 # Importar modelos y rutas de autenticación
 from models import db, Usuario, init_db
@@ -96,6 +97,11 @@ def cargar_ejercicios():
         except FileNotFoundError:
             print("❌ No se encontraron archivos de ejercicios")
     
+    # Agregar nombre completo de materia a cada ejercicio
+    for ejercicio in ejercicios:
+        if 'codigo_materia' in ejercicio:
+            ejercicio['nombre_materia'] = obtener_nombre_materia(ejercicio['codigo_materia'])
+    
     return ejercicios
 
 def cargar_metadatos():
@@ -105,6 +111,10 @@ def cargar_metadatos():
             data = json.load(f)
             # Agregar compatibilidad con templates existentes
             data['materias'] = data.get('codigos_materia', {})
+            # Agregar nombres completos de materias para los filtros
+            data['materias_nombres'] = {}
+            for codigo, count in data.get('codigos_materia', {}).items():
+                data['materias_nombres'][codigo] = obtener_nombre_materia(codigo)
             # Agregar campos faltantes para estadísticas
             data['visibles_web'] = data.get('total_ejercicios', 0)  # Por defecto todos visibles
             data['no_visibles_web'] = 0
@@ -116,6 +126,10 @@ def cargar_metadatos():
                 data = json.load(f)
                 # Agregar compatibilidad con templates existentes
                 data['materias'] = data.get('codigos_materia', {})
+                # Agregar nombres completos de materias para los filtros
+                data['materias_nombres'] = {}
+                for codigo, count in data.get('codigos_materia', {}).items():
+                    data['materias_nombres'][codigo] = obtener_nombre_materia(codigo)
                 # Agregar campos faltantes para estadísticas
                 data['visibles_web'] = data.get('total_ejercicios', 0)
                 data['no_visibles_web'] = 0
@@ -129,6 +143,7 @@ def cargar_metadatos():
                 "dificultades": {},
                 "codigos_materia": {},
                 "materias": {},  # Para compatibilidad con templates
+                "materias_nombres": {},  # Nombres completos de materias
                 "visibles_web": 0,
                 "no_visibles_web": 0
             }
@@ -273,6 +288,11 @@ def obtener_info_materia(codigo_materia):
         'color': '#6b7280'
     })
 
+def obtener_nombre_materia(codigo_materia):
+    """Obtiene el nombre completo de una materia por su código"""
+    info = obtener_info_materia(codigo_materia)
+    return info['nombre']
+
 def buscar_ejercicios_por_palabras(ejercicios, palabras_busqueda):
     """
     Busca ejercicios que contengan las palabras clave en cualquier atributo
@@ -343,6 +363,14 @@ def index():
     # Aplicar filtros
     ejercicios_filtrados = ejercicios.copy()
     
+    # Aplicar filtro de materias favoritas del usuario (si está autenticado y tiene materias favoritas)
+    mostrar_todas = request.args.get('mostrar_todas', '0') == '1'
+    if current_user.is_authenticated and current_user.materias_favoritas and not mostrar_todas:
+        materias_favoritas = current_user.materias_favoritas.split(',')
+        materias_favoritas = [m.strip() for m in materias_favoritas if m.strip()]
+        if materias_favoritas:
+            ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('codigo_materia') in materias_favoritas]
+    
     # Aplicar búsqueda por palabras primero
     if busqueda:
         ejercicios_filtrados = buscar_ejercicios_por_palabras(ejercicios_filtrados, busqueda)
@@ -361,12 +389,53 @@ def index():
     if visibilidad:
         ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('visibilidad') == visibilidad]
     
-    # Procesar LaTeX en los ejercicios
+    # Aplicar límites diarios de visualización
+    ejercicios_mostrables = []
+    ejercicios_bloqueados = []
+    
     for ejercicio in ejercicios_filtrados:
+        # Procesar LaTeX en el ejercicio
         ejercicio['enunciado'] = procesar_latex(ejercicio['enunciado'])
         ejercicio['solucion'] = procesar_latex(ejercicio['solucion'])
         # Agregar información amigable de la materia
         ejercicio['info_materia'] = obtener_info_materia(ejercicio.get('codigo_materia', ''))
+        
+        # Verificar si el usuario puede ver este ejercicio
+        if current_user.is_authenticated:
+            # Usuario registrado
+            if current_user.can_view_exercise(ejercicio['id']):
+                ejercicios_mostrables.append(ejercicio)
+            else:
+                ejercicio['bloqueado'] = True
+                ejercicios_bloqueados.append(ejercicio)
+        else:
+            # Usuario sin registro - usar sesión para tracking
+            from flask import session
+            import json
+            
+            # Inicializar tracking de sesión si no existe
+            if 'ejercicios_vistos_hoy' not in session:
+                session['ejercicios_vistos_hoy'] = 0
+                session['ultima_fecha_conteo'] = datetime.now().date().isoformat()
+                session['ejercicios_vistos_ids'] = []
+            
+            # Verificar si es un nuevo día
+            today = datetime.now().date().isoformat()
+            if session.get('ultima_fecha_conteo') != today:
+                session['ejercicios_vistos_hoy'] = 0
+                session['ultima_fecha_conteo'] = today
+                session['ejercicios_vistos_ids'] = []
+            
+            # Verificar límite (5 ejercicios para usuarios sin registro)
+            if (session['ejercicios_vistos_hoy'] < 5 or 
+                ejercicio['id'] in session.get('ejercicios_vistos_ids', [])):
+                ejercicios_mostrables.append(ejercicio)
+            else:
+                ejercicio['bloqueado'] = True
+                ejercicios_bloqueados.append(ejercicio)
+    
+    # Usar ejercicios mostrables como ejercicios filtrados
+    ejercicios_filtrados = ejercicios_mostrables
     
     # Preparar datos para los filtros
     filtros_datos = {
@@ -395,16 +464,34 @@ def index():
         'capitulo': capitulo
     }
     
+    # Obtener información de límites diarios
+    limites_info = {}
+    if current_user.is_authenticated:
+        limites_info = current_user.get_daily_limit_info()
+    else:
+        from flask import session
+        ejercicios_vistos = session.get('ejercicios_vistos_hoy', 0)
+        limite_diario = 5
+        limites_info = {
+            'limite_diario': limite_diario,
+            'ejercicios_vistos': ejercicios_vistos,
+            'ejercicios_restantes': max(0, limite_diario - ejercicios_vistos),
+            'es_premium': False,
+            'tipo_usuario': 'sin_registro'
+        }
+    
     return render_template('index.html', 
                          ejercicios=ejercicios,  # Todos los ejercicios para el JavaScript
                          ejercicios_filtrados=ejercicios_filtrados,  # Ejercicios filtrados para mostrar
+                         ejercicios_bloqueados=ejercicios_bloqueados,  # Ejercicios bloqueados por límite
                          metadatos=metadatos,
                          filtros_datos=filtros_datos,
                          filtros_activos=filtros_activos,
                          filtros=filtros,  # Agregar variable filtros
                          codigos_materias=CODIGOS_MATERIAS,
                          total_ejercicios=len(ejercicios),
-                         ejercicios_filtrados_count=len(ejercicios_filtrados))
+                         ejercicios_filtrados_count=len(ejercicios_filtrados),
+                         limites_info=limites_info)
 
 @app.route('/ejercicio/<ejercicio_id>')
 def ejercicio_detalle(ejercicio_id):
@@ -415,12 +502,66 @@ def ejercicio_detalle(ejercicio_id):
     if not ejercicio:
         return "Ejercicio no encontrado", 404
     
+    # Verificar si el usuario puede ver este ejercicio
+    puede_ver = True
+    if current_user.is_authenticated:
+        if not current_user.can_view_exercise(ejercicio_id):
+            puede_ver = False
+        else:
+            # Marcar como visto
+            current_user.mark_exercise_as_viewed(ejercicio_id)
+    else:
+        # Usuario sin registro
+        from flask import session
+        import json
+        
+        # Inicializar tracking de sesión si no existe
+        if 'ejercicios_vistos_hoy' not in session:
+            session['ejercicios_vistos_hoy'] = 0
+            session['ultima_fecha_conteo'] = datetime.now().date().isoformat()
+            session['ejercicios_vistos_ids'] = []
+        
+        # Verificar si es un nuevo día
+        today = datetime.now().date().isoformat()
+        if session.get('ultima_fecha_conteo') != today:
+            session['ejercicios_vistos_hoy'] = 0
+            session['ultima_fecha_conteo'] = today
+            session['ejercicios_vistos_ids'] = []
+        
+        # Verificar si ya vio este ejercicio
+        if ejercicio_id not in session.get('ejercicios_vistos_ids', []):
+            # Verificar límite (5 ejercicios para usuarios sin registro)
+            if session['ejercicios_vistos_hoy'] >= 5:
+                puede_ver = False
+            else:
+                # Marcar como visto
+                session['ejercicios_vistos_hoy'] += 1
+                session['ejercicios_vistos_ids'] = session.get('ejercicios_vistos_ids', []) + [ejercicio_id]
+    
     # Procesar LaTeX en el ejercicio
     ejercicio['enunciado'] = procesar_latex(ejercicio['enunciado'])
     ejercicio['solucion'] = procesar_latex(ejercicio['solucion'])
     ejercicio['info_materia'] = obtener_info_materia(ejercicio.get('codigo_materia', ''))
     
-    return render_template('ejercicio_detalle.html', ejercicio=ejercicio)
+    # Obtener información de límites diarios
+    limites_info = {}
+    if current_user.is_authenticated:
+        limites_info = current_user.get_daily_limit_info()
+    else:
+        ejercicios_vistos = session.get('ejercicios_vistos_hoy', 0)
+        limite_diario = 5
+        limites_info = {
+            'limite_diario': limite_diario,
+            'ejercicios_vistos': ejercicios_vistos,
+            'ejercicios_restantes': max(0, limite_diario - ejercicios_vistos),
+            'es_premium': False,
+            'tipo_usuario': 'sin_registro'
+        }
+    
+    return render_template('ejercicio_detalle.html', 
+                         ejercicio=ejercicio, 
+                         puede_ver=puede_ver,
+                         limites_info=limites_info)
 
 @app.route('/api/ejercicios')
 def api_ejercicios():
@@ -467,16 +608,44 @@ def formularios():
 def simulacro():
     """Página para configurar y generar simulacros"""
     metadatos = cargar_metadatos()
+    
+    # Obtener información de límites de simulacros
+    simulacro_info = {}
+    if current_user.is_authenticated:
+        simulacro_info = current_user.get_simulacro_limit_info()
+    else:
+        simulacro_info = {
+            'limite_diario': 0,
+            'simulacros_realizados': 0,
+            'simulacros_restantes': 0,
+            'es_premium': False,
+            'puede_hacer': False,
+            'mensaje': 'Debes registrarte para realizar simulacros'
+        }
+    
     return render_template('simulacro.html', 
                          metadatos=metadatos,
-                         codigos_materias=CODIGOS_MATERIAS)
+                         codigos_materias=CODIGOS_MATERIAS,
+                         simulacro_info=simulacro_info)
 
 @app.route('/generar_simulacro', methods=['POST'])
 def generar_simulacro():
     """Generar un simulacro con los parámetros especificados"""
+    # Verificar límites de simulacros
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Debes registrarte para realizar simulacros'}), 403
+    
+    if not current_user.can_do_simulacro():
+        simulacro_info = current_user.get_simulacro_limit_info()
+        if simulacro_info['es_premium']:
+            return jsonify({'error': 'Error en la verificación premium'}), 403
+        else:
+            return jsonify({'error': 'Ya has realizado tu simulacro diario. Los usuarios registrados pueden hacer 1 simulacro por día.'}), 403
+    
     data = request.get_json()
     
     num_preguntas = data.get('num_preguntas', 10)
+    tiempo_examen = data.get('tiempo_examen', 60)
     niveles = data.get('niveles', [])
     codigos_materia = data.get('codigos_materia', [])
     capitulos = data.get('capitulos', [])
@@ -486,6 +655,11 @@ def generar_simulacro():
     opciones_validas = [5, 7, 8, 10, 12, 15, 20]
     if num_preguntas not in opciones_validas:
         return jsonify({'error': f'Número de preguntas debe ser uno de: {opciones_validas}'}), 400
+    
+    # Validar tiempo del examen
+    tiempos_validos = [30, 60, 90, 120]
+    if tiempo_examen not in tiempos_validos:
+        return jsonify({'error': f'Tiempo del examen debe ser uno de: {tiempos_validos} minutos'}), 400
     
     # Cargar todos los ejercicios
     ejercicios = cargar_ejercicios()
@@ -522,11 +696,15 @@ def generar_simulacro():
         ejercicio['solucion'] = procesar_latex(ejercicio['solucion'])
         ejercicio['info_materia'] = obtener_info_materia(ejercicio.get('codigo_materia', ''))
     
+    # Marcar el simulacro como realizado
+    current_user.mark_simulacro_as_done()
+    
     return jsonify({
         'ejercicios': simulacro_ejercicios,
         'total': len(simulacro_ejercicios),
         'configuracion': {
             'num_preguntas': num_preguntas,
+            'tiempo_examen': tiempo_examen,
             'niveles': niveles,
             'codigos_materia': codigos_materia,
             'capitulos': capitulos,
@@ -534,9 +712,202 @@ def generar_simulacro():
         }
     })
 
+@app.route('/generar_simulacro_pdf', methods=['POST'])
+def generar_simulacro_pdf():
+    """Generar un simulacro en formato PDF"""
+    # Verificar límites de simulacros
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Debes registrarte para realizar simulacros'}), 403
+    
+    if not current_user.can_do_simulacro():
+        simulacro_info = current_user.get_simulacro_limit_info()
+        if simulacro_info['es_premium']:
+            return jsonify({'error': 'Error en la verificación premium'}), 403
+        else:
+            return jsonify({'error': 'Ya has realizado tu simulacro diario. Los usuarios registrados pueden hacer 1 simulacro por día.'}), 403
+    
+    try:
+        # Importar reportlab solo cuando sea necesario
+        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.lib import colors
+        from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
+        
+        data = request.get_json()
+        
+        num_preguntas = data.get('num_preguntas', 10)
+        tiempo_examen = data.get('tiempo_examen', 60)
+        niveles = data.get('niveles', [])
+        codigos_materia = data.get('codigos_materia', [])
+        capitulos = data.get('capitulos', [])
+        dificultades = data.get('dificultades', [])
+        
+        # Validar restricciones
+        opciones_validas = [5, 7, 8, 10, 12, 15, 20]
+        if num_preguntas not in opciones_validas:
+            return jsonify({'error': f'Número de preguntas debe ser uno de: {opciones_validas}'}), 400
+        
+        tiempos_validos = [30, 60, 90, 120]
+        if tiempo_examen not in tiempos_validos:
+            return jsonify({'error': f'Tiempo del examen debe ser uno de: {tiempos_validos} minutos'}), 400
+        
+        # Cargar todos los ejercicios
+        ejercicios = cargar_ejercicios()
+        
+        # Aplicar filtros
+        ejercicios_filtrados = ejercicios.copy()
+        
+        if niveles:
+            ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('nivel') in niveles]
+        
+        if codigos_materia:
+            ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('codigo_materia') in codigos_materia]
+        
+        if capitulos:
+            ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('capitulo') in capitulos]
+        
+        if dificultades:
+            ejercicios_filtrados = [e for e in ejercicios_filtrados if str(e.get('dificultad', '')) in dificultades]
+        
+        # Verificar que hay suficientes ejercicios
+        if len(ejercicios_filtrados) < num_preguntas:
+            return jsonify({
+                'error': f'Solo hay {len(ejercicios_filtrados)} ejercicios disponibles con los filtros seleccionados.'
+            }), 400
+        
+        # Seleccionar ejercicios aleatorios
+        import random
+        random.shuffle(ejercicios_filtrados)
+        simulacro_ejercicios = ejercicios_filtrados[:num_preguntas]
+        
+        # Crear buffer para el PDF
+        buffer = BytesIO()
+        
+        # Crear documento PDF
+        doc = SimpleDocTemplate(buffer, pagesize=A4)
+        story = []
+        
+        # Estilos
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=16,
+            spaceAfter=30,
+            alignment=TA_CENTER
+        )
+        heading_style = ParagraphStyle(
+            'CustomHeading',
+            parent=styles['Heading2'],
+            fontSize=14,
+            spaceAfter=12,
+            spaceBefore=12
+        )
+        normal_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            fontSize=11,
+            spaceAfter=6,
+            alignment=TA_JUSTIFY
+        )
+        question_style = ParagraphStyle(
+            'Question',
+            parent=styles['Normal'],
+            fontSize=12,
+            spaceAfter=8,
+            spaceBefore=8,
+            leftIndent=20
+        )
+        
+        # Título del simulacro
+        story.append(Paragraph("SIMULACRO DE EXAMEN", title_style))
+        story.append(Spacer(1, 20))
+        
+        # Información del simulacro
+        info_text = f"""
+        <b>Configuración del Simulacro:</b><br/>
+        • Número de preguntas: {num_preguntas}<br/>
+        • Tiempo del examen: {tiempo_examen} minutos<br/>
+        • Niveles: {', '.join(niveles) if niveles else 'Todos'}<br/>
+        • Materias: {', '.join(codigos_materia) if codigos_materia else 'Todas'}<br/>
+        • Capítulos: {', '.join(capitulos) if capitulos else 'Todos'}<br/>
+        • Dificultades: {', '.join(dificultades) if dificultades else 'Todas'}<br/>
+        • Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+        """
+        story.append(Paragraph(info_text, normal_style))
+        story.append(Spacer(1, 20))
+        
+        # Instrucciones
+        story.append(Paragraph("INSTRUCCIONES:", heading_style))
+        instructions = f"""
+        • Tienes {tiempo_examen} minutos para completar este simulacro.<br/>
+        • Lee cuidadosamente cada pregunta antes de responder.<br/>
+        • Puedes usar calculadora y fórmulas si es necesario.<br/>
+        • Marca claramente tus respuestas.<br/>
+        • Revisa tus respuestas antes de entregar.
+        """
+        story.append(Paragraph(instructions, normal_style))
+        story.append(Spacer(1, 20))
+        
+        # Ejercicios
+        story.append(Paragraph("EJERCICIOS:", heading_style))
+        story.append(Spacer(1, 10))
+        
+        for i, ejercicio in enumerate(simulacro_ejercicios, 1):
+            # Información del ejercicio
+            ejercicio_info = f"""
+            <b>Pregunta {i}</b> (ID: {ejercicio.get('id', 'N/A')} | 
+            Materia: {ejercicio.get('nombre_materia', ejercicio.get('codigo_materia', 'N/A'))} | 
+            Nivel: {ejercicio.get('nivel', 'N/A')})
+            """
+            story.append(Paragraph(ejercicio_info, question_style))
+            
+            # Enunciado (limpiar HTML y LaTeX)
+            enunciado = ejercicio.get('enunciado', 'Sin enunciado')
+            # Limpiar tags HTML básicos
+            enunciado = re.sub(r'<[^>]+>', '', enunciado)
+            # Simplificar LaTeX básico
+            enunciado = re.sub(r'\\[a-zA-Z]+', '', enunciado)
+            enunciado = re.sub(r'\{[^}]*\}', '', enunciado)
+            
+            story.append(Paragraph(enunciado, normal_style))
+            story.append(Spacer(1, 15))
+        
+        # Construir PDF
+        doc.build(story)
+        
+        # Obtener contenido del buffer
+        buffer.seek(0)
+        
+        # Marcar el simulacro como realizado
+        current_user.mark_simulacro_as_done()
+        
+        # Generar nombre del archivo
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'simulacro_{timestamp}.pdf'
+        
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/pdf'
+        )
+        
+    except ImportError:
+        return jsonify({'error': 'La biblioteca reportlab no está instalada. Ejecuta: pip install reportlab'}), 500
+    except Exception as e:
+        return jsonify({'error': f'Error al generar PDF: {str(e)}'}), 500
+
 @app.route('/estadisticas')
+@login_required
 def estadisticas():
-    """Página de estadísticas avanzadas"""
+    """Página de estadísticas avanzadas (solo para administradores)"""
+    if not current_user.es_admin:
+        flash("No tienes permisos para acceder a esta página.", "danger")
+        return redirect(url_for('index'))
+    
     metadatos = cargar_metadatos()
     ejercicios = cargar_ejercicios()
     
@@ -615,6 +986,27 @@ def libros():
 def anuncios():
     """Página de anuncios y promociones"""
     return render_template('anuncios.html')
+
+@app.route('/premium')
+def premium():
+    """Página de suscripción premium"""
+    # Obtener información de límites diarios
+    limites_info = {}
+    if current_user.is_authenticated:
+        limites_info = current_user.get_daily_limit_info()
+    else:
+        from flask import session
+        ejercicios_vistos = session.get('ejercicios_vistos_hoy', 0)
+        limite_diario = 5
+        limites_info = {
+            'limite_diario': limite_diario,
+            'ejercicios_vistos': ejercicios_vistos,
+            'ejercicios_restantes': max(0, limite_diario - ejercicios_vistos),
+            'es_premium': False,
+            'tipo_usuario': 'sin_registro'
+        }
+    
+    return render_template('premium.html', limites_info=limites_info)
 
 # Rutas adicionales para compatibilidad
 @app.route('/api/teoria')

@@ -60,7 +60,7 @@
                 <div class="mt-3">
                     {% for materia, count in metadatos.materias.items() %}
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge bg-primary">{{ materia|title }}</span>
+                        <span class="badge bg-primary">{{ metadatos.materias_nombres[materia] }}</span>
                         <span class="fw-bold">{{ count }} ejercicios</span>
                     </div>
                     <div class="progress mb-3" style="height: 8px;">

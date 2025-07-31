@@ -18,14 +18,14 @@
                         <a href="/simulacro" class="btn btn-danger btn-lg me-2">
                             <i class="fas fa-clipboard-check"></i> Simulacro de Examen
                         </a>
-                        <button class="btn btn-light btn-sm" onclick="testMathJax()">
-                            <i class="fas fa-calculator"></i> Probar MathJax
-                        </button>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
 
 <!-- Estadísticas rápidas -->
 <div class="row mb-4">
@@ -90,24 +90,60 @@
 
 <!-- Filtros -->
 <div class="filtros-section">
-    <h3><i class="fas fa-filter"></i> Filtros Paso a Paso</h3>
-    <form method="GET" action="{{ url_for('index') }}" id="filtrosForm">
-        <!-- Paso 1: Seleccionar Materia -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="materia" class="form-label">
-                    <i class="fas fa-book"></i> Paso 1: Selecciona la Materia
-                </label>
-                <select class="form-select" id="materia" name="codigo_materia" required>
-                    <option value="">-- Selecciona una materia --</option>
-                    {% for materia, count in metadatos.materias.items() %}
-                    <option value="{{ materia }}" {% if filtros.materia == materia %}selected{% endif %}>
-                        {{ materia|title }} ({{ count }} ejercicios)
-                    </option>
-                    {% endfor %}
-                </select>
+    <div class="mb-3">
+        <h3><i class="fas fa-filter"></i> Filtros Paso a Paso</h3>
+    </div>
+    
+    <!-- Materias favoritas al lado de los filtros -->
+    {% if current_user.is_authenticated and current_user.materias_favoritas %}
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <!-- Los filtros ocuparán esta columna -->
+        </div>
+        <div class="col-md-4">
+            <div class="materias-favoritas-filter alert alert-info mb-0" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-heart me-2"></i>
+                    <div>
+                        <strong>Materias favoritas:</strong>
+                        {% set materias = current_user.materias_favoritas.split(',') %}
+                        {% for materia in materias %}
+                            <span class="badge bg-primary me-1">{{ materia.strip() }}</span>
+                        {% endfor %}
+                        <div class="mt-1">
+                            <a href="{{ url_for('auth.profile') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-cog"></i> Cambiar
+                            </a>
+                            <a href="{{ url_for('index') }}?mostrar_todas=1" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-eye"></i> Ver todas
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-{% if current_user.is_authenticated and current_user.materias_favoritas %}8{% else %}12{% endif %}">
+            <form method="GET" action="{{ url_for('index') }}" id="filtrosForm">
+                <!-- Paso 1: Seleccionar Materia -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="materia" class="form-label">
+                            <i class="fas fa-book"></i> Paso 1: Selecciona la Materia
+                        </label>
+                        <select class="form-select" id="materia" name="codigo_materia" required>
+                            <option value="">-- Selecciona una materia --</option>
+                            {% for materia, count in metadatos.materias.items() %}
+                            <option value="{{ materia }}" {% if filtros.materia == materia %}selected{% endif %}>
+                                {{ metadatos.materias_nombres[materia] }} ({{ count }} ejercicios)
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
         <!-- Paso 2: Seleccionar Capítulo (se habilita después de elegir materia) -->
         <div class="row mb-3" id="paso2" style="display: none;">
@@ -144,8 +180,11 @@
                 </a>
             </div>
         </div>
-    </form>
-</div>
+            </form>
+        </div>
+    </div>
+
+
 
 <!-- Resultados -->
 <div class="row mb-3">
@@ -167,6 +206,11 @@
             {% if filtros_activos.busqueda %}
                 <span class="badge bg-info ms-2">
                     <i class="fas fa-search"></i> Búsqueda activa
+                </span>
+            {% endif %}
+            {% if not limites_info.es_premium and limites_info.ejercicios_restantes == 0 %}
+                <span class="badge bg-warning ms-2">
+                    <i class="fas fa-lock"></i> Límite alcanzado
                 </span>
             {% endif %}
         </p>
@@ -201,7 +245,7 @@
                 
                 <div class="mb-3">
                     <small class="text-muted">
-                        <i class="fas fa-book"></i> {{ ejercicio.codigo_materia|title }} | 
+                        <i class="fas fa-book"></i> {{ ejercicio.nombre_materia }} | 
                         <i class="fas fa-chapter"></i> {{ ejercicio.capitulo|title }} |
                         <i class="fas fa-tag"></i> {{ ejercicio.procedencia }}
                     </small>
@@ -226,9 +270,11 @@
                         </a>
                         {% endif %}
                     </div>
+                    {% if current_user.is_authenticated and current_user.es_admin %}
                     <small class="text-muted">
                         <i class="fas fa-file-alt"></i> {{ ejercicio.archivo_origen.split('/')[-1] if ejercicio.archivo_origen else 'N/A' }}
                     </small>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -593,4 +639,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<!-- Información de límites diarios (al final de la página) -->
+{% if not limites_info.es_premium %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-light border" role="alert" style="opacity: 0.8; font-size: 0.9em;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-info-circle me-2 text-muted"></i>
+                    <span class="text-muted">
+                        <strong>Límite diario:</strong> 
+                        Has visto {{ limites_info.ejercicios_vistos }} de {{ limites_info.limite_diario }} ejercicios disponibles hoy.
+                        {% if limites_info.ejercicios_restantes > 0 %}
+                            <span class="badge bg-success ms-2">{{ limites_info.ejercicios_restantes }} restantes</span>
+                        {% else %}
+                            <span class="badge bg-warning ms-2">Límite alcanzado</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                    {% if limites_info.tipo_usuario == 'sin_registro' %}
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('premium') }}" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-crown"></i> Ir Premium
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %} 

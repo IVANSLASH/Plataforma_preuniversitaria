@@ -512,6 +512,68 @@
                                 
                                 <div class="info-item">
                                     <div class="info-icon">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Materias Favoritas</div>
+                                        <div class="info-value editable-field" data-field="materias_favoritas">
+                                            <span class="display-value">
+                                                {% if usuario.materias_favoritas %}
+                                                    {% set materias = usuario.materias_favoritas.split(',') %}
+                                                    {% for materia in materias %}
+                                                        <span class="badge bg-primary me-1">{{ materia.strip() }}</span>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    No especificadas
+                                                {% endif %}
+                                            </span>
+                                            <div class="edit-materias" style="display: none;">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="MATU" {{ 'checked' if 'MATU' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Matemáticas Preuniversitaria</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="FISU" {{ 'checked' if 'FISU' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Física Preuniversitaria</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="QUIM" {{ 'checked' if 'QUIM' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Química Preuniversitaria</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="LENG" {{ 'checked' if 'LENG' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Lenguaje y Literatura</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="CAL2" {{ 'checked' if 'CAL2' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Cálculo 2</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="ALGN" {{ 'checked' if 'ALGN' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Álgebra Lineal</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="FIS1" {{ 'checked' if 'FIS1' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Física 1</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="materias_favoritas" value="FIS2" {{ 'checked' if 'FIS2' in (usuario.materias_favoritas or '').split(',') else '' }}>
+                                                            <span class="form-check-label">Física 2</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Selecciona las materias que te interesan para filtrar el contenido de la plataforma</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
                                         <i class="fas fa-bell"></i>
                                     </div>
                                     <div class="info-content">
@@ -721,6 +783,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayValue.style.display = 'none';
                 }
                 
+                // Manejo especial para materias favoritas
+                if (fieldName === 'materias_favoritas') {
+                    const editMaterias = field.querySelector('.edit-materias');
+                    if (editMaterias) {
+                        editMaterias.style.display = 'block';
+                        displayValue.style.display = 'none';
+                    }
+                }
+                
                 // Manejo especial para nivel académico
                 if (fieldName === 'nivel_academico_actual') {
                     const select = field.querySelector('select');
@@ -749,6 +820,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (input) {
                     input.style.display = 'none';
                     displayValue.style.display = 'block';
+                }
+                
+                // Manejo especial para materias favoritas
+                if (fieldName === 'materias_favoritas') {
+                    const editMaterias = field.querySelector('.edit-materias');
+                    if (editMaterias) {
+                        editMaterias.style.display = 'none';
+                        displayValue.style.display = 'block';
+                    }
                 }
                 
                 // Restaurar valor original
@@ -795,7 +875,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Manejo especial para checkbox
                         if (input.type === 'checkbox') {
-                            newValue = input.checked ? 'Sí, acepto recibir anuncios' : 'No acepto recibir anuncios';
+                            if (fieldName === 'acepta_anuncios') {
+                                newValue = input.checked ? 'Sí, acepto recibir anuncios' : 'No acepto recibir anuncios';
+                            } else if (fieldName === 'materias_favoritas') {
+                                // Para materias favoritas, necesitamos manejar múltiples checkboxes
+                                const checkboxes = field.querySelectorAll('input[type="checkbox"]:checked');
+                                const materias = Array.from(checkboxes).map(cb => cb.value);
+                                if (materias.length > 0) {
+                                    newValue = materias.join(', ');
+                                } else {
+                                    newValue = 'No especificadas';
+                                }
+                            }
                         }
                         
                         // Manejo especial para select
@@ -804,7 +895,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             newValue = selectedOption.text;
                         }
                         
-                        displayValue.textContent = newValue || 'No especificado';
+                        if (fieldName === 'materias_favoritas') {
+                            // Para materias favoritas, mostrar como badges
+                            if (newValue && newValue !== 'No especificadas') {
+                                const materias = newValue.split(', ');
+                                const badges = materias.map(materia => 
+                                    `<span class="badge bg-primary me-1">${materia}</span>`
+                                ).join('');
+                                displayValue.innerHTML = badges;
+                            } else {
+                                displayValue.textContent = 'No especificadas';
+                            }
+                        } else {
+                            displayValue.textContent = newValue || 'No especificado';
+                        }
                         originalValues[fieldName] = newValue;
                     }
                 });

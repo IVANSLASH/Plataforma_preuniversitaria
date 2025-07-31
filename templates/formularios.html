@@ -191,11 +191,13 @@
                                 <i class="fas fa-list"></i> Ejercicios
                             </a>
                         </div>
+                        {% if current_user.is_authenticated and current_user.es_admin %}
                         <div class="col-md-4">
                             <a href="/estadisticas" class="btn btn-outline-info w-100">
                                 <i class="fas fa-chart-pie"></i> Estadísticas
                             </a>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

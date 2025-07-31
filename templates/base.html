@@ -398,6 +398,133 @@
         }
         
         .libro-promocion {
+        
+        /* ============================================
+        ESTILOS PARA FILTRO DE MATERIAS FAVORITAS
+        ============================================ */
+        
+        .materias-favoritas-filter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .materias-favoritas-filter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .materias-favoritas-filter:hover::before {
+            left: 100%;
+        }
+        
+        .materias-favoritas-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .materias-favoritas-filter .alert {
+            background: transparent;
+            border: none;
+            color: white;
+            margin: 0;
+        }
+        
+        .materias-favoritas-filter .fas.fa-heart {
+            color: #ff6b6b;
+            animation: heartbeat 2s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .materias-favoritas-filter strong {
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .materias-favoritas-filter .badge {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .materias-favoritas-filter .badge:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            transform: scale(1.05);
+        }
+        
+        .materias-favoritas-filter .btn {
+            border-radius: 20px;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .materias-favoritas-filter .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .materias-favoritas-filter .btn-outline-primary {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+        
+        .materias-favoritas-filter .btn-outline-primary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: white;
+        }
+        
+        .materias-favoritas-filter .btn-outline-secondary {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        
+        .materias-favoritas-filter .btn-outline-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive para el filtro de materias favoritas */
+        @media (max-width: 768px) {
+            .materias-favoritas-filter {
+                max-width: 100% !important;
+                margin-top: 1rem;
+            }
+            
+            .materias-favoritas-filter .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            
+            .materias-favoritas-filter .btn {
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+        }
             background: rgba(255,255,255,0.8);
             padding: 1rem;
             border-radius: 10px;
@@ -549,14 +676,21 @@
                             <i class="fas fa-clipboard-check"></i> Simulacro
                         </a>
                     </li>
+                    {% if current_user.is_authenticated and current_user.es_admin %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('estadisticas') }}">
                             <i class="fas fa-chart-bar"></i> Estadísticas
                         </a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('libros') }}">
                             <i class="fas fa-book"></i> Libros
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('premium') }}">
+                            <i class="fas fa-crown"></i> Premium
                         </a>
                     </li>
                 </ul>

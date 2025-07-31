@@ -69,13 +69,13 @@ def authorize():
     usuario = Usuario.query.filter_by(google_id=google_id).first()
 
     if not usuario:
-        # Si no existe, crea un nuevo usuario
-        usuario = Usuario(
-            google_id=google_id,
+        # Si no existe, crea un nuevo usuario usando el método seguro
+        usuario = Usuario.create_google_user(
+            username=email.split('@')[0],  # Usar parte del email como username inicial
             email=email,
             nombre_completo=nombre_completo,
-            google_picture=google_picture,
-            username=email.split('@')[0] # Usar parte del email como username inicial
+            google_id=google_id,
+            google_picture=google_picture
         )
         db.session.add(usuario)
         db.session.commit()
@@ -87,8 +87,8 @@ def authorize():
     # Actualiza el último acceso
     usuario.actualizar_ultimo_acceso()
 
-    # Redirige a completar el perfil si es necesario
-    if not usuario.profile_completed:
+    # Redirige a completar el perfil solo si es un usuario nuevo y no tiene datos básicos
+    if not usuario.profile_completed and not usuario.ultima_unidad_educativa and not usuario.ciudad:
         return redirect(url_for('auth.complete_profile'))
     
     return redirect(url_for('index'))
@@ -110,18 +110,30 @@ def complete_profile():
     Página para que los usuarios completen su perfil después del registro.
     """
     if request.method == 'POST':
-        current_user.ultima_unidad_educativa = request.form.get('institucion_educativa_secundaria')
-        current_user.nivel_academico_actual = request.form.get('nivel_academico_actual')
-        if current_user.nivel_academico_actual == 'otro':
-            current_user.nivel_academico_otro = request.form.get('nivel_academico_otro')
-        current_user.ciudad = request.form.get('ciudad')
-        current_user.whatsapp = request.form.get('whatsapp')
-        current_user.carrera_interes = request.form.get('carrera_interes')
-        current_user.profile_completed = True
+        # Solo actualizar si se proporcionan datos
+        if request.form.get('institucion_educativa_secundaria'):
+            current_user.ultima_unidad_educativa = request.form.get('institucion_educativa_secundaria')
+        if request.form.get('nivel_academico_actual'):
+            current_user.nivel_academico_actual = request.form.get('nivel_academico_actual')
+            if current_user.nivel_academico_actual == 'otro':
+                current_user.nivel_academico_otro = request.form.get('nivel_academico_otro')
+        if request.form.get('ciudad'):
+            current_user.ciudad = request.form.get('ciudad')
+        if request.form.get('whatsapp'):
+            current_user.whatsapp = request.form.get('whatsapp')
+        if request.form.get('carrera_interes'):
+            current_user.carrera_interes = request.form.get('carrera_interes')
+        
+        # Marcar como completado si al menos se proporcionó algún dato
+        if any([request.form.get('institucion_educativa_secundaria'), 
+                request.form.get('nivel_academico_actual'), 
+                request.form.get('ciudad')]):
+            current_user.profile_completed = True
+            flash("¡Perfil actualizado! Gracias por la información.", "success")
+        else:
+            flash("Puedes completar tu perfil más tarde desde tu página de perfil.", "info")
         
         db.session.commit()
-        
-        flash("¡Perfil completado! Gracias por la información.", "success")
         return redirect(url_for('index'))
         
     return render_template('auth/complete_profile.html')
@@ -209,6 +221,10 @@ def update_profile():
         intereses = request.form.get('intereses', '').strip()
         acepta_anuncios = 'acepta_anuncios' in request.form
         
+        # Obtener materias favoritas (múltiples valores)
+        materias_favoritas = request.form.getlist('materias_favoritas')
+        materias_favoritas_str = ','.join(materias_favoritas) if materias_favoritas else None
+        
         # Validaciones básicas
         if not nombre_completo:
             return {'success': False, 'message': 'El nombre completo es obligatorio'}
@@ -230,6 +246,7 @@ def update_profile():
         current_user.carrera_interes = carrera_interes or None
         current_user.intereses = intereses or None
         current_user.acepta_anuncios = acepta_anuncios
+        current_user.materias_favoritas = materias_favoritas_str
         
         # Marcar perfil como completado si no lo estaba
         if not current_user.profile_completed:

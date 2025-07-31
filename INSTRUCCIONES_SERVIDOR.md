@@ -47,7 +47,7 @@ python app.py
 ## 🔍 Filtros URL soportados
 
 ```
-?codigo_materia=MATU    # Por código de materia
+?codigo_materia=MATU    # Por código de materia (se mostrará "Matemáticas Preuniversitaria")
 ?nivel=basico           # Por nivel
 ?dificultad=2           # Por dificultad 1-5
 ?visibilidad=web_impreso # Por visibilidad
@@ -57,6 +57,7 @@ python app.py
 
 ```
 http://localhost:5000/?codigo_materia=MATU
+# Mostrará ejercicios de "Matemáticas Preuniversitaria"
 http://localhost:5000/?nivel=basico&dificultad=2
 http://localhost:5000/ejercicio/MATU_ALG_001
 ```

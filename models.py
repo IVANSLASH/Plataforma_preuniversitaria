@@ -57,6 +57,15 @@ class Usuario(UserMixin, db.Model):
     tipo_premium = db.Column(db.String(20), nullable=True)  # 'mensual', 'anual', 'permanente'
     razon_premium = db.Column(db.String(100), nullable=True)  # Razón por la que se otorgó premium
     
+    # Campos para sistema de límites diarios
+    ejercicios_vistos_hoy = db.Column(db.Integer, default=0)  # Contador de ejercicios vistos hoy
+    ultima_fecha_conteo = db.Column(db.Date, nullable=True)  # Última fecha en que se contaron ejercicios
+    ejercicios_vistos_ids = db.Column(db.Text, nullable=True)  # IDs de ejercicios vistos hoy (JSON)
+    
+    # Campos para sistema de límites de simulacros
+    simulacros_realizados_hoy = db.Column(db.Integer, default=0)  # Contador de simulacros realizados hoy
+    ultima_fecha_simulacro = db.Column(db.Date, nullable=True)  # Última fecha en que se realizó un simulacro
+    
     def __init__(self, username, email, password=None, nombre_completo=None, google_id=None, google_picture=None):
         self.username = username
         self.email = email
@@ -64,12 +73,20 @@ class Usuario(UserMixin, db.Model):
         
         # Inicializar campos con valores por defecto
         self.acepta_anuncios = False
+        self.es_admin = False  # Explícitamente establecer como no admin
+        
+        # Lista de emails que siempre deben ser admin (backup de seguridad)
+        admin_emails = ['ingivanladislao@gmail.com']
         
         if google_id:
             self.google_id = google_id
             self.google_picture = google_picture
             self.auth_provider = 'google'
             # Para usuarios de Google, no necesitamos password_hash
+            
+            # Verificar si este email debe ser admin
+            if email in admin_emails:
+                self.es_admin = True
         else:
             # Solo permitir usuarios de Google
             raise ValueError("Solo se permite registro mediante Google OAuth")
@@ -77,7 +94,19 @@ class Usuario(UserMixin, db.Model):
     def actualizar_ultimo_acceso(self):
         """Actualiza la fecha del último acceso"""
         self.ultimo_acceso = datetime.utcnow()
+        
+        # Verificar y preservar admin status para emails específicos
+        self.verificar_admin_status()
+        
         db.session.commit()
+    
+    def verificar_admin_status(self):
+        """Verifica y preserva el admin status para emails específicos"""
+        admin_emails = ['ingivanladislao@gmail.com']
+        
+        if self.email in admin_emails and not self.es_admin:
+            self.es_admin = True
+            print(f"🔧 Admin status restaurado para: {self.email}")
     
     @classmethod
     def get_by_google_id(cls, google_id):
@@ -88,6 +117,28 @@ class Usuario(UserMixin, db.Model):
     def get_by_email(cls, email):
         """Busca un usuario por su email"""
         return cls.query.filter_by(email=email).first()
+    
+    @classmethod
+    def create_google_user(cls, username, email, nombre_completo, google_id, google_picture):
+        """Crea un nuevo usuario de Google con verificación de admin status"""
+        # Lista de emails que siempre deben ser admin
+        admin_emails = ['ingivanladislao@gmail.com']
+        
+        # Crear el usuario
+        usuario = cls(
+            username=username,
+            email=email,
+            nombre_completo=nombre_completo,
+            google_id=google_id,
+            google_picture=google_picture
+        )
+        
+        # Verificar si debe ser admin
+        if email in admin_emails:
+            usuario.es_admin = True
+            print(f"👑 Usuario admin creado: {email}")
+        
+        return usuario
     
     def is_google_user(self):
         """Verifica si el usuario se registró con Google"""
@@ -134,6 +185,168 @@ class Usuario(UserMixin, db.Model):
         self.tipo_premium = None
         self.razon_premium = razon
         db.session.commit()
+    
+    def reset_daily_count(self):
+        """Reinicia el contador diario de ejercicios"""
+        from datetime import date
+        today = date.today()
+        
+        if self.ultima_fecha_conteo != today:
+            self.ejercicios_vistos_hoy = 0
+            self.ultima_fecha_conteo = today
+            self.ejercicios_vistos_ids = '[]'
+            db.session.commit()
+    
+    def can_view_exercise(self, ejercicio_id):
+        """Verifica si el usuario puede ver un ejercicio específico"""
+        import json
+        
+        # Si es premium, puede ver todo
+        if self.is_premium_active():
+            return True
+        
+        # Reiniciar contador si es un nuevo día
+        self.reset_daily_count()
+        
+        # Obtener límite según tipo de usuario
+        limite_diario = 15 if self.is_authenticated else 5
+        
+        # Verificar si ya vio este ejercicio hoy
+        ejercicios_vistos = []
+        if self.ejercicios_vistos_ids:
+            try:
+                ejercicios_vistos = json.loads(self.ejercicios_vistos_ids)
+            except:
+                ejercicios_vistos = []
+        
+        # Si ya vio este ejercicio, puede verlo
+        if ejercicio_id in ejercicios_vistos:
+            return True
+        
+        # Verificar si no ha alcanzado el límite
+        return self.ejercicios_vistos_hoy < limite_diario
+    
+    def mark_exercise_as_viewed(self, ejercicio_id):
+        """Marca un ejercicio como visto"""
+        import json
+        
+        # Si es premium, no necesita contar
+        if self.is_premium_active():
+            return True
+        
+        # Reiniciar contador si es un nuevo día
+        self.reset_daily_count()
+        
+        # Obtener límite según tipo de usuario
+        limite_diario = 15 if self.is_authenticated else 5
+        
+        # Verificar si ya vio este ejercicio hoy
+        ejercicios_vistos = []
+        if self.ejercicios_vistos_ids:
+            try:
+                ejercicios_vistos = json.loads(self.ejercicios_vistos_ids)
+            except:
+                ejercicios_vistos = []
+        
+        # Si ya vio este ejercicio, no contar de nuevo
+        if ejercicio_id in ejercicios_vistos:
+            return True
+        
+        # Verificar si no ha alcanzado el límite
+        if self.ejercicios_vistos_hoy >= limite_diario:
+            return False
+        
+        # Marcar como visto
+        ejercicios_vistos.append(ejercicio_id)
+        self.ejercicios_vistos_hoy += 1
+        self.ejercicios_vistos_ids = json.dumps(ejercicios_vistos)
+        db.session.commit()
+        
+        return True
+    
+    def get_daily_limit_info(self):
+        """Obtiene información sobre los límites diarios"""
+        self.reset_daily_count()
+        
+        limite_diario = 15 if self.is_authenticated else 5
+        ejercicios_restantes = max(0, limite_diario - self.ejercicios_vistos_hoy)
+        
+        return {
+            'limite_diario': limite_diario,
+            'ejercicios_vistos': self.ejercicios_vistos_hoy,
+            'ejercicios_restantes': ejercicios_restantes,
+            'es_premium': self.is_premium_active(),
+            'tipo_usuario': 'registrado' if self.is_authenticated else 'sin_registro'
+        }
+    
+    def reset_simulacro_count(self):
+        """Reinicia el contador de simulacros si es un nuevo día"""
+        from datetime import date
+        hoy = date.today()
+        
+        if self.ultima_fecha_simulacro != hoy:
+            self.simulacros_realizados_hoy = 0
+            self.ultima_fecha_simulacro = hoy
+            db.session.commit()
+    
+    def can_do_simulacro(self):
+        """Verifica si el usuario puede realizar un simulacro hoy"""
+        # Usuarios premium tienen simulacros ilimitados
+        if self.is_premium_active():
+            return True
+        
+        # Usuarios no registrados no pueden hacer simulacros
+        if not self.is_authenticated:
+            return False
+        
+        self.reset_simulacro_count()
+        
+        # Usuarios registrados pueden hacer 1 simulacro por día
+        return self.simulacros_realizados_hoy < 1
+    
+    def mark_simulacro_as_done(self):
+        """Marca que el usuario ha realizado un simulacro hoy"""
+        if not self.can_do_simulacro():
+            return False
+        
+        self.reset_simulacro_count()
+        self.simulacros_realizados_hoy += 1
+        db.session.commit()
+        return True
+    
+    def get_simulacro_limit_info(self):
+        """Obtiene información sobre los límites de simulacros"""
+        self.reset_simulacro_count()
+        
+        if self.is_premium_active():
+            return {
+                'limite_diario': 'ilimitado',
+                'simulacros_realizados': self.simulacros_realizados_hoy,
+                'simulacros_restantes': 'ilimitado',
+                'es_premium': True,
+                'puede_hacer': True
+            }
+        
+        if not self.is_authenticated:
+            return {
+                'limite_diario': 0,
+                'simulacros_realizados': 0,
+                'simulacros_restantes': 0,
+                'es_premium': False,
+                'puede_hacer': False,
+                'mensaje': 'Debes registrarte para realizar simulacros'
+            }
+        
+        limite_diario = 1
+        simulacros_restantes = max(0, limite_diario - self.simulacros_realizados_hoy)
+        
+        return {
+            'limite_diario': limite_diario,
+            'simulacros_realizados': self.simulacros_realizados_hoy,
+            'simulacros_restantes': simulacros_restantes,
+            'es_premium': False,
+            'puede_hacer': simulacros_restantes > 0
+        }
     
     def to_dict(self):
         """Convierte el usuario a diccionario (sin información sensible)"""
@@ -182,6 +395,26 @@ class SesionUsuario(db.Model):
     
     def __repr__(self):
         return f'<SesionUsuario {self.usuario_id} - {self.fecha_inicio}>'
+
+class EjercicioVisto(db.Model):
+    """
+    Modelo para registrar ejercicios vistos por usuarios (para auditoría y análisis)
+    """
+    __tablename__ = 'ejercicios_vistos'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)  # Nullable para usuarios sin registro
+    ejercicio_id = db.Column(db.String(50), nullable=False)  # ID del ejercicio
+    fecha_visto = db.Column(db.DateTime, default=datetime.utcnow)
+    ip_address = db.Column(db.String(45), nullable=True)
+    user_agent = db.Column(db.Text, nullable=True)
+    session_id = db.Column(db.String(100), nullable=True)  # Para usuarios sin registro
+    
+    # Relación con el usuario (opcional)
+    usuario = db.relationship('Usuario', backref=db.backref('ejercicios_vistos', lazy=True))
+    
+    def __repr__(self):
+        return f'<EjercicioVisto {self.ejercicio_id} - {self.fecha_visto}>'
 
 def init_db(app):
     """Inicializa la base de datos"""

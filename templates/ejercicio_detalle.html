@@ -12,8 +12,8 @@
             </a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ url_for('index', materia=ejercicio.materia) }}">
-                {{ ejercicio.materia|title }}
+            <a href="{{ url_for('index', codigo_materia=ejercicio.codigo_materia) }}">
+                {{ ejercicio.nombre_materia }}
             </a>
         </li>
         <li class="breadcrumb-item">
@@ -45,7 +45,7 @@
                             </div>
                             <div class="text-white-50">
                                 <small>
-                                    <i class="fas fa-book"></i> {{ ejercicio.materia|title }}<br>
+                                    <i class="fas fa-book"></i> {{ ejercicio.nombre_materia }}<br>
                                     <i class="fas fa-chapter"></i> {{ ejercicio.capitulo|title }}
                                 </small>
                             </div>
@@ -63,6 +63,49 @@
     </div>
 </div>
 
+<!-- Verificación de acceso -->
+{% if not puede_ver %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h3><i class="fas fa-lock"></i> Acceso Restringido</h3>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-crown fa-4x text-warning mb-3"></i>
+                <h4>Has alcanzado tu límite diario</h4>
+                <p class="lead">
+                    Has visto {{ limites_info.ejercicios_vistos }} de {{ limites_info.limite_diario }} ejercicios disponibles hoy.
+                </p>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5><i class="fas fa-user-plus"></i> Registrarse</h5>
+                                <p>Obtén 15 ejercicios diarios al registrarte</p>
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt"></i> Registrarse
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5><i class="fas fa-crown"></i> Ir Premium</h5>
+                                <p>Acceso ilimitado a todos los ejercicios</p>
+                                <a href="{{ url_for('premium') }}" class="btn btn-warning">
+                                    <i class="fas fa-crown"></i> Suscribirse
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
 <!-- Contenido del ejercicio -->
 <div class="row">
     <div class="col-lg-8">
@@ -167,6 +210,7 @@
 
     <!-- Sidebar -->
     <div class="col-lg-4">
+        {% if current_user.is_authenticated and current_user.es_admin %}
         <!-- Información del ejercicio -->
         <div class="card mb-4">
             <div class="card-header">
@@ -252,6 +296,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -317,6 +362,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}

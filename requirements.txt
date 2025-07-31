@@ -103,6 +103,10 @@ tempfile2>=0.1.0                # Manejo seguro de archivos temporales
 # pip install pylatex
 # pylatex>=1.4.2                # Generación programática de LaTeX
 
+# === GENERACIÓN DE PDF ===
+# pip install reportlab
+reportlab>=4.0.0                # Generación de PDFs
+
 # === COMPRESIÓN ===
 # pip install zipfile36
 # zipfile36>=0.1.3              # Manejo avanzado de archivos ZIP

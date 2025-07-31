@@ -75,6 +75,20 @@ class EjercicioExporterNuevo:
             'HIST': 'historia',
             'EDIF': 'ecuaciones_diferenciales'
         }
+        
+        # Mapeo de códigos de materia a nombres amigables para la UI
+        self.nombres_materias = {
+            'MATU': 'Matemáticas Preuniversitaria',
+            'FISU': 'Física Preuniversitaria',
+            'QUIM': 'Química Preuniversitaria',
+            'LENG': 'Lenguaje y Literatura',
+            'CAL2': 'Cálculo 2',
+            'ALGN': 'Álgebra Lineal',
+            'FIS1': 'Física 1',
+            'FIS2': 'Física 2',
+            'HIST': 'Historia',
+            'EDIF': 'Ecuaciones Diferenciales'
+        }
     
     def parse_metadata(self, metadata_str: str) -> Dict[str, Any]:
         """Parsea los metadatos de un ejercicio con nueva estructura."""
@@ -186,6 +200,7 @@ class EjercicioExporterNuevo:
                     'id': metadata.get('id', ''),
                     'materia_principal': metadata.get('materia_principal', materia_principal),
                     'codigo_materia': metadata.get('codigo_materia', ''),
+                    'nombre_materia': self.nombres_materias.get(metadata.get('codigo_materia', ''), metadata.get('codigo_materia', '')),
                     'capitulo': metadata.get('capitulo', capitulo),
                     'subtema': metadata.get('subtema', ''),
                     'nivel': metadata.get('nivel', 'basico'),
@@ -262,7 +277,8 @@ class EjercicioExporterNuevo:
             'niveles': {},
             'dificultades': {},
             'visibilidades': {},
-            'codigos_materia': {}
+            'codigos_materia': {},
+            'materias_nombres': {}
         }
         
         for ejercicio in ejercicios:
@@ -301,6 +317,10 @@ class EjercicioExporterNuevo:
             if codigo not in metadatos['codigos_materia']:
                 metadatos['codigos_materia'][codigo] = 0
             metadatos['codigos_materia'][codigo] += 1
+            
+            # Agregar nombre completo de la materia
+            if codigo not in metadatos['materias_nombres']:
+                metadatos['materias_nombres'][codigo] = self.nombres_materias.get(codigo, codigo)
         
         return metadatos
     

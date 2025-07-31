@@ -1,5 +1,7 @@
 # Códigos de Materias - Sistema de 4 Caracteres
 
+> **NOTA IMPORTANTE**: Los códigos de materia se usan internamente para la organización de archivos y bases de datos. En la interfaz de usuario se muestran los nombres completos de las materias para una mejor experiencia del usuario.
+
 ## Matemáticas y Ciencias Exactas
 - **MATU** - Matemáticas Preuniversitaria
 - **CAL2** - Cálculo 2

@@ -20,6 +20,46 @@
         </div>
     </div>
 
+    <!-- Información de límites de simulacros -->
+    {% if not simulacro_info.es_premium %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Límite de simulacros:</strong>
+                        {% if simulacro_info.limite_diario == 'ilimitado' %}
+                            <span class="badge bg-success ms-2">Simulacros ilimitados (Premium)</span>
+                        {% elif simulacro_info.limite_diario == 0 %}
+                            <span class="text-muted">Debes registrarte para realizar simulacros</span>
+                        {% else %}
+                            Has realizado {{ simulacro_info.simulacros_realizados }} de {{ simulacro_info.limite_diario }} simulacros disponibles hoy.
+                            {% if simulacro_info.simulacros_restantes > 0 %}
+                                <span class="badge bg-success ms-2">{{ simulacro_info.simulacros_restantes }} restantes</span>
+                            {% else %}
+                                <span class="badge bg-warning ms-2">Límite alcanzado</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if not simulacro_info.puede_hacer %}
+                            {% if simulacro_info.limite_diario == 0 %}
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-sm me-2">
+                                    <i class="fas fa-user-plus"></i> Registrarse
+                                </a>
+                            {% endif %}
+                            <a href="{{ url_for('premium') }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-crown"></i> Ir Premium
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Configuración del simulacro -->
     <div class="row">
         <div class="col-lg-8">
@@ -42,6 +82,19 @@
                                 <option value="12">12 preguntas</option>
                                 <option value="15">15 preguntas</option>
                                 <option value="20">20 preguntas (máximo)</option>
+                            </select>
+                        </div>
+
+                        <!-- Tiempo del examen -->
+                        <div class="mb-4">
+                            <label for="tiempoExamen" class="form-label">
+                                <strong><i class="fas fa-clock"></i> Tiempo del Examen</strong>
+                            </label>
+                            <select class="form-select" id="tiempoExamen" name="tiempoExamen" required>
+                                <option value="30">30 minutos</option>
+                                <option value="60" selected>60 minutos</option>
+                                <option value="90">90 minutos</option>
+                                <option value="120">120 minutos</option>
                             </select>
                         </div>
 
@@ -81,7 +134,7 @@
                             <div class="form-check">
                                 <input class="form-check-input materia-radio" type="radio" name="materia" id="materia{{ materia }}" value="{{ materia }}">
                                 <label class="form-check-label" for="materia{{ materia }}">
-                                    {{ materia|title }} ({{ count }} ejercicios disponibles)
+                                    {{ metadatos.materias_nombres[materia] }} ({{ count }} ejercicios disponibles)
                                 </label>
                             </div>
                             {% endfor %}
@@ -133,9 +186,15 @@
 
                         <!-- Botón generar -->
                         <div class="d-grid">
+                            {% if simulacro_info.puede_hacer %}
                             <button type="submit" class="btn btn-danger btn-lg">
                                 <i class="fas fa-magic"></i> Generar Simulacro
                             </button>
+                            {% else %}
+                            <button type="submit" class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-ban"></i> Límite de Simulacros Alcanzado
+                            </button>
+                            {% endif %}
                         </div>
                     </form>
                 </div>
@@ -352,6 +411,7 @@ document.getElementById('simulacroForm').addEventListener('submit', function(e) 
     const materiaSeleccionada = document.querySelector('input[name="materia"]:checked').value;
     const formData = {
         num_preguntas: parseInt(document.getElementById('numPreguntas').value),
+        tiempo_examen: parseInt(document.getElementById('tiempoExamen').value),
         niveles: Array.from(document.querySelectorAll('.nivel-checkbox:checked')).map(cb => cb.value),
         codigos_materia: materiaSeleccionada ? [materiaSeleccionada] : [],
         capitulos: Array.from(document.querySelectorAll('.capitulo-checkbox:checked')).map(cb => cb.value),
@@ -398,6 +458,7 @@ function mostrarSimulacro(data) {
                 <h5><i class="fas fa-info-circle"></i> Configuración</h5>
                 <ul class="list-unstyled">
                     <li><strong>Preguntas:</strong> ${data.configuracion.num_preguntas}</li>
+                    <li><strong>Tiempo:</strong> ${data.configuracion.tiempo_examen} minutos</li>
                     <li><strong>Niveles:</strong> ${data.configuracion.niveles.length > 0 ? data.configuracion.niveles.join(', ') : 'Todos'}</li>
                     <li><strong>Materias:</strong> ${data.configuracion.codigos_materia.length > 0 ? data.configuracion.codigos_materia.join(', ') : 'Todas'}</li>
                     <li><strong>Capítulos:</strong> ${data.configuracion.capitulos.length > 0 ? data.configuracion.capitulos.join(', ') : 'Todos'}</li>
@@ -420,8 +481,11 @@ function mostrarSimulacro(data) {
             <button class="btn btn-success me-2" onclick="mostrarRespuestas()">
                 <i class="fas fa-eye"></i> Ver Respuestas
             </button>
-            <button class="btn btn-primary" onclick="ocultarRespuestas()">
+            <button class="btn btn-primary me-2" onclick="ocultarRespuestas()">
                 <i class="fas fa-eye-slash"></i> Ocultar Respuestas
+            </button>
+            <button class="btn btn-danger" onclick="descargarPDF()">
+                <i class="fas fa-file-pdf"></i> Descargar PDF
             </button>
         </div>
     `;
@@ -473,6 +537,63 @@ function mostrarRespuestas() {
 function ocultarRespuestas() {
     document.querySelectorAll('.respuesta-pregunta').forEach(respuesta => {
         respuesta.style.display = 'none';
+    });
+}
+
+function descargarPDF() {
+    // Mostrar indicador de carga
+    const btnPDF = document.querySelector('button[onclick="descargarPDF()"]');
+    const originalText = btnPDF.innerHTML;
+    btnPDF.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF...';
+    btnPDF.disabled = true;
+    
+    // Obtener los datos del simulacro actual
+    const simulacroContent = document.getElementById('simulacroContent');
+    const configuracion = {
+        num_preguntas: parseInt(document.getElementById('numPreguntas').value),
+        tiempo_examen: parseInt(document.getElementById('tiempoExamen').value),
+        niveles: Array.from(document.querySelectorAll('.nivel-checkbox:checked')).map(cb => cb.value),
+        codigos_materia: document.querySelector('input[name="materia"]:checked').value ? [document.querySelector('input[name="materia"]:checked').value] : [],
+        capitulos: Array.from(document.querySelectorAll('.capitulo-checkbox:checked')).map(cb => cb.value),
+        dificultades: Array.from(document.querySelectorAll('.dificultad-checkbox:checked')).map(cb => cb.value)
+    };
+    
+    // Enviar solicitud para generar PDF
+    fetch('/generar_simulacro_pdf', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(configuracion)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.error || 'Error del servidor');
+            });
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        // Crear enlace de descarga
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `simulacro_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        // Restaurar botón
+        btnPDF.innerHTML = originalText;
+        btnPDF.disabled = false;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al generar PDF: ' + error.message);
+        btnPDF.innerHTML = originalText;
+        btnPDF.disabled = false;
     });
 }
 
