@@ -728,9 +728,14 @@
                             </ul>
                         </li>
                     {% else %}
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-primary" href="{{ url_for('auth.login') }}">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
-                                <i class="fab fa-google"></i> Acceder con Google
+                                <i class="fab fa-google"></i> Registrarse
                             </a>
                         </li>
                     {% endif %}

@@ -660,7 +660,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div>
                     {% if limites_info.tipo_usuario == 'sin_registro' %}
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-sm me-2">
+                        <a href="{{ url_for('auth.login_google') }}" class="btn btn-outline-primary btn-sm me-2">
                             <i class="fas fa-user-plus"></i> Registrarse
                         </a>
                     {% endif %}

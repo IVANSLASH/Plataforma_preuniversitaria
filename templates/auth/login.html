@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Iniciar Sesión - Plataforma Preuniversitaria{% endblock %}
+{% block title %}Acceso - Plataforma Preuniversitaria{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -114,6 +114,49 @@
         background: linear-gradient(135deg, #74c0fc 0%, #4dabf7 100%);
         color: white;
     }
+    
+    .auth-option {
+        padding: 1.5rem;
+        border-radius: 15px;
+        background: #f8f9fa;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-option:hover {
+        border-color: #667eea;
+        background: #f0f2ff;
+        transform: translateY(-2px);
+    }
+    
+    .auth-option h5 {
+        color: #495057;
+        font-weight: 600;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-outline-primary {
+        border: 2px solid #667eea;
+        color: #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #667eea;
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
 </style>
 {% endblock %}
 
@@ -122,8 +165,8 @@
     <div class="auth-card">
         <div class="auth-header">
             <h2><i class="fas fa-graduation-cap"></i></h2>
-            <h2>Iniciar Sesión</h2>
-            <p>Accede a tu cuenta de la Plataforma Preuniversitaria</p>
+            <h2>Acceso a la Plataforma</h2>
+            <p>Elige cómo quieres acceder a tu cuenta</p>
         </div>
         
         <div class="auth-body">
@@ -138,57 +181,52 @@
                 {% endif %}
             {% endwith %}
             
-            <form method="POST">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="username" name="username" 
-                           placeholder="Usuario o Email" required>
-                    <label for="username">
-                        <i class="fas fa-user"></i> Usuario o Email
-                    </label>
-                </div>
-                
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="password" name="password" 
-                           placeholder="Contraseña" required>
-                    <label for="password">
-                        <i class="fas fa-lock"></i> Contraseña
-                    </label>
-                </div>
-                
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                    <label class="form-check-label" for="remember">
-                        Recordarme
-                    </label>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-login">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </button>
-            </form>
+            <!-- Opción 1: Iniciar Sesión -->
+            <div class="auth-option mb-4">
+                <h5 class="text-center mb-3">
+                    <i class="fas fa-sign-in-alt text-primary"></i> 
+                    ¿Ya tienes una cuenta?
+                </h5>
+                <a href="{{ url_for('auth.login_google') }}" class="btn btn-outline-primary w-100 mb-2" 
+                   style="border-radius: 10px; padding: 0.75rem 2rem; font-weight: 600;">
+                    <i class="fas fa-sign-in-alt"></i> 
+                    Iniciar Sesión con Google
+                </a>
+                <p class="text-center text-muted small">
+                    Accede a tu cuenta existente
+                </p>
+            </div>
             
             <!-- Separador -->
             <div class="text-center my-4">
                 <span class="text-muted">o</span>
             </div>
             
-            <!-- Botón de Google -->
-            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary w-100 mb-3" 
-               style="border-radius: 10px; padding: 0.75rem 2rem; font-weight: 600;">
-                <i class="fab fa-google" style="color: #DB4437;"></i> 
-                Continuar con Google
-            </a>
+            <!-- Opción 2: Registrarse -->
+            <div class="auth-option">
+                <h5 class="text-center mb-3">
+                    <i class="fas fa-user-plus text-success"></i> 
+                    ¿Eres nuevo aquí?
+                </h5>
+                <a href="{{ url_for('auth.login_google') }}" class="btn btn-success w-100 mb-2" 
+                   style="border-radius: 10px; padding: 0.75rem 2rem; font-weight: 600;">
+                    <i class="fab fa-google"></i> 
+                    Registrarse con Google
+                </a>
+                <p class="text-center text-muted small">
+                    Crea tu cuenta gratuita
+                </p>
+            </div>
         </div>
         
         <div class="auth-footer">
-            <p>¿No tienes una cuenta? 
-                <a href="{{ url_for('auth.login') }}">
-                    <i class="fab fa-google"></i> Regístrate con Google
-                </a>
-            </p>
+            <p><small class="text-muted">
+                <i class="fas fa-shield-alt"></i> 
+                Tu información está segura con Google OAuth
+            </small></p>
             <p><small class="text-muted">
                 <i class="fas fa-info-circle"></i> 
-                Solo se permite registro mediante Google OAuth
+                Solo se permite autenticación mediante Google
             </small></p>
         </div>
     </div>
@@ -198,36 +236,34 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-focus en el primer campo
-    document.getElementById('username').focus();
+    // Agregar efectos de hover a las opciones de autenticación
+    const authOptions = document.querySelectorAll('.auth-option');
     
-    // Validación en tiempo real
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    
-    function validateField(input, minLength = 1) {
-        const value = input.value.trim();
-        if (value.length < minLength) {
-            input.classList.add('is-invalid');
-            return false;
-        } else {
-            input.classList.remove('is-invalid');
-            return true;
-        }
-    }
-    
-    usernameInput.addEventListener('blur', () => validateField(usernameInput, 1));
-    passwordInput.addEventListener('blur', () => validateField(passwordInput, 1));
-    
-    // Validación del formulario antes de enviar
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const usernameValid = validateField(usernameInput, 1);
-        const passwordValid = validateField(passwordInput, 1);
+    authOptions.forEach(option => {
+        option.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
         
-        if (!usernameValid || !passwordValid) {
-            e.preventDefault();
-            return false;
-        }
+        option.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Agregar efecto de click a los botones
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Agregar efecto de loading
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
+            this.disabled = true;
+            
+            // Restaurar después de un delay (en caso de error)
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 5000);
+        });
     });
 });
 </script>

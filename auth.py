@@ -28,6 +28,16 @@ def init_oauth(app):
 @auth_bp.route('/login')
 def login():
     """
+    Página de selección entre registro e inicio de sesión.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    return render_template('auth/login.html')
+
+@auth_bp.route('/login/google')
+def login_google():
+    """
     Redirige al usuario a la autenticación de Google OAuth.
     Esta es la única forma de autenticación permitida.
     """
