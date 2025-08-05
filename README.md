@@ -40,21 +40,29 @@ plataforma_preuniversitaria/
 
 ### Requisitos
 - Python 3.8+
-- LaTeX (MiKTeX, TeX Live)
-- Node.js (para frontend)
+- pip (gestor de paquetes de Python)
+- Cuenta de Google Cloud Platform (para OAuth)
 
 ### Configuración Inicial
 ```bash
 # Clonar el repositorio
-git clone [url-del-repositorio]
-cd plataforma_preuniversitaria
+git clone https://github.com/IVANSLASH/Plataforma_preuniversitaria.git
+cd Plataforma_preuniversitaria
 
 # Instalar dependencias Python
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
-# Configurar LaTeX
-# (Instalar MiKTeX o TeX Live según tu sistema)
+# Configurar variables de entorno
+# Ver CONFIGURACION.md para instrucciones detalladas
 ```
+
+### Configuración Rápida
+1. **Crear archivo `.env`** con tus credenciales de Google OAuth
+2. **Configurar Google Cloud Console** (ver CONFIGURACION.md)
+3. **Ejecutar la aplicación**: `python app.py`
+4. **Acceder**: `http://localhost:5000`
+
+📖 **Para instrucciones detalladas, consulta [CONFIGURACION.md](CONFIGURACION.md)**
 
 ### Uso Básico
 
