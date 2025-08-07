@@ -192,6 +192,42 @@
             position: relative;
         }
         
+        /* Estilos para el selector de materias */
+        .materias-checkboxes .form-check {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .materias-checkboxes .form-check:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+        
+        .materias-checkboxes .form-check-input:checked + .form-check-label {
+            font-weight: 600;
+        }
+        
+        .materias-checkboxes .form-check-label {
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .materias-favoritas-info {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .materias-favoritas-filter {
+            border-left: 4px solid #007bff;
+        }
+        
+
+        
         .enunciado-content::after {
             content: '';
             position: absolute;
@@ -221,10 +257,12 @@
         /* Estilos para botones de dificultad */
         .btn-dificultad {
             border-radius: 20px;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             font-weight: 500;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            font-size: 0.9rem;
+            min-width: 80px;
         }
         
         .btn-dificultad:hover {

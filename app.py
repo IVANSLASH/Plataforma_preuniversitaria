@@ -189,15 +189,8 @@ def procesar_latex(texto):
                         if ruta_completa.exists():
                             return f'/static/ejercicios_nuevo/{materia}/{capitulo_dir.name}/imagenes/{ruta_imagen}'
         
-        # Fallback a estructura antigua
-        materias_antiguas = ['fisica', 'geometria', 'calculo', 'algebra']
-        for materia in materias_antiguas:
-            ruta_completa = f'static/ejercicios/{materia}/{ruta_imagen}'
-            if os.path.exists(ruta_completa):
-                return f'/static/ejercicios/{materia}/{ruta_imagen}'
-        
-        # Si no se encuentra, devolver la ruta original
-        return f'/static/ejercicios/{ruta_imagen}'
+        # Si no se encuentra en la nueva estructura, devolver ruta por defecto
+        return f'/static/ejercicios_nuevo/{ruta_imagen}'
     
     # Eliminar líneas de comentarios de LaTeX (que empiezan con %)
     lineas = texto.split('\n')
@@ -359,6 +352,7 @@ def index():
     dificultad = request.args.get('dificultad', '')
     visibilidad = request.args.get('visibilidad', '')
     busqueda = request.args.get('busqueda', '')  # Nuevo parámetro de búsqueda
+
     
     # Aplicar filtros
     ejercicios_filtrados = ejercicios.copy()
@@ -388,6 +382,8 @@ def index():
         ejercicios_filtrados = [e for e in ejercicios_filtrados if str(e.get('dificultad', '')) == dificultad]
     if visibilidad:
         ejercicios_filtrados = [e for e in ejercicios_filtrados if e.get('visibilidad') == visibilidad]
+    
+
     
     # Aplicar límites diarios de visualización
     ejercicios_mostrables = []
@@ -434,8 +430,10 @@ def index():
                 ejercicio['bloqueado'] = True
                 ejercicios_bloqueados.append(ejercicio)
     
-    # Usar ejercicios mostrables como ejercicios filtrados
+    # Usar ejercicios mostrables como ejercicios filtrados y ordenar aleatoriamente
+    import random
     ejercicios_filtrados = ejercicios_mostrables
+    random.shuffle(ejercicios_filtrados)
     
     # Preparar datos para los filtros
     filtros_datos = {
