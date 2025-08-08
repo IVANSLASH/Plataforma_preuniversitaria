@@ -1,0 +1,171 @@
+\begin{teoria}[
+  materia=algebra,
+  capitulo=exponentes,
+  nivel=basico,
+  titulo="Exponentes y Radicales",
+  descripcion="Conceptos fundamentales y propiedades de exponentes y radicales",
+  tiempo_estimado=30,
+  dificultad=2,
+  prerequisitos={aritmetica_basica},
+  objetivos={"Comprender las propiedades de exponentes", "Simplificar expresiones con exponentes", "Resolver problemas con radicales"},
+  tags={exponentes, potencias, radicales, propiedades}
+]
+
+% ========================================
+% INTRODUCCIÓN
+% ========================================
+
+\section{Introducción}
+
+Los exponentes son una herramienta fundamental en álgebra que nos permite expresar de manera compacta la multiplicación repetida de un número por sí mismo. En este capítulo aprenderemos las propiedades básicas y avanzadas de los exponentes, así como su relación con los radicales.
+
+% ========================================
+% CONCEPTOS FUNDAMENTALES
+% ========================================
+
+\section{Conceptos Fundamentales}
+
+\subsection{Definición Básica}
+
+Si $a$ es un número real y $n$ es un entero positivo, entonces:
+$$a^n = \underbrace{a \cdot a \cdot a \cdots a}_{n \text{ veces}}$$
+
+Donde:
+\begin{itemize}
+\item $a$ se llama la \textbf{base}
+\item $n$ se llama el \textbf{exponente} o \textbf{potencia}
+\item $a^n$ se llama la \textbf{expresión exponencial}
+\end{itemize}
+
+\subsection{Propiedades Fundamentales}
+
+Las propiedades fundamentales de los exponentes son:
+
+\begin{enumerate}
+\item \textbf{Producto de potencias de igual base:} $a^m \cdot a^n = a^{m+n}$
+\item \textbf{Cociente de potencias de igual base:} $\frac{a^m}{a^n} = a^{m-n}$ (con $a \neq 0$)
+\item \textbf{Potencia de una potencia:} $(a^m)^n = a^{m \cdot n}$
+\item \textbf{Potencia de un producto:} $(a \cdot b)^n = a^n \cdot b^n$
+\item \textbf{Potencia de un cociente:} $\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$ (con $b \neq 0$)
+\end{enumerate}
+
+% ========================================
+% CASOS ESPECIALES
+% ========================================
+
+\section{Casos Especiales}
+
+\subsection{Exponente Cero}
+
+Para cualquier número real $a \neq 0$:
+$$a^0 = 1$$
+
+\textbf{Ejemplo:} $2^0 = 1$, $(-3)^0 = 1$, $\left(\frac{1}{2}\right)^0 = 1$
+
+\subsection{Exponentes Negativos}
+
+Para cualquier número real $a \neq 0$ y cualquier entero $n$:
+$$a^{-n} = \frac{1}{a^n}$$
+
+\textbf{Ejemplo:} $2^{-3} = \frac{1}{2^3} = \frac{1}{8}$
+
+\subsection{Radicales y Exponentes Fraccionarios}
+
+Para cualquier número real $a \geq 0$ y enteros positivos $m$ y $n$:
+$$\sqrt[n]{a^m} = a^{\frac{m}{n}}$$
+
+\textbf{Ejemplo:} $\sqrt[3]{8} = 8^{\frac{1}{3}} = 2$ porque $2^3 = 8$
+
+% ========================================
+% EJEMPLOS RESUELTOS
+% ========================================
+
+\section{Ejemplos Resueltos}
+
+\subsection{Ejemplo 1: Propiedades Básicas}
+
+\textbf{Problema:} Simplifica la expresión $2^5 \cdot 2^3 \div 2^4 \cdot 2^{-1}$
+
+\textbf{Solución:}
+\begin{align*}
+2^5 \cdot 2^3 \div 2^4 \cdot 2^{-1} &= 2^5 \cdot 2^3 \cdot 2^{-4} \cdot 2^{-1} \\
+&= 2^{5+3+(-4)+(-1)} \\
+&= 2^{5+3-4-1} \\
+&= 2^3 \\
+&= 8
+\end{align*}
+
+\subsection{Ejemplo 2: Exponentes Fraccionarios}
+
+\textbf{Problema:} Simplifica $\sqrt[3]{27} \cdot \sqrt[3]{8}$
+
+\textbf{Solución:}
+\begin{align*}
+\sqrt[3]{27} \cdot \sqrt[3]{8} &= 27^{\frac{1}{3}} \cdot 8^{\frac{1}{3}} \\
+&= (27 \cdot 8)^{\frac{1}{3}} \\
+&= 216^{\frac{1}{3}} \\
+&= 6
+\end{align*}
+
+% ========================================
+% ERRORES COMUNES
+% ========================================
+
+\section{Errores Comunes}
+
+\begin{enumerate}
+\item \textbf{Error:} $(a+b)^2 = a^2 + b^2$\\
+\textbf{Correcto:} $(a+b)^2 = a^2 + 2ab + b^2$
+
+\item \textbf{Error:} $\sqrt{a^2} = a$\\
+\textbf{Correcto:} $\sqrt{a^2} = |a|$
+
+\item \textbf{Error:} $(a^m)^n = a^{m+n}$\\
+\textbf{Correcto:} $(a^m)^n = a^{m \cdot n}$
+\end{enumerate}
+
+% ========================================
+% APLICACIONES PRÁCTICAS
+% ========================================
+
+\section{Aplicaciones Prácticas}
+
+Los exponentes tienen numerosas aplicaciones en:
+
+\begin{itemize}
+\item \textbf{Crecimiento poblacional:} $P(t) = P_0 \cdot (1+r)^t$
+\item \textbf{Interés compuesto:} $A = P \cdot (1+\frac{r}{n})^{nt}$
+\item \textbf{Notación científica:} $3 \times 10^8$ m/s (velocidad de la luz)
+\item \textbf{Computación:} Potencias de 2 en sistemas binarios ($2^{10} = 1024$ bytes = 1 KB)
+\end{itemize}
+
+% ========================================
+% EJERCICIOS PROPUESTOS
+% ========================================
+
+\section{Ejercicios Propuestos}
+
+\begin{enumerate}
+\item Simplifica: $3^4 \cdot 3^2 \div 3^3$
+\item Calcula: $\left(\frac{1}{2}\right)^{-3}$
+\item Resuelve: $2^x = 32$
+\item Simplifica: $\sqrt[4]{16} \cdot \sqrt[4]{81}$
+\item Expresa como una sola potencia: $\frac{x^5 \cdot y^3}{x^2 \cdot y^4}$
+\end{enumerate}
+
+% ========================================
+% RESUMEN
+% ========================================
+
+\section{Resumen}
+
+En este capítulo hemos aprendido:
+\begin{itemize}
+\item Las propiedades fundamentales de los exponentes
+\item Cómo trabajar con exponentes negativos y cero
+\item La relación entre radicales y exponentes fraccionarios
+\item Técnicas de simplificación de expresiones exponenciales
+\item Aplicaciones prácticas de los exponentes
+\end{itemize}
+
+\end{teoria}

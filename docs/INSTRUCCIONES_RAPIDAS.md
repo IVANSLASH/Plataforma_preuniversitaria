@@ -1,152 +1,189 @@
-# ⚡ INSTRUCCIONES RÁPIDAS - Empezar en 5 minutos
+# ⚡ INSTRUCCIONES RÁPIDAS - Plataforma Preuniversitaria
 
-## 🚀 **INICIO SUPER RÁPIDO**
+## 🚀 **INICIO RÁPIDO DE LA APLICACIÓN WEB**
 
-### 0. **Instalar requerimientos (PRIMERA VEZ)**
+### 1. **Instalar y Configurar (PRIMERA VEZ)**
 ```bash
-# Opción automática (recomendada)
-python instalar_requerimientos.py
+# Instalar dependencias
+pip install -r requirements.txt
 
-# O manualmente
-pip install -r requirements_minimos.txt
+# Configurar variables de entorno (crear archivo .env)
+cp .env.example .env  # Editar con tus credenciales de Google OAuth
 ```
 
-### 1. **Crear tu primer problema (automático)**
+### 2. **Ejecutar la Aplicación**
 ```bash
-python crear_primer_problema.py
+# Iniciar servidor Flask
+python app.py
 ```
-**¡Sigue las instrucciones en pantalla!**
+**Aplicación disponible en:** http://localhost:5000
 
-### 2. **Crear problema manualmente**
-1. Copia `plantillas/plantilla_ejercicio.tex`
-2. Guárdalo como `ejercicios/algebra/mi_problema_001.tex`
-3. Modifica el contenido
-4. Ejecuta: `python exportador/exportar_json.py`
-
-### 3. **Ver el resultado**
-- Abre: `frontend/componente_ejercicio.html`
-- Ejecuta: `python demo.py`
+### 3. **Primer Uso**
+1. **Registrarse**: Usar Google OAuth en la página principal
+2. **Explorar ejercicios**: Navegar por las materias disponibles
+3. **Resolver ejercicios**: Hacer clic en cualquier ejercicio para ver detalle
+4. **Generar simulacros**: Crear exámenes personalizados
 
 ---
 
-## 📝 **FORMATO OBLIGATORIO**
+## 👤 **TIPOS DE USUARIOS Y LÍMITES**
 
-```latex
-\begin{ejercicio}[
-  id=ALG_EXP_001,           ← ÚNICO
-  materia=algebra,          ← OBLIGATORIO
-  capitulo=exponentes,      ← OBLIGATORIO
-  nivel=basico,             ← OBLIGATORIO
-  procedencia="Origen",     ← OBLIGATORIO
-  visibilidad=true,         ← OBLIGATORIO
-  libros={libro1, libro2}   ← OPCIONAL
-]
-[ENUNCIADO]
+### **Sin Registro**
+- ✅ **5 ejercicios por día** gratis
+- ❌ Sin descarga de PDFs
+- ❌ Sin seguimiento de progreso
 
-\begin{solucion}
-[SOLUCIÓN]
-\end{solucion}
-\end{ejercicio}
-```
+### **Usuario Registrado** (Google OAuth)
+- ✅ **15 ejercicios por día**
+- ✅ Seguimiento de progreso
+- ✅ Historial de ejercicios vistos
+- ❌ Descargas limitadas
+
+### **Usuario Premium**
+- ✅ **Ejercicios ilimitados**
+- ✅ Descargas de PDFs sin límite
+- ✅ Estadísticas avanzadas
+- ✅ Soporte prioritario
+- ✅ Contenido exclusivo
 
 ---
 
-## 🔧 **COMANDOS ESENCIALES**
+## 🔧 **COMANDOS DE ADMINISTRACIÓN**
 
 | Acción | Comando |
 |--------|---------|
-| Crear problema automático | `python crear_primer_problema.py` |
-| Exportar a JSON | `python exportador/exportar_json.py` |
-| Ver demo | `python demo.py` |
-| Generar simulacro | `python simulacros/generador_simulacro.py --titulo "Mi Simulacro" --materia algebra` |
-| Ver en web | Abrir `frontend/componente_ejercicio.html` |
+| Iniciar aplicación | `python app.py` |
+| Crear administrador | `python hacer_admin.py` |
+| Otorgar premium | `python otorgar_premium.py` |
+| Exportar ejercicios | `python exportador/exportar_json_nuevo.py` |
+| Generar simulacro | Usar interfaz web en `/simulacro` |
 
 ---
 
-## 📁 **ESTRUCTURA DE ARCHIVOS**
+## 📁 **MATERIAS Y EJERCICIOS DISPONIBLES**
+
+### **Matemáticas Preuniversitaria (MATU)**
+- 📐 **Álgebra**: 6 ejercicios disponibles
+- 📊 **Funciones**: 2 ejercicios disponibles  
+- 📏 **Geometría**: 2 ejercicios disponibles
+
+### **Física Preuniversitaria (FISU)**
+- ⚡ **Dinámica**: 2 ejercicios disponibles
 
 ```
-ejercicios/
-├── algebra/
-│   ├── exponentes_exp_001.tex
-│   └── polinomios_pol_001.tex
-├── calculo/
-│   └── derivadas_der_001.tex
-└── fisica/
-    └── cinematica_cin_001.tex
+ejercicios_nuevo/
+├── matematicas_preuniversitaria/
+│   ├── algebra/     (MATU_ALG_001-006)
+│   ├── funciones/   (MATU_FUN_007-008)
+│   └── geometria/   (MATU_GEO_010-011)
+└── fisica_preuniversitaria/
+    └── dinamica/    (FISU_DIN_001, FISU_CIN_009)
 ```
 
 ---
 
-## 🆔 **SISTEMA DE IDs**
+## 🌐 **NAVEGACIÓN DE LA APLICACIÓN WEB**
 
-### **Formato 3 dígitos (recomendado para proyectos pequeños):**
-| Materia | Formato | Ejemplo |
-|---------|---------|---------|
-| Álgebra | `ALG_[CAP]_[NUM]` | `ALG_EXP_001` |
-| Cálculo | `CAL_[CAP]_[NUM]` | `CAL_DER_001` |
-| Física | `FIS_[CAP]_[NUM]` | `FIS_CIN_001` |
+### **Páginas Principales:**
+| Página | URL | Descripción |
+|--------|-----|-------------|
+| **Inicio** | `/` | Lista de ejercicios con filtros |
+| **Ejercicio** | `/ejercicio/<id>` | Detalle y solución |
+| **Simulacros** | `/simulacro` | Generar examen personalizado |
+| **Teoría** | `/teoria` | Contenido teórico por materias |
+| **Formularios** | `/formularios` | Fórmulas descargables |
+| **Premium** | `/premium` | Planes de suscripción |
+| **Perfil** | `/profile` | Configuración de usuario |
 
-### **Formato 4 dígitos (recomendado para proyectos grandes):**
-| Materia | Formato | Ejemplo |
-|---------|---------|---------|
-| Álgebra | `ALG_[CAP]_[NUM]` | `ALG_EXP_0001` |
-| Cálculo | `CAL_[CAP]_[NUM]` | `CAL_DER_0001` |
-| Física | `FIS_[CAP]_[NUM]` | `FIS_CIN_0001` |
-
-**Ventajas de 4 dígitos:**
-- Hasta 9,999 problemas por capítulo
-- Mejor organización para proyectos grandes
-- Más profesional
+### **Panel de Administración** (Solo admins):
+- **Usuarios**: `/admin/users` - Gestión de usuarios
+- **Estadísticas**: `/estadisticas` - Métricas de uso
 
 ---
 
-## ⚠️ **REGLAS CLAVE**
+## ⚠️ **FUNCIONALIDADES CLAVE**
 
-### ✅ **HACER:**
-- Usar IDs únicos
-- Incluir todos los metadatos
-- Usar LaTeX para matemáticas: `$x^2$`, `$$\frac{a}{b}$$`
-- Probar después de crear
+### ✅ **Para Estudiantes:**
+- 🔐 **Autenticación Google**: Registro e inicio de sesión seguro
+- 📊 **Límites diarios**: Sistema de restricción transparente
+- 🎯 **Simulacros personalizados**: Exámenes por materia y capítulo
+- 📚 **Teoría integrada**: Contenido de apoyo
+- 📱 **Interfaz responsive**: Compatible con móviles
 
-### ❌ **NO HACER:**
-- IDs duplicados
-- Olvidar metadatos
-- Modificar JSON manualmente
-- Espacios en nombres de archivos
+### 🛠️ **Para Administradores:**
+- 👥 **Gestión de usuarios**: Panel completo de administración
+- 💎 **Sistema premium**: Otorgar y revocar suscripciones
+- 📈 **Estadísticas**: Métricas de uso detalladas
+- 🔧 **Scripts de utilidad**: Herramientas de mantenimiento
 
 ---
 
 ## 🆘 **SOLUCIÓN DE PROBLEMAS**
 
+### **Problemas Comunes de la Aplicación:**
 | Problema | Solución |
 |----------|----------|
-| "Error al exportar" | Verificar formato LaTeX |
-| "No aparece en web" | Verificar `visibilidad=true` |
-| "ID duplicado" | Cambiar ID |
-| "Error de sintaxis" | Revisar llaves `{}` |
+| "OAuth Error" | Verificar credenciales Google en `.env` |
+| "Base de datos no encontrada" | Se crea automáticamente al iniciar |
+| "Puerto ocupado" | Cambiar puerto con `FLASK_RUN_PORT=5001` |
+| "Límite alcanzado" | Registrarse o adquirir premium |
+| "Ejercicio no carga" | Verificar ID en base de datos |
+
+### **Problemas de Google OAuth:**
+1. ✅ Verificar `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`
+2. ✅ Verificar URIs autorizadas en Google Console
+3. ✅ Verificar APIs habilitadas (Google+ API)
 
 ---
 
 ## 📚 **RECURSOS ADICIONALES**
 
-- **Guía completa:** `GUIA_INCORPORAR_PROBLEMAS.md`
-- **Plantilla:** `plantillas/plantilla_ejercicio.tex`
-- **Comandos LaTeX:** `plantillas/comandos_latex_utiles.md`
-- **Ejemplos:** `ejercicios/` (carpeta)
+### **Documentación:**
+- **Instalación completa**: `docs/INSTALACION.md`
+- **Códigos de materias**: `docs/CODIGOS_MATERIAS.md`
+- **Sistema de límites**: `docs/SISTEMA_LIMITES_DIARIOS.md`
+- **Guía de incorporación**: `docs/GUIA_INCORPORAR_PROBLEMAS.md`
+
+### **Scripts de Utilidad:**
+- `hacer_admin.py` - Crear administrador
+- `otorgar_premium.py` - Gestionar cuentas premium  
+- `exportador/exportar_json_nuevo.py` - Exportar ejercicios
+
+### **Archivos de Configuración:**
+- `requirements.txt` - Dependencias Python
+- `.env` - Variables de entorno (crear manualmente)
+- `config.py` - Configuraciones Flask
 
 ---
 
-## 🎯 **CHECKLIST RÁPIDO**
+## 🎯 **CHECKLIST DE INSTALACIÓN**
 
-- [ ] ID único
-- [ ] Metadatos completos
-- [ ] Enunciado claro
-- [ ] Solución detallada
-- [ ] Archivo en ubicación correcta
-- [ ] Exportador ejecutado
-- [ ] Verificado en web
+### **Configuración Inicial:**
+- [ ] Python 3.8+ instalado
+- [ ] Dependencias instaladas (`pip install -r requirements.txt`)
+- [ ] Archivo `.env` creado con credenciales Google OAuth
+- [ ] Credenciales Google OAuth configuradas
+- [ ] Aplicación iniciada (`python app.py`)
+
+### **Verificación:**
+- [ ] Página principal carga correctamente
+- [ ] Autenticación Google funciona
+- [ ] Ejercicios se muestran correctamente
+- [ ] Límites diarios funcionan
+- [ ] Simulacros se generan
+
+### **Para Administradores:**
+- [ ] Cuenta de administrador creada
+- [ ] Panel admin accesible
+- [ ] Estadísticas funcionan
 
 ---
 
-**¡Listo! Ya puedes empezar a crear problemas. 🎉** 
+## 🚀 **PRÓXIMOS PASOS**
+
+1. **Usar la aplicación**: Explorar ejercicios y funcionalidades
+2. **Configurar premium**: Si necesitas acceso ilimitado
+3. **Administrar usuarios**: Panel de administración
+4. **Personalizar**: Modificar estilos y contenido según necesidades
+
+**¡Tu Plataforma Preuniversitaria está lista! 🎉** 

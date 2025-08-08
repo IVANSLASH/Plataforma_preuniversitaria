@@ -1,32 +1,32 @@
 {
-  "total_ejercicios": 12,
-  "fecha_generacion": "2025-07-31T13:10:24.639526",
+  "total_ejercicios": 13,
+  "fecha_generacion": "2025-08-07T22:01:47.027780",
   "version_estructura": "2.0_jerarquica",
   "materias_principales": {
     "fisica_preuniversitaria": 2,
-    "matematicas_preuniversitaria": 10
+    "matematicas_preuniversitaria": 11
   },
   "capitulos": {
     "cinematica": 1,
     "dinamica": 1,
-    "algebra": 6,
+    "algebra": 7,
     "funciones": 2,
     "geometria": 2
   },
   "niveles": {
-    "intermedio": 8,
+    "intermedio": 9,
     "basico": 4
   },
   "dificultades": {
     "2": 11,
-    "3": 1
+    "3": 2
   },
   "visibilidades": {
-    "web_impreso": 12
+    "web_impreso": 13
   },
   "codigos_materia": {
     "FISU": 2,
-    "MATU": 10
+    "MATU": 11
   },
   "materias_nombres": {
     "FISU": "Física Preuniversitaria",

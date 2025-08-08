@@ -1,342 +1,299 @@
-# 📚 GUÍA COMPLETA: Cómo Incorporar Problemas
+# 👨‍💼 GUÍA ADMINISTRATIVA: Gestión de la Plataforma Preuniversitaria
 
 ## 🎯 **OBJETIVO**
-Esta guía te enseñará paso a paso cómo añadir nuevos problemas matemáticos a tu plataforma preuniversitaria.
+Esta guía está dirigida a administradores que necesitan gestionar usuarios, contenido y funcionalidades de la plataforma web Flask.
 
 ---
 
-## 📋 **PASO 1: PREPARACIÓN INICIAL**
+## 👨‍💼 **ACCESO ADMINISTRATIVO**
 
-### 1.1 Verificar que tienes Python instalado
+### 1.1 Convertirse en administrador
 ```bash
-python --version
-```
-**Debe mostrar:** Python 3.8 o superior ✅
+# Opción 1: Email hardcodeado (automático)
+# El email "ingivanladislao@gmail.com" es automáticamente administrador
 
-### 1.2 Instalar dependencias (solo la primera vez)
+# Opción 2: Script de administrador
+python hacer_admin.py
+```
+
+### 1.2 Acceder al panel de administración
+1. **Iniciar sesión** con Google OAuth como administrador
+2. **Ir a**: http://localhost:5000/admin/users
+3. **Panel disponible** automáticamente para administradores
+
+### 1.3 Verificar permisos administrativos
+- ✅ Acceso a `/admin/users`
+- ✅ Acceso a `/estadisticas` 
+- ✅ Funciones de gestión de usuarios
+- ✅ Otorgamiento de premium
+
+---
+
+## 👥 **GESTIÓN DE USUARIOS**
+
+### 2.1 Panel de administración de usuarios
+**Ubicación:** `/admin/users`
+
+**Funcionalidades disponibles:**
+- 📋 **Listar todos los usuarios** registrados
+- 🔍 **Buscar usuarios** por email o nombre
+- 👑 **Otorgar privilegios** de administrador
+- 💎 **Gestionar cuentas premium**
+- 📊 **Ver estadísticas** de uso por usuario
+- 🚫 **Desactivar/activar** cuentas
+
+### 2.2 Gestión de cuentas premium
 ```bash
-pip install -r requirements.txt
+# Script de gestión premium
+python otorgar_premium.py
+
+# Funciones disponibles:
+# - Otorgar premium mensual/anual/permanente
+# - Revocar premium
+# - Listar usuarios premium
+# - Ver estadísticas
 ```
 
-### 1.3 Verificar la estructura del proyecto
+### 2.3 Tipos de usuarios en la plataforma:
+
+| Tipo | Límite Diario | Descripción | Gestión |
+|------|---------------|-------------|---------|
+| **Sin registro** | 5 ejercicios | Usuarios anónimos | Automático por sesión |
+| **Registrado** | 15 ejercicios | Google OAuth | Panel admin |
+| **Premium** | Ilimitado | Suscripción pagada | Script/Panel admin |
+| **Administrador** | Ilimitado | Gestión completa | Script `hacer_admin.py` |
+
+**Estados premium:**
+- `mensual` - Duración: 30 días
+- `anual` - Duración: 365 días  
+- `permanente` - Sin expiración
+- `revocado` - Premium revocado
+
+---
+
+## 📊 **ESTADÍSTICAS Y MONITOREO**
+
+### 3.1 Página de estadísticas
+**Ubicación:** `/estadisticas` (Solo administradores)
+
+**Métricas disponibles:**
+- 👥 **Usuarios registrados** total y por período
+- 📈 **Ejercicios vistos** por día/semana/mes
+- 💎 **Conversiones a premium** y ingresos estimados
+- 🎯 **Ejercicios más populares** y menos accedidos
+- 📱 **Patrones de uso** por dispositivo/hora
+- 🔄 **Retención de usuarios** y sesiones activas
+
+### 3.2 Datos de seguimiento automático
+```python
+# La aplicación registra automáticamente:
+# - Ejercicios vistos por usuario/sesión
+# - Fechas y horarios de acceso
+# - IPs y user agents (para análisis)
+# - Límites diarios alcanzados
+# - Conversiones a premium
 ```
-plataforma_preuniversitaria/
-├── ejercicios/          ← AQUÍ VAN TUS PROBLEMAS
-├── exportador/          ← Scripts de conversión
-├── etiquetas/           ← Archivos JSON generados
-└── ...
+
+### 3.3 Scripts de utilidad administrativa
+
+**Archivo:** `hacer_admin.py`
+```python
+# Convertir usuario en administrador
+# Uso: python hacer_admin.py
+# Permite seleccionar usuario por email
+# Otorga privilegios administrativos
+```
+
+**Archivo:** `otorgar_premium.py`
+```python
+# Gestión completa de cuentas premium
+# Funciones:
+# - otorgar_premium_usuario(email, tipo, dias)
+# - revocar_premium_usuario(email, razon)
+# - listar_usuarios_premium()
+# - mostrar_estadisticas_limites()
+```
+
+### 3.4 Base de datos y modelos
+
+**Modelos principales:**
+```python
+# Usuario - Información básica y premium
+class Usuario(UserMixin, db.Model):
+    # Campos: email, nombre, es_admin, es_premium
+    # Métodos: grant_premium(), is_premium_active()
+    
+# EjercicioVisto - Tracking de ejercicios
+class EjercicioVisto(db.Model):
+    # Registro de ejercicios vistos por usuario
+    # Campos: usuario_id, ejercicio_id, fecha_visto
+    
+# SesionUsuario - Límites para no registrados
+class SesionUsuario(db.Model):
+    # Control de límites por sesión
+    # Campos: session_id, ejercicios_vistos_hoy
 ```
 
 ---
 
-## 📝 **PASO 2: CREAR UN NUEVO PROBLEMA**
+## 🛠️ **GESTIÓN DE CONTENIDO**
 
-### 2.1 Elegir la ubicación del archivo
-**Regla:** `ejercicios/[MATERIA]/[CAPITULO]_[CODIGO].tex`
-
-**Ejemplos:**
-- `ejercicios/algebra/exponentes_exp_003.tex`
-- `ejercicios/calculo/derivadas_der_001.tex`
-- `ejercicios/fisica/cinematica_cin_002.tex`
-
-### 2.2 Estructura OBLIGATORIA del problema
-
-```latex
-\begin{ejercicio}[
-  id=ALG_EXP_003,
-  materia=algebra,
-  capitulo=exponentes,
-  nivel=basico,
-  procedencia="Examen UNI 2023",
-  visibilidad=true,
-  libros={algebra_pre, algebra_basica}
-]
-[TU ENUNCIADO AQUÍ]
-
-\begin{solucion}
-[TU SOLUCIÓN AQUÍ]
-\end{solucion}
-\end{ejercicio}
+### 4.1 Estructura actual de ejercicios
+```
+ejercicios_nuevo/
+├── matematicas_preuniversitaria/
+│   ├── algebra/     (6 ejercicios: MATU_ALG_001-006)
+│   ├── funciones/   (2 ejercicios: MATU_FUN_007-008)  
+│   └── geometria/   (2 ejercicios: MATU_GEO_010-011)
+└── fisica_preuniversitaria/
+    └── dinamica/    (2 ejercicios: FISU_DIN_001, FISU_CIN_009)
 ```
 
-### 2.3 Explicación de cada campo:
-
-| Campo | Descripción | Ejemplos |
-|-------|-------------|----------|
-| `id` | Identificador único | `ALG_EXP_003`, `CAL_DER_001` |
-| `materia` | Materia del problema | `algebra`, `calculo`, `fisica` |
-| `capitulo` | Tema específico | `exponentes`, `derivadas`, `cinematica` |
-| `nivel` | Dificultad | `basico`, `intermedio`, `avanzado` |
-| `procedencia` | Origen del problema | `"Examen UNI 2023"`, `"Libro Álgebra 1"` |
-| `visibilidad` | ¿Aparece en la web? | `true` (sí), `false` (no) |
-| `libros` | Libros donde aparece | `{algebra_pre}`, `{calculo1, calculo_basico}` |
-
----
-
-## 📖 **PASO 3: EJEMPLOS PRÁCTICOS**
-
-### 3.1 Problema Básico de Álgebra
-
-**Archivo:** `ejercicios/algebra/exponentes_exp_003.tex`
-
-```latex
-\begin{ejercicio}[
-  id=ALG_EXP_003,
-  materia=algebra,
-  capitulo=exponentes,
-  nivel=basico,
-  procedencia="Examen UNI 2023",
-  visibilidad=true,
-  libros={algebra_pre}
-]
-Calcula el valor de: $3^2 \cdot 3^3$
-
-\begin{solucion}
-Aplicando la propiedad de exponentes: $a^m \cdot a^n = a^{m+n}$
-
-$3^2 \cdot 3^3 = 3^{2+3} = 3^5 = 243$
-
-\textbf{Respuesta:} 243
-\end{solucion}
-\end{ejercicio}
-```
-
-### 3.2 Problema de Cálculo
-
-**Archivo:** `ejercicios/calculo/derivadas_der_001.tex`
-
-```latex
-\begin{ejercicio}[
-  id=CAL_DER_001,
-  materia=calculo,
-  capitulo=derivadas,
-  nivel=intermedio,
-  procedencia="Libro Cálculo Avanzado",
-  visibilidad=true,
-  libros={calculo1, calculo_avanzado}
-]
-Calcula la derivada de: $f(x) = x^2 \cdot e^x$
-
-\begin{solucion}
-Usando la regla del producto: $(u \cdot v)' = u' \cdot v + u \cdot v'$
-
-Donde $u = x^2$ y $v = e^x$
-
-$u' = 2x$ y $v' = e^x$
-
-Por tanto: $f'(x) = 2x \cdot e^x + x^2 \cdot e^x = e^x(2x + x^2)$
-
-\textbf{Respuesta:} $f'(x) = e^x(2x + x^2)$
-\end{solucion}
-\end{ejercicio}
-```
-
-### 3.3 Problema de Física
-
-**Archivo:** `ejercicios/fisica/cinematica_cin_001.tex`
-
-```latex
-\begin{ejercicio}[
-  id=FIS_CIN_001,
-  materia=fisica,
-  capitulo=cinematica,
-  nivel=basico,
-  procedencia="Examen CEPRE 2023",
-  visibilidad=true,
-  libros={fisica_basica}
-]
-Un auto parte del reposo y acelera uniformemente a $2 \, m/s^2$. 
-¿Qué distancia recorre en 10 segundos?
-
-\begin{solucion}
-Usando la ecuación: $d = v_0 t + \frac{1}{2} a t^2$
-
-Donde:
-- $v_0 = 0$ (parte del reposo)
-- $a = 2 \, m/s^2$
-- $t = 10 \, s$
-
-$d = 0 \cdot 10 + \frac{1}{2} \cdot 2 \cdot 10^2 = 100 \, m$
-
-\textbf{Respuesta:} 100 metros
-\end{solucion}
-\end{ejercicio}
-```
-
----
-
-## 🔄 **PASO 4: CONVERTIR A JSON**
-
-### 4.1 Ejecutar el exportador
+### 4.2 Exportar/actualizar ejercicios
 ```bash
-python exportador/exportar_json.py
+# Script para exportar ejercicios a JSON
+python exportador/exportar_json_nuevo.py
+
+# Archivos generados:
+# - etiquetas/metadata_ejercicios_nuevo.json
+# - etiquetas/todos_ejercicios_nuevo.json
+# - etiquetas/matematicas_preuniversitaria_nuevo.json
+# - etiquetas/fisica_preuniversitaria_nuevo.json
 ```
 
-### 4.2 Verificar que se generaron los archivos
-```
-etiquetas/
-├── algebra.json          ← Problemas de álgebra
-├── calculo.json          ← Problemas de cálculo
-├── fisica.json           ← Problemas de física
-├── metadata_ejercicios.json  ← Índice general
-└── todos_ejercicios.json     ← Todos los problemas
-```
+---
 
-### 4.3 Verificar el resultado
+## 🌐 **FUNCIONALIDADES WEB ADMINISTRATIVAS**
+
+### 5.1 Rutas administrativas
+| Ruta | Descripción | Acceso |
+|------|-------------|--------|
+| `/admin/users` | Panel de usuarios | Solo administradores |
+| `/estadisticas` | Métricas del sistema | Solo administradores |
+| `/premium` | Gestión de suscripciones | Todos los usuarios |
+
+### 5.2 Funcionalidades del panel de usuarios
+- **Buscar usuarios:** Por email, nombre o estado
+- **Modificar roles:** Otorgar/revocar administrador
+- **Gestionar premium:** Otorgar/revocar suscripciones
+- **Ver actividad:** Ejercicios vistos, última actividad
+- **Estadísticas:** Métricas de uso por usuario
+
+---
+
+## 📄 **GENERACIÓN DE CONTENIDO PDF**
+
+### 6.1 Simulacros personalizados
+Los usuarios pueden generar simulacros desde la interfaz web:
+- **Filtros disponibles:** Materia, capítulo, nivel, número de preguntas
+- **Formatos:** PDF descargable con ReportLab
+- **Personalización:** Título, instrucciones, tiempo
+
+### 6.2 Gestión de libros LaTeX (Legado)
 ```bash
-python demo.py
+# Los libros en libros/ son de la estructura antigua
+# Para uso actual, los ejercicios se muestran directamente en web
+# con MathJax para renderizado matemático
 ```
 
 ---
 
-## 🌐 **PASO 5: VER EN LA WEB**
+## 🎓 **GESTIÓN DE SIMULACROS**
 
-### 5.1 Abrir el componente web
-- Abre el archivo: `frontend/componente_ejercicio.html`
-- Se cargará automáticamente el primer ejercicio
+### 7.1 Funcionalidad web de simulacros
+**Ubicación:** `/simulacro`
+- **Interfaz web:** Los usuarios crean simulacros desde la aplicación
+- **Filtros dinámicos:** Por materia, capítulo disponible
+- **Validaciones:** Número de preguntas disponibles
+- **Generación PDF:** Automática con ReportLab
 
-### 5.2 Personalizar el ejercicio mostrado
-Edita las líneas 280-290 en `componente_ejercicio.html`:
-
-```javascript
-const ejercicioData = {
-    id: "TU_NUEVO_ID",
-    materia: "tu_materia",
-    capitulo: "tu_capitulo",
-    nivel: "tu_nivel",
-    procedencia: "Tu procedencia",
-    visibilidad: true,
-    libros: ["tu_libro"],
-    enunciado: "Tu enunciado...",
-    solucion: "Tu solución..."
-};
-```
+### 7.2 Control administrativo
+- **Límites por usuario:** Sin registro (limitado), Premium (ilimitado)
+- **Tracking:** Se registra cada simulacro generado
+- **Estadísticas:** Simulacros más populares, materias preferidas
 
 ---
 
-## 📚 **PASO 6: INCLUIR EN LIBROS**
-
-### 6.1 Editar un libro existente
-Abre `libros/algebra_pre.tex` y añade tu ejercicio:
-
-```latex
-% Tu nuevo ejercicio
-\begin{ejercicio}[ALG_EXP_003]
-Calcula el valor de: $3^2 \cdot 3^3$
-
-\begin{solucion}
-Aplicando la propiedad de exponentes...
-\end{solucion}
-\end{ejercicio}
-```
-
-### 6.2 Compilar el libro
-```bash
-pdflatex libros/algebra_pre.tex
-```
-
----
-
-## 📝 **PASO 7: GENERAR SIMULACROS**
-
-### 7.1 Crear simulacro con tus problemas
-```bash
-python simulacros/generador_simulacro.py --titulo "Mi Simulacro" --materia algebra --nivel basico --cantidad 5
-```
-
-### 7.2 Opciones disponibles
-- `--materia`: algebra, calculo, fisica, etc.
-- `--nivel`: basico, intermedio, avanzado
-- `--capitulo`: exponentes, derivadas, etc.
-- `--cantidad`: número de problemas
-- `--formato`: latex o json
-
----
-
-## ⚠️ **REGLAS IMPORTANTES**
+## ⚠️ **BUENAS PRÁCTICAS ADMINISTRATIVAS**
 
 ### ✅ **HACER:**
-- Usar IDs únicos (ej: `ALG_EXP_003`)
-- Incluir TODOS los metadatos obligatorios
-- Usar LaTeX para matemáticas: `$x^2$`, `$$\frac{a}{b}$$`
-- Probar el exportador después de cada problema
-- Mantener consistencia en el formato
+- **Monitorear límites diarios:** Verificar que el sistema funciona correctamente
+- **Gestionar premium responsablemente:** Otorgar solo cuando corresponda
+- **Revisar estadísticas regularmente:** Para identificar tendencias
+- **Mantener backups:** De la base de datos SQLite
+- **Documentar cambios:** Al modificar configuraciones
 
 ### ❌ **NO HACER:**
-- Usar IDs duplicados
-- Olvidar metadatos obligatorios
-- Usar caracteres especiales en IDs
-- Modificar archivos JSON manualmente
-- Usar espacios en nombres de archivos
+- **Otorgar admin indiscriminadamente:** Mantener control de acceso
+- **Modificar base de datos directamente:** Usar scripts proporcionados
+- **Ignorar métricas de error:** Revisar logs regularmente
+- **Cambiar configuraciones sin respaldo:** Mantener archivo .env seguro
 
 ---
 
-## 🔧 **SOLUCIÓN DE PROBLEMAS**
+## 🔧 **SOLUCIÓN DE PROBLEMAS ADMINISTRATIVOS**
 
-### Problema: "Error al exportar"
-**Solución:** Verifica que el formato LaTeX sea correcto
+### Problema: "Usuario no puede acceder al panel admin"
+**Solución:** Verificar que sea administrador con `hacer_admin.py`
 
-### Problema: "No aparece en la web"
-**Solución:** Verifica que `visibilidad=true`
+### Problema: "Límites diarios no funcionan"
+**Solución:** Revisar modelo `EjercicioVisto` y lógica de conteo
 
-### Problema: "Error de sintaxis"
-**Solución:** Revisa que no falten llaves `{}` o corchetes `[]`
+### Problema: "Error en Google OAuth"
+**Solución:** Verificar credenciales en `.env` y configuración Google Console
 
-### Problema: "ID duplicado"
-**Solución:** Cambia el ID por uno único
-
----
-
-## 📊 **ESTRUCTURA DE IDS RECOMENDADA**
-
-### **Formato 3 dígitos (hasta 999 problemas por capítulo):**
-| Materia | Prefijo | Ejemplo |
-|---------|---------|---------|
-| Álgebra | `ALG` | `ALG_EXP_001` |
-| Cálculo | `CAL` | `CAL_DER_001` |
-| Física | `FIS` | `FIS_CIN_001` |
-| Química | `QUI` | `QUI_EST_001` |
-| Biología | `BIO` | `BIO_CEL_001` |
-| Lenguaje | `LEN` | `LEN_GRAM_001` |
-
-### **Formato 4 dígitos (hasta 9,999 problemas por capítulo):**
-| Materia | Prefijo | Ejemplo |
-|---------|---------|---------|
-| Álgebra | `ALG` | `ALG_EXP_0001` |
-| Cálculo | `CAL` | `CAL_DER_0001` |
-| Física | `FIS` | `FIS_CIN_0001` |
-| Química | `QUI` | `QUI_EST_0001` |
-| Biología | `BIO` | `BIO_CEL_0001` |
-| Lenguaje | `LEN` | `LEN_GRAM_0001` |
-
-**¿Cuál elegir?**
-- **3 dígitos:** Para proyectos pequeños (hasta 999 problemas por capítulo)
-- **4 dígitos:** Para proyectos grandes (hasta 9,999 problemas por capítulo)
-- **El script automático te permite elegir al crear cada problema**
+### Problema: "Premium no se otorga"
+**Solución:** Usar script `otorgar_premium.py` y verificar base de datos
 
 ---
 
-## 🎯 **CHECKLIST PARA CADA PROBLEMA**
+## 📋 **CÓDIGOS DE MATERIAS ACTUALES**
 
-- [ ] ID único y bien formateado
-- [ ] Todos los metadatos completos
-- [ ] Enunciado claro y completo
-- [ ] Solución detallada paso a paso
-- [ ] Archivo guardado en la ubicación correcta
-- [ ] Exportador ejecutado sin errores
-- [ ] Problema visible en la web
-- [ ] Incluido en libros (si aplica)
+### **Estructura de IDs implementada:**
+| Materia Completa | Código | Ejemplo |
+|------------------|--------|----------|
+| Matemáticas Preuniversitaria | `MATU` | `MATU_ALG_001` |
+| Física Preuniversitaria | `FISU` | `FISU_DIN_001` |
 
----
+### **Capítulos disponibles:**
+- **MATU_ALG**: Álgebra (6 ejercicios)
+- **MATU_FUN**: Funciones (2 ejercicios)
+- **MATU_GEO**: Geometría (2 ejercicios)  
+- **FISU_DIN**: Dinámica (1 ejercicio)
+- **FISU_CIN**: Cinemática (1 ejercicio)
 
-## 🚀 **PRÓXIMOS PASOS**
-
-1. **Crea tu primer problema** siguiendo esta guía
-2. **Ejecuta el exportador** para convertirlo
-3. **Verifica en la web** que se vea correctamente
-4. **Genera un simulacro** con tu problema
-5. **¡Repite el proceso!** 
+**Más códigos disponibles en:** `docs/CODIGOS_MATERIAS.md`
 
 ---
 
-**¿Necesitas ayuda?** Revisa los ejemplos en `ejercicios/` o ejecuta `python demo.py` para ver el sistema en acción. 
+## 🎯 **CHECKLIST ADMINISTRATIVO**
+
+### **Gestión diaria:**
+- [ ] Revisar estadísticas de uso
+- [ ] Verificar funcionamiento de límites diarios
+- [ ] Monitorear conversiones a premium
+- [ ] Revisar logs de errores
+- [ ] Verificar autenticación Google OAuth
+
+### **Gestión de usuarios:**
+- [ ] Revisar nuevos registros
+- [ ] Gestionar solicitudes premium
+- [ ] Atender reportes de problemas
+- [ ] Mantener base de datos organizada
+
+---
+
+## 🚀 **PRÓXIMOS PASOS COMO ADMINISTRADOR**
+
+1. **Familiarizarse** con el panel administrativo
+2. **Configurar monitoreo** de métricas clave
+3. **Establecer procesos** de gestión de usuarios
+4. **Documentar procedimientos** específicos
+5. **Planificar expansión** de contenido
+
+---
+
+**¿Necesitas ayuda administrativa?** 
+- 📧 Revisar logs en `/var/log/` o consola
+- 📖 Consultar `SISTEMA_LIMITES_DIARIOS.md`
+- 🛠️ Usar scripts en la raíz del proyecto

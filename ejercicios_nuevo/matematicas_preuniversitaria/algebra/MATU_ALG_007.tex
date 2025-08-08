@@ -1,0 +1,71 @@
+\begin{ejercicio}[
+  id=MATU_ALG_007,
+  materia_principal=matematicas_preuniversitaria,
+  codigo_materia=MATU,
+  capitulo=algebra,
+  subtema=exponentes,
+  nivel=intermedio,
+  procedencia="Problemas Resueltos de Matemática",
+  visibilidad=web_impreso,
+  tiempo_estimado=6,
+  libros={matematicas_pre},
+  dificultad=3,
+  mostrar_solucion=true,
+  tags={exponentes, fracciones, sustitucion}
+]
+
+Desarrollar:  
+Si $(ab)^m = 1$ y $a^{2m} - b^{2m} = 2$, hallar el valor de $Q$:
+
+\[
+Q = \frac{a^{-m} - b^{-m}}{a^{-m} + b^{-m}} - \frac{a^{-m} + b^{-m}}{a^{-m} - b^{-m}}
+\]
+
+\begin{solucion}
+
+\textbf{Datos del problema}
+\begin{itemize}
+    \item $(ab)^m=1 \ \Rightarrow\ (ab)^{2m}=1$.
+    \item $a^{2m}-b^{2m}=2$.
+\end{itemize}
+
+\textbf{Cambio de variable}  
+Sea $x=a^{-m}$ y $y=b^{-m}$. Entonces
+\[
+Q=\frac{x-y}{x+y}-\frac{x+y}{x-y}
+  =\frac{(x-y)^2-(x+y)^2}{(x+y)(x-y)}.
+\]
+
+\textbf{Algebra}  
+\[
+(x-y)^2-(x+y)^2=(x^2-2xy+y^2)-(x^2+2xy+y^2)=-4xy,
+\]
+\[
+(x+y)(x-y)=x^2-y^2.
+\]
+Por tanto
+\[
+Q=\frac{-4xy}{x^2-y^2}.
+\]
+
+\textbf{Volver a $a,b$}  
+\[
+xy=a^{-m}b^{-m}=(ab)^{-m}=\big((ab)^m\big)^{-1}=1,
+\]
+\[
+x^2-y^2=a^{-2m}-b^{-2m}
+=\frac{b^{2m}-a^{2m}}{a^{2m}b^{2m}}
+=\frac{-(a^{2m}-b^{2m})}{(ab)^{2m}}
+=\frac{-2}{1}=-2.
+\]
+
+\textbf{Resultado}  
+\[
+Q=\frac{-4\cdot 1}{-2}=2.
+\]
+
+\textbf{Respuesta final:} $\boxed{Q=2}$.
+
+\end{solucion}
+
+\end{ejercicio}

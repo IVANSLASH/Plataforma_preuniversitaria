@@ -596,11 +596,96 @@ def teoria():
     teoria_data = cargar_teoria()
     return render_template('teoria.html', teoria=teoria_data)
 
+@app.route('/teoria/<materia>/<capitulo>')
+def teoria_capitulo(materia, capitulo):
+    """Página de teoría de un capítulo específico"""
+    teoria_data = cargar_teoria()
+    
+    # Verificar si existe el capítulo
+    if (materia in teoria_data['capitulos'] and 
+        capitulo in teoria_data['capitulos'][materia]):
+        
+        data = teoria_data['capitulos'][materia][capitulo]
+        return render_template('teoria_capitulo.html', 
+                             data=data,
+                             materia=materia,
+                             capitulo=capitulo)
+    
+    # Si no existe el capítulo, redirigir a la página principal de teoría
+    flash('El capítulo solicitado no existe.', 'error')
+    return redirect(url_for('teoria'))
+
 @app.route('/formularios')
 def formularios():
     """Página de formularios descargables"""
     formularios_data = cargar_formularios()
     return render_template('formularios.html', formularios=formularios_data)
+
+@app.route('/descargar/teoria/<materia>/<capitulo>')
+def descargar_teoria(materia, capitulo):
+    """Descarga un archivo de teoría específico"""
+    teoria_data = cargar_teoria()
+    
+    # Verificar si existe el capítulo
+    if (materia in teoria_data['capitulos'] and 
+        capitulo in teoria_data['capitulos'][materia]):
+        
+        # Construir la ruta del archivo de teoría
+        ruta_archivo = os.path.join('static', 'teoria', materia, f'teo_{materia}_{capitulo}.pdf')
+        
+        # Verificar si el archivo existe
+        if os.path.exists(ruta_archivo):
+            return send_file(ruta_archivo, as_attachment=True)
+    
+    # Si no se encuentra el archivo
+    flash('El archivo de teoría no se encuentra disponible.', 'error')
+    return redirect(url_for('teoria'))
+
+@app.route('/descargar/<materia>/<capitulo>')
+def descargar_formulario(materia, capitulo):
+    """Descarga un formulario específico"""
+    formularios_data = cargar_formularios()
+    
+    # Verificar si existe el formulario
+    if (materia in formularios_data['formularios'] and 
+        capitulo in formularios_data['formularios'][materia]):
+        
+        formulario = formularios_data['formularios'][materia][capitulo]
+        archivo = formulario['archivo']
+        
+        # Construir la ruta completa del archivo
+        ruta_archivo = os.path.join('static', archivo)
+        
+        # Verificar si el archivo existe
+        if os.path.exists(ruta_archivo):
+            return send_file(ruta_archivo, as_attachment=True)
+    
+    # Si no se encuentra el formulario
+    flash('El formulario solicitado no se encuentra disponible.', 'error')
+    return redirect(url_for('formularios'))
+
+@app.route('/descargar/<id>')
+def descargar_formulario_completo(id):
+    """Descarga un formulario completo"""
+    formularios_data = cargar_formularios()
+    
+    # Verificar si existe el formulario completo
+    if id in formularios_data['formularios_generales']:
+        formulario = formularios_data['formularios_generales'][id]
+        archivo = formulario['archivo']
+        
+        # Construir la ruta completa del archivo
+        ruta_archivo = os.path.join('static', archivo)
+        
+        # Verificar si el archivo existe
+        if os.path.exists(ruta_archivo):
+            return send_file(ruta_archivo, as_attachment=True)
+        else:
+            flash('El archivo del formulario no se encuentra disponible.', 'error')
+            return redirect(url_for('formularios'))
+    else:
+        flash('El formulario solicitado no existe.', 'error')
+        return redirect(url_for('formularios'))
 
 @app.route('/simulacro')
 def simulacro():
