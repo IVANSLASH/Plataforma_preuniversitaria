@@ -412,6 +412,14 @@
                         <div class="stat-number">{{ usuarios_google }}</div>
                         <div class="stat-label">Usuarios Google</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ visitas_totales }}</div>
+                        <div class="stat-label">Visitas Totales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ visitas_hoy }}</div>
+                        <div class="stat-label">Visitas Hoy</div>
+                    </div>
                 </div>
                 
                 <!-- Controles -->
@@ -448,6 +456,7 @@
                                 <th><i class="fas fa-school"></i> Institución</th>
                                 <th><i class="fas fa-calendar"></i> Registro</th>
                                 <th><i class="fas fa-clock"></i> Último Acceso</th>
+                                <th><i class="fas fa-sign-in-alt"></i> Ingresos</th>
                                 <th><i class="fas fa-shield-alt"></i> Estado</th>
                                 <th><i class="fas fa-cogs"></i> Acciones</th>
                             </tr>
@@ -501,6 +510,9 @@
                                     {% else %}
                                         <span class="text-muted">Nunca</span>
                                     {% endif %}
+                                </td>
+                                <td>
+                                    {{ (usuario.sesiones | length) if usuario.sesiones is defined else 0 }}
                                 </td>
                                 <td>
                                     {% if usuario.es_activo %}

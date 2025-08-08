@@ -4,7 +4,8 @@ import json
 from flask import Blueprint, redirect, url_for, flash, render_template, request, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
-from models import db, Usuario
+from models import db, Usuario, SesionUsuario
+from models import VisitaPagina
 
 # Blueprint para la autenticación
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -97,6 +98,21 @@ def authorize():
     # Actualiza el último acceso
     usuario.actualizar_ultimo_acceso()
 
+    # Registrar sesión del usuario para auditoría/estadísticas
+    try:
+        sesion = SesionUsuario(
+            usuario_id=usuario.id,
+            ip_address=request.headers.get('X-Forwarded-For', request.remote_addr),
+            user_agent=request.headers.get('User-Agent')
+        )
+        db.session.add(sesion)
+        db.session.commit()
+        # Guardar ID de sesión en la sesión de Flask para cerrarla en logout
+        session['sesion_usuario_id'] = sesion.id
+    except Exception:
+        db.session.rollback()
+        # No bloquear el login por fallos de auditoría
+        
     # Redirige a completar el perfil solo si es un usuario nuevo y no tiene datos básicos
     if not usuario.profile_completed and not usuario.ultima_unidad_educativa and not usuario.ciudad:
         return redirect(url_for('auth.complete_profile'))
@@ -109,6 +125,28 @@ def logout():
     """
     Cierra la sesión del usuario.
     """
+    # Cerrar la sesión registrada (si existe)
+    try:
+        sesion_id = session.pop('sesion_usuario_id', None)
+        if sesion_id:
+            sesion_db = SesionUsuario.query.get(sesion_id)
+            if sesion_db and sesion_db.fecha_fin is None:
+                from datetime import datetime
+                sesion_db.fecha_fin = datetime.utcnow()
+                db.session.commit()
+        else:
+            # Fallback: cerrar la última sesión abierta del usuario
+            sesion_abierta = (SesionUsuario.query
+                              .filter_by(usuario_id=current_user.id, fecha_fin=None)
+                              .order_by(SesionUsuario.fecha_inicio.desc())
+                              .first())
+            if sesion_abierta:
+                from datetime import datetime
+                sesion_abierta.fecha_fin = datetime.utcnow()
+                db.session.commit()
+    except Exception:
+        db.session.rollback()
+
     logout_user()
     flash("Has cerrado sesión.", "info")
     return redirect(url_for('index'))
@@ -175,13 +213,20 @@ def admin_users():
     usuarios_activos = len([u for u in usuarios if u.es_activo])
     usuarios_premium = len([u for u in usuarios if u.is_premium_active()])
     usuarios_google = len([u for u in usuarios if u.auth_provider == 'google'])
+
+    # Métricas de visitas
+    from datetime import date
+    visitas_totales = VisitaPagina.query.count()
+    visitas_hoy = VisitaPagina.query.filter(VisitaPagina.fecha >= date.today()).count()
     
     return render_template('auth/admin_users.html', 
                          usuarios=usuarios,
                          total_usuarios=total_usuarios,
                          usuarios_activos=usuarios_activos,
                          usuarios_premium=usuarios_premium,
-                         usuarios_google=usuarios_google)
+                         usuarios_google=usuarios_google,
+                         visitas_totales=visitas_totales,
+                         visitas_hoy=visitas_hoy)
 
 @auth_bp.route('/admin/toggle_user/<int:user_id>')
 @login_required
@@ -281,7 +326,6 @@ def delete_account():
         user_id = current_user.id
         
         # Eliminar todas las sesiones del usuario
-        from models import SesionUsuario
         sesiones = SesionUsuario.query.filter_by(usuario_id=user_id).all()
         for sesion in sesiones:
             db.session.delete(sesion)
@@ -400,7 +444,6 @@ def admin_delete_user(user_id):
             return jsonify({'success': False, 'message': 'No puedes eliminar cuentas de administrador.'})
         
         # Eliminar sesiones del usuario
-        from models import SesionUsuario
         sesiones = SesionUsuario.query.filter_by(usuario_id=user_id).all()
         for sesion in sesiones:
             db.session.delete(sesion)
@@ -456,7 +499,6 @@ def admin_bulk_actions():
             
             for usuario in usuarios_a_eliminar:
                 # Eliminar sesiones
-                from models import SesionUsuario
                 sesiones = SesionUsuario.query.filter_by(usuario_id=usuario.id).all()
                 for sesion in sesiones:
                     db.session.delete(sesion)

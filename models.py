@@ -416,6 +416,23 @@ class EjercicioVisto(db.Model):
     def __repr__(self):
         return f'<EjercicioVisto {self.ejercicio_id} - {self.fecha_visto}>'
 
+class VisitaPagina(db.Model):
+    """Registro de visitas a la plataforma (para métricas de acceso global)."""
+    __tablename__ = 'visitas_pagina'
+
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(512), nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)
+    ip_address = db.Column(db.String(45), nullable=True)
+    user_agent = db.Column(db.Text, nullable=True)
+
+    # Relación opcional con usuario
+    usuario = db.relationship('Usuario', backref=db.backref('visitas', lazy=True))
+
+    def __repr__(self):
+        return f'<Visita {self.path} - {self.fecha}>'
+
 def init_db(app):
     """Inicializa la base de datos"""
     # Solo inicializar si no está ya inicializado

@@ -24,12 +24,12 @@ from flask_login import LoginManager, login_required, current_user
 import json
 import os
 import re
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 from io import BytesIO
 
 # Importar modelos y rutas de autenticación
-from models import db, Usuario, init_db
+from models import db, Usuario, init_db, VisitaPagina
 from auth import auth_bp, init_oauth
 
 app = Flask(__name__)
@@ -337,6 +337,30 @@ def buscar_ejercicios_por_palabras(ejercicios, palabras_busqueda):
             ejercicios_coincidentes.append(ejercicio)
     
     return ejercicios_coincidentes
+
+@app.before_request
+def registrar_visita():
+    try:
+        # Solo registrar solicitudes GET normales (no static ni favicon)
+        if request.method != 'GET':
+            return
+        if request.path.startswith('/static') or request.path == '/favicon.ico':
+            return
+        # Evitar registrar llamadas a APIs internas si no deseas contarlas
+        # if request.path.startswith('/api/'): return
+
+        visita = VisitaPagina(
+            path=request.path,
+            usuario_id=(current_user.id if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated else None),
+            ip_address=request.headers.get('X-Forwarded-For', request.remote_addr),
+            user_agent=request.headers.get('User-Agent')
+        )
+        db.session.add(visita)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        # No bloquear la solicitud por errores de logging
+        return
 
 @app.route('/')
 def index():
